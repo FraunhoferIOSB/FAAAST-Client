@@ -128,14 +128,23 @@ public class AASRepositoryInterfaceTest {
 
         RecordedRequest request = server.takeRequest();
 
+        String expectedPath = "/example.com/api/v3.0/shells/?limit=1&cursor=MQ==&assetIds=" +
+                normalizeBase64("ew0KICAibmFtZSIgOiAiZ2xvYmFsQXNzZXRJZCIsDQogICJ2YWx1ZSIgOiAiYXNzZXRMaW5rMSINCn0=") +
+                "," +
+                normalizeBase64("ew0KICAibmFtZSIgOiAic3BlY2lmaWNBc3NldElkIiwNCiAgInZhbHVlIiA6ICJhc3NldExpbmsyIg0KfQ==") +
+                "&idShort=idShort";
+
+        String actualPath = request.getPath();
+
+        assertEquals(expectedPath, actualPath);
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals(
-                "/example.com/api/v3.0/shells/?limit=1&cursor=MQ==&assetIds=ew0KICAibmFtZSIgOiAiZ2xvYmFsQXNzZXRJZCIsDQogICJ2YWx1ZSIgOiAiYXNzZXRMaW5rMSINCn0=,ew0KICAibmFtZSIgOiAic3BlY2lmaWNBc3NldElkIiwNCiAgInZhbHVlIiA6ICJhc3NldExpbmsyIg0KfQ==&idShort=idShort",
-                request.getPath());
         assertNull(responseAssetAdministrationShellPage.getMetadata().getCursor());
     }
 
+    private String normalizeBase64(String base64String) {
+        return base64String.replaceAll("\\s+", "");
+    }
 
     @Test
     public void postAssetAdministrationShell() throws SerializationException, InterruptedException, ClientException {
