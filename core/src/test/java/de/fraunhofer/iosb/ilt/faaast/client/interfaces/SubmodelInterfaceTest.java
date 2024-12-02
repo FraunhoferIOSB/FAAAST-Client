@@ -21,6 +21,7 @@ import de.fraunhofer.iosb.ilt.faaast.service.model.IdShortPath;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.OutputModifier;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.operation.ExecutionState;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.operation.OperationResult;
+import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.Datatype;
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.PropertyValue;
 import de.fraunhofer.iosb.ilt.faaast.service.typing.ElementValueTypeInfo;
@@ -41,7 +42,6 @@ import org.junit.Test;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.Duration;
 
 import static org.junit.Assert.assertEquals;
 
@@ -121,7 +121,7 @@ public class SubmodelInterfaceTest {
 
 
     @Test
-    public void testGetDefault() throws ClientException, InterruptedException, SerializationException {
+    public void testGetDefault() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         String serializedSubmodel = serializer.write(requestSubmodel);
         server.enqueue(new MockResponse().setBody(serializedSubmodel));
 
@@ -136,7 +136,7 @@ public class SubmodelInterfaceTest {
 
 
     @Test
-    public void testPut() throws ClientException, InterruptedException, SerializationException {
+    public void testPut() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         String serializedSubmodel = serializer.write(requestSubmodel);
         server.enqueue(new MockResponse().setBody(serializedSubmodel));
         submodelInterface.put(requestSubmodel);
@@ -149,7 +149,7 @@ public class SubmodelInterfaceTest {
 
 
     @Test
-    public void testPatchDefault() throws ClientException, InterruptedException, SerializationException {
+    public void testPatchDefault() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         String serializedSubmodel = serializer.write(requestSubmodel);
         server.enqueue(new MockResponse().setBody(serializedSubmodel));
         submodelInterface.patch(requestSubmodel);
@@ -162,7 +162,7 @@ public class SubmodelInterfaceTest {
 
 
     @Test
-    public void testGetAllElements() throws SerializationException, InterruptedException, ClientException {
+    public void testGetAllElements() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         List<SubmodelElement> requestSubmodelElements = requestSubmodel.getSubmodelElements();
         String serializedSubmodelElements = serializer.write(requestSubmodelElements);
         server.enqueue(new MockResponse().setBody(serializedSubmodelElements));
@@ -176,7 +176,7 @@ public class SubmodelInterfaceTest {
 
 
     @Test
-    public void testPostElement() throws ClientException, InterruptedException, SerializationException {
+    public void testPostElement() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         SubmodelElement requestSubmodelElement = requestSubmodel.getSubmodelElements().get(0);
         String serializedSubmodelElement = serializer.write(requestSubmodelElement);
         server.enqueue(new MockResponse().setBody(serializedSubmodelElement));
@@ -192,7 +192,7 @@ public class SubmodelInterfaceTest {
 
 
     @Test
-    public void testGetElementDefault() throws SerializationException, InterruptedException, ClientException {
+    public void testGetElementDefault() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         SubmodelElement requestSubmodelElement = requestSubmodel.getSubmodelElements().get(0);
         String serializedSubmodelElement = serializer.write(requestSubmodelElement);
         server.enqueue(new MockResponse().setBody(serializedSubmodelElement));
@@ -208,7 +208,7 @@ public class SubmodelInterfaceTest {
 
 
     @Test
-    public void testGetElementValue() throws SerializationException, InterruptedException, ClientException {
+    public void testGetElementValue() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         Double value = 2.0;
         String serializedPropertyValue = serializer.write(value);
         server.enqueue(new MockResponse().setBody(serializedPropertyValue));
@@ -227,7 +227,7 @@ public class SubmodelInterfaceTest {
 
 
     @Test
-    public void testPatchElementValue() throws SerializationException, InterruptedException, ClientException {
+    public void testPatchElementValue() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         DefaultProperty property = new DefaultProperty.Builder().value("2.0").valueType(DataTypeDefXsd.FLOAT).idShort("value").build();
         String serializedPropertyValue = serializer.write(property, OutputModifier.DEFAULT);
         server.enqueue(new MockResponse().setBody(serializedPropertyValue));
@@ -244,7 +244,7 @@ public class SubmodelInterfaceTest {
 
 
     @Test
-    public void testPostElementByPath() throws ClientException, InterruptedException, SerializationException {
+    public void testPostElementByPath() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         SubmodelElement requestSubmodelElement = requestSubmodel.getSubmodelElements().get(0);
         String serializedSubmodelElement = serializer.write(requestSubmodelElement);
         server.enqueue(new MockResponse().setBody(serializedSubmodelElement));
@@ -261,7 +261,7 @@ public class SubmodelInterfaceTest {
 
 
     @Test
-    public void testPutElementByPath() throws ClientException, InterruptedException, SerializationException {
+    public void testPutElementByPath() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         SubmodelElement requestSubmodelElement = requestSubmodel.getSubmodelElements().get(0);
         String serializedSubmodelElement = serializer.write(requestSubmodelElement);
         server.enqueue(new MockResponse().setBody(serializedSubmodelElement));
@@ -277,7 +277,7 @@ public class SubmodelInterfaceTest {
 
 
     @Test
-    public void testPatchElementByPath() throws ClientException, InterruptedException, SerializationException {
+    public void testPatchElementByPath() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         SubmodelElement requestSubmodelElement = requestSubmodel.getSubmodelElements().get(0);
         String serializedSubmodelElement = serializer.write(requestSubmodelElement);
         server.enqueue(new MockResponse().setBody(serializedSubmodelElement));
@@ -293,7 +293,7 @@ public class SubmodelInterfaceTest {
 
 
     @Test
-    public void testDeleteElement() throws ClientException, InterruptedException, SerializationException {
+    public void testDeleteElement() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         SubmodelElement requestSubmodelElement = requestSubmodel.getSubmodelElements().get(0);
         String serializedSubmodelElement = serializer.write(requestSubmodelElement);
         server.enqueue(new MockResponse().setBody(serializedSubmodelElement));
@@ -309,7 +309,7 @@ public class SubmodelInterfaceTest {
 
 
     @Test
-    public void testGetFileByPath() throws ClientException, InterruptedException, SerializationException {
+    public void testGetFileByPath() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         String serializedFile = serializer.write(requestFile);
         server.enqueue(new MockResponse().setBody(serializedFile));
         IdShortPath idShort = new IdShortPath.Builder().idShort(
@@ -324,7 +324,7 @@ public class SubmodelInterfaceTest {
 
 
     @Test
-    public void testPutFileByPath() throws ClientException, InterruptedException, SerializationException {
+    public void testPutFileByPath() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         String serializedFile = serializer.write(requestFile);
         server.enqueue(new MockResponse().setBody(serializedFile));
         IdShortPath idShort = new IdShortPath.Builder().idShort(
@@ -339,7 +339,7 @@ public class SubmodelInterfaceTest {
 
 
     @Test
-    public void testDeleteFileByPath() throws ClientException, InterruptedException, SerializationException {
+    public void testDeleteFileByPath() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         String serializedFile = serializer.write(requestFile);
         server.enqueue(new MockResponse().setBody(serializedFile));
         IdShortPath idShort = new IdShortPath.Builder().idShort(
@@ -354,7 +354,7 @@ public class SubmodelInterfaceTest {
 
 
     @Test
-    public void testInvokeOperationSync() throws ClientException, InterruptedException, SerializationException, DatatypeConfigurationException {
+    public void testInvokeOperationSync() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException, DatatypeConfigurationException {
         OperationResult requestOperationResult = new OperationResult();
         String serializedOperationResult = serializer.write(requestOperationResult);
         server.enqueue(new MockResponse().setBody(serializedOperationResult));

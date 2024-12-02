@@ -32,6 +32,7 @@ import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.QueryModifier;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingMetadata;
+import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.ElementValue;
 import de.fraunhofer.iosb.ilt.faaast.service.typing.TypeInfo;
 import de.fraunhofer.iosb.ilt.faaast.service.util.EncodingHelper;
@@ -363,7 +364,7 @@ public abstract class BaseInterface {
                     .content(content).build();
             return new JsonApiSerializer().write(entity, outputModifier);
         }
-        catch (SerializationException e) {
+        catch (SerializationException | UnsupportedModifierException e) {
             throw new InvalidPayloadException("Serialization Failed", e);
         }
     }
@@ -373,7 +374,7 @@ public abstract class BaseInterface {
         try {
             return new JsonApiSerializer().write(entity, OutputModifier.DEFAULT);
         }
-        catch (SerializationException e) {
+        catch (SerializationException | UnsupportedModifierException e) {
             throw new InvalidPayloadException("Serialization Failed", e);
         }
     }

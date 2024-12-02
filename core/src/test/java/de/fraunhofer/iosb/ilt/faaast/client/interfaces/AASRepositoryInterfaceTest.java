@@ -15,21 +15,20 @@
 package de.fraunhofer.iosb.ilt.faaast.client.interfaces;
 
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ClientException;
-import de.fraunhofer.iosb.ilt.faaast.client.query.AASSearchCriteria;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.ApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingMetadata;
-import de.fraunhofer.iosb.ilt.faaast.service.model.asset.AssetIdentification;
-import de.fraunhofer.iosb.ilt.faaast.service.model.asset.GlobalAssetIdentification;
-import de.fraunhofer.iosb.ilt.faaast.service.model.asset.SpecificAssetIdentification;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+
+import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
@@ -44,8 +43,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 
 public class AASRepositoryInterfaceTest {
 
@@ -84,7 +81,7 @@ public class AASRepositoryInterfaceTest {
 
 
     @Test
-    public void testGetAASPage() throws SerializationException, InterruptedException, ClientException {
+    public void testGetAASPage() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         Page<AssetAdministrationShell> aasPage = Page.<AssetAdministrationShell> builder()
                 .result(requestAssetAdministrationShellList.get(0))
                 .metadata(new PagingMetadata.Builder().cursor("1").build())
@@ -107,7 +104,7 @@ public class AASRepositoryInterfaceTest {
 
 
     @Test
-    public void postAssetAdministrationShell() throws SerializationException, InterruptedException, ClientException {
+    public void postAssetAdministrationShell() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         AssetAdministrationShell requestAssetAdministrationShell = requestAssetAdministrationShellList.get(0);
         String serializedAas = serializer.write(requestAssetAdministrationShell);
         server.enqueue(new MockResponse().setBody(serializedAas));
@@ -123,7 +120,7 @@ public class AASRepositoryInterfaceTest {
 
 
     @Test
-    public void testGetAllAssetAdministrationShellsAsReference() throws SerializationException, InterruptedException, ClientException {
+    public void testGetAllAssetAdministrationShellsAsReference() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         List<Reference> requestAasReferenceList = new ArrayList<>();
         requestAasReferenceList.add(new DefaultReference());
 
@@ -141,7 +138,7 @@ public class AASRepositoryInterfaceTest {
 
 
     @Test
-    public void delete() throws SerializationException, InterruptedException, ClientException {
+    public void delete() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         AssetAdministrationShell requestAssetAdministrationShell = requestAssetAdministrationShellList.get(0);
         String serializedAas = serializer.write(requestAssetAdministrationShell);
         String requestAasIdentifier = requestAssetAdministrationShell.getId();
@@ -158,7 +155,7 @@ public class AASRepositoryInterfaceTest {
 
 
     @Test
-    public void testGetAssetAdministrationShell() throws SerializationException, InterruptedException, ClientException {
+    public void testGetAssetAdministrationShell() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         AssetAdministrationShell requestAas = requestAssetAdministrationShellList.get(0);
 
         String serializedAas = serializer.write(requestAas);
