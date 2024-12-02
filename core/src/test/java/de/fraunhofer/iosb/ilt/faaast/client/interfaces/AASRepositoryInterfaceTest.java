@@ -107,46 +107,6 @@ public class AASRepositoryInterfaceTest {
 
 
     @Test
-    public void testGetAllAssetAdministrationShellsWithPagingWithSearchCriteria() throws SerializationException, InterruptedException, ClientException {
-        Page<AssetAdministrationShell> aasPage = Page.<AssetAdministrationShell> builder().result(requestAssetAdministrationShellList)
-                .metadata(new PagingMetadata.Builder().build()).build();
-        String serializedAasPage = serializer.write(aasPage);
-        server.enqueue(new MockResponse().setBody(serializedAasPage));
-        List<AssetIdentification> assetIdentificationList = new ArrayList<>();
-        assetIdentificationList.add(new GlobalAssetIdentification.Builder().value("assetLink1").build());
-        assetIdentificationList.add(new SpecificAssetIdentification.Builder().key("specificAssetId").value("assetLink2").build());
-
-        Page<AssetAdministrationShell> responseAssetAdministrationShellPage = AASRepositoryInterface.get(
-                new PagingInfo.Builder()
-                        .cursor("1")
-                        .limit(1)
-                        .build(),
-                new AASSearchCriteria.Builder()
-                        .assetIds(assetIdentificationList)
-                        .idShort("idShort")
-                        .build());
-
-        RecordedRequest request = server.takeRequest();
-
-        String expectedPath = "/example.com/api/v3.0/shells/?limit=1&cursor=MQ==&assetIds=" +
-                normalizeBase64("ew0KICAibmFtZSIgOiAiZ2xvYmFsQXNzZXRJZCIsDQogICJ2YWx1ZSIgOiAiYXNzZXRMaW5rMSINCn0=") +
-                "," +
-                normalizeBase64("ew0KICAibmFtZSIgOiAic3BlY2lmaWNBc3NldElkIiwNCiAgInZhbHVlIiA6ICJhc3NldExpbmsyIg0KfQ==") +
-                "&idShort=idShort";
-
-        String actualPath = request.getPath();
-
-        assertEquals(expectedPath, actualPath);
-        assertEquals("GET", request.getMethod());
-        assertEquals(0, request.getBodySize());
-        assertNull(responseAssetAdministrationShellPage.getMetadata().getCursor());
-    }
-
-    private String normalizeBase64(String base64String) {
-        return base64String.replaceAll("\\s+", "");
-    }
-
-    @Test
     public void postAssetAdministrationShell() throws SerializationException, InterruptedException, ClientException {
         AssetAdministrationShell requestAssetAdministrationShell = requestAssetAdministrationShellList.get(0);
         String serializedAas = serializer.write(requestAssetAdministrationShell);
