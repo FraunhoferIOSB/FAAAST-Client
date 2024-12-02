@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>de.fraunhofer.iosb.ilt.faaast.client</groupId>
+        <artifactId>faaast-client</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>core</artifactId>
+    <name>core</name>
+    <description>Main functionality of the FA³ST Client.</description>
+    <properties>
+        <aas4j.version>1.0.2</aas4j.version>
+        <faaast.service.version>1.1.0</faaast.service.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <okhttp3.version>4.12.0</okhttp3.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>mockwebserver</artifactId>
+            <version>${okhttp3.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.fraunhofer.iosb.ilt.faaast.service</groupId>
+            <artifactId>core</artifactId>
+            <version>${faaast.service.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.fraunhofer.iosb.ilt.faaast.service</groupId>
+            <artifactId>dataformat-json</artifactId>
+            <version>${faaast.service.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.fraunhofer.iosb.ilt.faaast.service</groupId>
+            <artifactId>model</artifactId>
+            <version>${faaast.service.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.digitaltwin.aas4j</groupId>
+            <artifactId>aas4j-dataformat-core</artifactId>
+            <version>${aas4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.digitaltwin.aas4j</groupId>
+            <artifactId>aas4j-dataformat-json</artifactId>
+            <version>${aas4j.version}</version>
+        </dependency>
+    </dependencies>
+</project>
