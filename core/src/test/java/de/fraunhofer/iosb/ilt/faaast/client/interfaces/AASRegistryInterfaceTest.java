@@ -18,8 +18,9 @@ import de.fraunhofer.iosb.ilt.faaast.client.exception.ClientException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.ApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
-import de.fraunhofer.iosb.ilt.faaast.service.model.descriptor.AssetAdministrationShellDescriptor;
-import de.fraunhofer.iosb.ilt.faaast.service.model.descriptor.impl.DefaultAssetAdministrationShellDescriptor;
+import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShellDescriptor;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShellDescriptor;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class AASRegistryInterfaceTest {
 
 
     @Test
-    public void testGetAllAssetAdministrationShellDescriptors() throws ClientException, SerializationException, InterruptedException {
+    public void testGetAllAssetAdministrationShellDescriptors() throws ClientException, SerializationException, InterruptedException, UnsupportedModifierException {
         String serializedShellDescriptors = serializer.write(requestShellDescriptors);
         server.enqueue(new MockResponse().setBody(serializedShellDescriptors));
 
@@ -83,7 +84,7 @@ public class AASRegistryInterfaceTest {
 
 
     @Test
-    public void testPost() throws SerializationException, ClientException, InterruptedException {
+    public void testPost() throws SerializationException, ClientException, InterruptedException, UnsupportedModifierException {
         DefaultAssetAdministrationShellDescriptor requestShellDescriptor = new DefaultAssetAdministrationShellDescriptor();
         String requestAasIdentifier = "DefaultId";
         requestShellDescriptor.setId(requestAasIdentifier);
@@ -103,7 +104,7 @@ public class AASRegistryInterfaceTest {
 
 
     @Test
-    public void testGet() throws SerializationException, ClientException, InterruptedException {
+    public void testGet() throws SerializationException, ClientException, InterruptedException, UnsupportedModifierException {
         AssetAdministrationShellDescriptor requestShellDescriptor = new DefaultAssetAdministrationShellDescriptor();
         String requestAasIdentifier = "DefaultId";
         requestShellDescriptor.setId(requestAasIdentifier);
@@ -124,7 +125,7 @@ public class AASRegistryInterfaceTest {
 
 
     @Test
-    public void testPut() throws ClientException, SerializationException, InterruptedException {
+    public void testPut() throws ClientException, SerializationException, InterruptedException, UnsupportedModifierException {
         DefaultAssetAdministrationShellDescriptor requestShellDescriptor = new DefaultAssetAdministrationShellDescriptor();
         String requestAasId = "DefaultId";
         requestShellDescriptor.setId(requestAasId);
@@ -144,7 +145,7 @@ public class AASRegistryInterfaceTest {
 
 
     @Test
-    public void testDelete() throws SerializationException, ClientException, InterruptedException {
+    public void testDelete() throws SerializationException, ClientException, InterruptedException, UnsupportedModifierException {
         AssetAdministrationShellDescriptor requestShellDescriptor = new DefaultAssetAdministrationShellDescriptor();
         String requestAasIdentifier = "DefaultId";
         requestShellDescriptor.setId(requestAasIdentifier);
