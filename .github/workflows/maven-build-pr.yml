@@ -45,6 +45,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           mvn install sonar:sonar -Dsonar.projectKey=FraunhoferIOSB_FAAAST-Client \
+              -Dsonar.organization=fraunhofer-iosb \
               -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
               --settings maven-ci-settings.xml -B
 
