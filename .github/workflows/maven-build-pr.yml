@@ -46,7 +46,7 @@ jobs:
         run: |
           mvn install sonar:sonar -P coverage -Dsonar.projectKey=FraunhoferIOSB_FAAAST-Client \
               -Dsonar.organization=fraunhofer-iosb \
-              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
+              -Dsonar.coverage.jacoco.xmlReportPaths=target/jacoco/jacoco.xml \
               --settings maven-ci-settings.xml -B
 
       - name: Restore CVD Database from Cache
