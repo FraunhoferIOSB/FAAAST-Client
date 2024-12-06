@@ -21,6 +21,8 @@ import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
@@ -48,7 +50,7 @@ public class DescriptionInterfaceTest {
 
 
     @Test
-    public void testGet() throws SerializationException, InterruptedException, ClientException {
+    public void testGet() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         List<String> requestDescription = new ArrayList<>();
         requestDescription.add("Description1");
         requestDescription.add("Description2");

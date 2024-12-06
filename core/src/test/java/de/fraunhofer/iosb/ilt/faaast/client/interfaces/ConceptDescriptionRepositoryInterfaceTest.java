@@ -18,6 +18,7 @@ import de.fraunhofer.iosb.ilt.faaast.client.exception.ClientException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.ApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
+import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import de.fraunhofer.iosb.ilt.faaast.service.util.EncodingHelper;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class ConceptDescriptionRepositoryInterfaceTest {
 
 
     @Test
-    public void testGetAll() throws SerializationException, InterruptedException, ClientException {
+    public void testGetAll() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         List<ConceptDescription> requestConceptDescriptions = new ArrayList<>();
         requestConceptDescriptions.add(new DefaultConceptDescription());
         String serializedConceptDescription = serializer.write(requestConceptDescriptions);
@@ -68,7 +69,7 @@ public class ConceptDescriptionRepositoryInterfaceTest {
 
 
     @Test
-    public void testPost() throws SerializationException, InterruptedException, ClientException {
+    public void testPost() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         ConceptDescription requestConceptDescription = new DefaultConceptDescription();
         String cdIdentifier = EncodingHelper.base64UrlEncode("cdIdentifier");
         requestConceptDescription.setId(cdIdentifier);
@@ -86,7 +87,7 @@ public class ConceptDescriptionRepositoryInterfaceTest {
 
 
     @Test
-    public void testGetById() throws SerializationException, InterruptedException, ClientException {
+    public void testGetById() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         ConceptDescription requestConceptDescription = new DefaultConceptDescription();
         String cdIdentifier = "cdIdentifier";
         requestConceptDescription.setId(cdIdentifier);
@@ -106,7 +107,7 @@ public class ConceptDescriptionRepositoryInterfaceTest {
 
 
     @Test
-    public void testPut() throws SerializationException, InterruptedException, ClientException {
+    public void testPut() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         ConceptDescription requestConceptDescription = new DefaultConceptDescription();
         String cdIdentifier = "cdIdentifier";
         requestConceptDescription.setId(cdIdentifier);
@@ -125,7 +126,7 @@ public class ConceptDescriptionRepositoryInterfaceTest {
 
 
     @Test
-    public void testDelete() throws SerializationException, InterruptedException, ClientException {
+    public void testDelete() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         ConceptDescription requestConceptDescription = new DefaultConceptDescription();
         String cdIdentifier = "cdIdentifier";
         requestConceptDescription.setId(cdIdentifier);
