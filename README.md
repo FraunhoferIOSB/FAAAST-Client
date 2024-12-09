@@ -38,7 +38,7 @@ Add the dependency:
 <dependency>
 	<groupId>de.fraunhofer.iosb.ilt.faaast.client</groupId>
 	<artifactId>faaast-client</artifactId>
-	<version>???</version>
+	<version>1.0.0-SNAPSHOT</version>
 </dependency>
 
 ```
@@ -47,7 +47,7 @@ Add the dependency:
 
 Add the dependency:
 ```gradle
-compile 'de.fraunhofer.iosb.ilt:faaast-client:???'
+compile 'de.fraunhofer.iosb.ilt:faaast-client:1.0.0-SNAPSHOT'
 ```
 
 ## API
@@ -229,7 +229,8 @@ to instantiate an interface for connection with that server.
 
 ## Changelog 
 
-### 1.0.0-Snapshot
+<!--start:changelog-header-->
+### 1.0.0-SNAPSHOT (current development version)<!--end:changelog-header-->
 
 First release!
 
