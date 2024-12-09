@@ -47,7 +47,7 @@ Add the dependency:
 
 Add the dependency:
 ```gradle
-compile 'de.fraunhofer.iosb.ilt:faaast-client:1.0.0-SNAPSHOT'
+compile 'de.fraunhofer.iosb.ilt.faaast.client:faaast-client:1.0.0-SNAPSHOT'
 ```
 
 ## API
