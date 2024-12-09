@@ -20,6 +20,7 @@ import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingMetadata;
+import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -55,13 +56,13 @@ public class BaseInterfaceTest {
     }
 
 
-    private String serializePage(Page<Submodel> page) throws SerializationException {
+    private String serializePage(Page<Submodel> page) throws SerializationException, UnsupportedModifierException {
         return new JsonApiSerializer().write(page);
     }
 
 
     @Test
-    public void testDeserializeStandardPage() throws SerializationException, ClientException {
+    public void testDeserializeStandardPage() throws SerializationException, ClientException, UnsupportedModifierException {
         Page<Submodel> requestPage = createPage();
         server.enqueue(new MockResponse().setBody(serializePage(requestPage)));
 
@@ -71,7 +72,7 @@ public class BaseInterfaceTest {
 
 
     @Test
-    public void testDeserializeCustomPage() throws JSONException, SerializationException, ClientException {
+    public void testDeserializeCustomPage() throws JSONException, SerializationException, ClientException, UnsupportedModifierException {
         Page<Submodel> requestPage = createPage();
         JSONObject customPage = new JSONObject(serializePage(requestPage));
         customPage.getJSONObject("paging_metadata").put("cursor2", "cursor");
