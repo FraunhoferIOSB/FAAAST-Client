@@ -9,6 +9,7 @@ else
 fi
 TAG_VERSION="version"
 TAG_CHANGELOG_HEADER="changelog-header"
+TAG_CHANGELOG_ANCHOR="changelog-anchor"
 README_FILE="README.md"
 
 # arguments: tag
@@ -86,7 +87,7 @@ echo "Next: replacing version nubmers [enter]"
 read -s
 mvn versions:set -DgenerateBackupPoms=false -DnewVersion="${NEXTVERSION}"-SNAPSHOT
 sed -i 's/<tag>v'"${VERSION}"'<\/tag>/<tag>'"${NEXTBRANCH}"'<\/tag>/g' pom.xml
-sed -i "2 i <!--start:${TAG_CHANGELOG_HEADER}-->\\n<!--end:${TAG_CHANGELOG_HEADER}-->" "$README_FILE"
+sed -i "/^<!--${TAG_CHANGELOG_ANCHOR}-->$/a <!--start:${TAG_CHANGELOG_HEADER}-->\\n<!--end:${TAG_CHANGELOG_HEADER}-->" "$README_FILE"
 replaceValue "$README_FILE" "$TAG_CHANGELOG_HEADER" "### ${NEXTVERSION}-SNAPSHOT (current development version)"
 mvn -B spotless:apply
 
