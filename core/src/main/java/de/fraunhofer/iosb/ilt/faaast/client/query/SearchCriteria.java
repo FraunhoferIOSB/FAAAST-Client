@@ -19,7 +19,7 @@ package de.fraunhofer.iosb.ilt.faaast.client.query;
  * These are used to filter the response of an AAS server based on specific criteria.
  */
 public interface SearchCriteria {
-    SearchCriteria DEFAULT = new DefaultSearchCriteria();
+    public static final SearchCriteria DEFAULT = () -> "";
 
     String toQueryString();
 }

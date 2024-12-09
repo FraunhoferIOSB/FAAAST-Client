@@ -14,10 +14,6 @@
  */
 package de.fraunhofer.iosb.ilt.faaast.client.exception;
 
-import de.fraunhofer.iosb.ilt.faaast.service.dataformat.DeserializationException;
-import org.json.JSONException;
-
-
 /**
  * This exception is thrown if the server responds with a body that cannot be deserialized.
  */

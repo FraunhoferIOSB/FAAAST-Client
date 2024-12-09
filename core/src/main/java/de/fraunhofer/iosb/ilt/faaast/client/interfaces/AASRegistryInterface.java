@@ -39,13 +39,15 @@ import java.util.List;
  */
 public class AASRegistryInterface extends BaseInterface {
 
+    private static final String API_PATH = "/shell-descriptors/";
+
     /**
      * Creates a new Asset Administration Shell Registry Interface.
      *
      * @param serviceUri Uri used to communicate with the FA³ST Service.
      */
     public AASRegistryInterface(URI serviceUri) {
-        super(serviceUri, "/shell-descriptors/");
+        super(serviceUri, API_PATH);
     }
 
 
@@ -57,7 +59,7 @@ public class AASRegistryInterface extends BaseInterface {
      * @param serviceUri Uri used to communicate with the FA³ST Service.
      */
     public AASRegistryInterface(URI serviceUri, String user, String password) {
-        super(serviceUri, "/shell-descriptors/", user, password);
+        super(serviceUri, API_PATH, user, password);
     }
 
 
@@ -68,7 +70,7 @@ public class AASRegistryInterface extends BaseInterface {
      * @param serviceUri Uri used to communicate with the FA³ST Service.
      */
     public AASRegistryInterface(URI serviceUri, HttpClient httpClient) {
-        super(serviceUri, "/shell-descriptors/", httpClient);
+        super(serviceUri, API_PATH, httpClient);
     }
 
 
@@ -187,6 +189,7 @@ public class AASRegistryInterface extends BaseInterface {
     /**
      * Replaces an existing Asset Administration Shell Descriptor, i.e. replaces registration information.
      *
+     * @param aasIdentifier The Asset Administration Shell’s unique id.
      * @param shellDescriptor Object containing the Asset Administration Shell’s identification and endpoint information.
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
@@ -221,6 +224,7 @@ public class AASRegistryInterface extends BaseInterface {
      *             </div>
      * @throws ConnectivityException if the connection to the server cannot be established.
      */
+    @Override
     public void delete(String aasIdentifier) throws StatusCodeException, ConnectivityException {
         super.delete(idPath(aasIdentifier));
     }
@@ -230,6 +234,7 @@ public class AASRegistryInterface extends BaseInterface {
      * Returns the Submodel Registry Interface.
      *
      * @param aasIdentifier The unique id of the Submodel for the reference to be deleted
+     * @return
      */
     public SubmodelRegistryInterface getSubmodelRegistryInterface(String aasIdentifier) {
         return new SubmodelRegistryInterface(URI.create(idPath(aasIdentifier)));

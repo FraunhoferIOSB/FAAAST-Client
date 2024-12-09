@@ -24,7 +24,7 @@ public abstract class ClientException extends Exception {
      *
      * @param message the detail message
      */
-    public ClientException(String message) {
+    protected ClientException(String message) {
         super(message);
     }
 
@@ -35,7 +35,7 @@ public abstract class ClientException extends Exception {
      * @param message the detail message
      * @param cause the cause
      */
-    public ClientException(String message, Throwable cause) {
+    protected ClientException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -45,7 +45,7 @@ public abstract class ClientException extends Exception {
      *
      * @param cause the cause
      */
-    public ClientException(Throwable cause) {
+    protected ClientException(Throwable cause) {
         super(cause);
     }
 }
