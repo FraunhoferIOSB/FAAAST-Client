@@ -86,7 +86,6 @@ public class SubmodelRegistryInterfaceTest {
     @Test
     public void testPost() throws SerializationException, ClientException, InterruptedException {
         DefaultSubmodelDescriptor requestSubmodelDescriptor = requestSubmodelDescriptors.get(0);
-        String requestSubmodelIdentifier = requestSubmodelDescriptor.getId();
         String serializedSubmodelDescriptors = serializer.write(requestSubmodelDescriptor);
         server.enqueue(new MockResponse().setBody(serializedSubmodelDescriptors));
 

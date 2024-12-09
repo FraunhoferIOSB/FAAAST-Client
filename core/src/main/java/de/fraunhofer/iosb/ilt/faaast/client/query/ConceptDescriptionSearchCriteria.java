@@ -25,7 +25,8 @@ import java.util.stream.Stream;
  * idShort, isCaseOf and dataSpecification.
  */
 public class ConceptDescriptionSearchCriteria extends de.fraunhofer.iosb.ilt.faaast.service.persistence.ConceptDescriptionSearchCriteria implements SearchCriteria {
-    public static ConceptDescriptionSearchCriteria DEFAULT = new ConceptDescriptionSearchCriteria();
+
+    public static final ConceptDescriptionSearchCriteria DEFAULT = new ConceptDescriptionSearchCriteria();
 
     /**
      * Serializes isCaseOf, idShort and dataSpecification as filters in a query string for the use in a http request.

@@ -26,7 +26,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
  * asset kind and asset type.
  */
 public class AASDescriptorSearchCriteria implements SearchCriteria {
-    public static AASDescriptorSearchCriteria DEFAULT = new AASDescriptorSearchCriteria.Builder().build();
+    public static final AASDescriptorSearchCriteria DEFAULT = new AASDescriptorSearchCriteria.Builder().build();
     private final AssetKind assetKind;
     private final String assetType;
 

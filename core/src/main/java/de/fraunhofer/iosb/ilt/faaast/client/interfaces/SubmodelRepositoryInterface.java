@@ -37,13 +37,15 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
  */
 public class SubmodelRepositoryInterface extends BaseInterface {
 
+    private static final String API_PATH = "/submodels/";
+
     /**
      * Creates a new Submodel Repository Interface.
      *
      * @param serviceUri Uri used to communicate with the FA³ST service.
      */
     public SubmodelRepositoryInterface(URI serviceUri) {
-        super(serviceUri, "/submodels/");
+        super(serviceUri, API_PATH);
     }
 
 
@@ -55,7 +57,7 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      * @param serviceUri uri used to communicate with the FA³ST service
      */
     public SubmodelRepositoryInterface(URI serviceUri, String user, String password) {
-        super(serviceUri, "/submodels/", user, password);
+        super(serviceUri, API_PATH, user, password);
     }
 
 
@@ -66,7 +68,7 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      * @param serviceUri uri used to communicate with the FA³ST service
      */
     public SubmodelRepositoryInterface(URI serviceUri, HttpClient httpClient) {
-        super(serviceUri, "/submodels/", httpClient);
+        super(serviceUri, API_PATH, httpClient);
     }
 
 
@@ -481,6 +483,7 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      *             </div>
      * @throws ConnectivityException if the connection to the server cannot be established.
      */
+    @Override
     public void delete(String submodelIdentifier) throws StatusCodeException, ConnectivityException {
         super.delete(idPath(submodelIdentifier));
     }

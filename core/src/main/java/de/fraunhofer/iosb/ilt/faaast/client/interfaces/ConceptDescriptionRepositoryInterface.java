@@ -36,13 +36,15 @@ import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
  */
 public class ConceptDescriptionRepositoryInterface extends BaseInterface {
 
+    private static final String API_PATH = "/concept-descriptions/";
+
     /**
      * Creates a new Concept Description Interface.
      *
      * @param serviceUri Uri used to communicate with the FA³ST service.
      */
     protected ConceptDescriptionRepositoryInterface(URI serviceUri) {
-        super(serviceUri, "/concept-descriptions/");
+        super(serviceUri, API_PATH);
     }
 
 
@@ -54,7 +56,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
      * @param serviceUri Uri used to communicate with the FA³ST service.
      */
     protected ConceptDescriptionRepositoryInterface(URI serviceUri, String user, String password) {
-        super(serviceUri, "/concept-descriptions/", user, password);
+        super(serviceUri, API_PATH, user, password);
     }
 
 
@@ -65,7 +67,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
      * @param serviceUri the serviceUri
      */
     protected ConceptDescriptionRepositoryInterface(URI serviceUri, HttpClient httpClient) {
-        super(serviceUri, "/concept-descriptions/", httpClient);
+        super(serviceUri, API_PATH, httpClient);
     }
 
 
@@ -207,6 +209,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
      * Replaces an existing Concept Description
      *
      * @param conceptDescription Concept Description object
+     * @param cdIdentifier The Concept Description’s unique id
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -240,6 +243,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
      *             </div>
      * @throws ConnectivityException if the connection to the server cannot be established.
      */
+    @Override
     public void delete(String cdIdentifier) throws StatusCodeException, ConnectivityException {
         super.delete(idPath(cdIdentifier));
     }

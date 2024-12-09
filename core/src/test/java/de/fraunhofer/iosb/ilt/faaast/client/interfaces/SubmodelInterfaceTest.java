@@ -41,7 +41,6 @@ import org.junit.Test;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.Duration;
 
 import static org.junit.Assert.assertEquals;
 
@@ -180,8 +179,6 @@ public class SubmodelInterfaceTest {
         SubmodelElement requestSubmodelElement = requestSubmodel.getSubmodelElements().get(0);
         String serializedSubmodelElement = serializer.write(requestSubmodelElement);
         server.enqueue(new MockResponse().setBody(serializedSubmodelElement));
-        IdShortPath idShort = new IdShortPath.Builder().idShort(
-                requestSubmodelElement.getIdShort()).build();
         SubmodelElement responseSubmodelElement = submodelInterface.postElement(requestSubmodelElement);
         RecordedRequest request = server.takeRequest();
 
