@@ -19,8 +19,6 @@ import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.model.IdShortPath;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.OutputModifier;
-import de.fraunhofer.iosb.ilt.faaast.service.model.api.operation.ExecutionState;
-import de.fraunhofer.iosb.ilt.faaast.service.model.api.operation.OperationResult;
 import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.Datatype;
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.PropertyValue;
@@ -94,7 +92,7 @@ public class SubmodelInterfaceTest {
 
     @NotNull
     private static OperationResult getOperationResult() {
-        OperationResult requestOperationResult = new OperationResult();
+        OperationResult requestOperationResult = new DefaultOperationResult();
 
         OperationVariable requestOutputArgument = new DefaultOperationVariable();
         List<OperationVariable> requestOutputArgumentList = new ArrayList<>();
@@ -180,8 +178,7 @@ public class SubmodelInterfaceTest {
         SubmodelElement requestSubmodelElement = requestSubmodel.getSubmodelElements().get(0);
         String serializedSubmodelElement = serializer.write(requestSubmodelElement);
         server.enqueue(new MockResponse().setBody(serializedSubmodelElement));
-        IdShortPath idShort = new IdShortPath.Builder().idShort(
-                requestSubmodelElement.getIdShort()).build();
+
         SubmodelElement responseSubmodelElement = submodelInterface.postElement(requestSubmodelElement);
         RecordedRequest request = server.takeRequest();
 
@@ -355,7 +352,7 @@ public class SubmodelInterfaceTest {
 
     @Test
     public void testInvokeOperationSync() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException, DatatypeConfigurationException {
-        OperationResult requestOperationResult = new OperationResult();
+        OperationResult requestOperationResult = new DefaultOperationResult();
         String serializedOperationResult = serializer.write(requestOperationResult);
         server.enqueue(new MockResponse().setBody(serializedOperationResult));
 
