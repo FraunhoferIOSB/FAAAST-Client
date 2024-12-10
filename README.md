@@ -1,54 +1,64 @@
 # FA³ST Client 
-[![Build Status](https://github.com/FraunhoferIOSB/FAAST-Client/workflows/Maven%20Build/badge.svg)](https://github.com/FraunhoferIOSB/FAAST-Client/actions) [![codecov](https://codecov.io/gh/FraunhoferIOSB/FAAAST-Client/branch/master/graph/badge.svg)](https://codecov.io/gh/FraunhoferIOSB/FAAAST-Client) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/???)](https://www.codacy.com/gh/FraunhoferIOSB/FAAAST-Client?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=FraunhoferIOSB/FAAAST-Client&amp;utm_campaign=Badge_Grade)
+[![Maven Build](https://github.com/FraunhoferIOSB/FAAAST-Client/actions/workflows/maven-build.yml/badge.svg?branch=main)](https://github.com/FraunhoferIOSB/FAAST-Client/actions)[![Codacy Badge](https://app.codacy.com/project/badge/Grade/c6e2e44a488d498bab020cf1058c3445)](https://app.codacy.com/gh/FraunhoferIOSB/FAAAST-Client/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)<a href="https://sonarcloud.io/summary/new_code?id=FraunhoferIOSB_FAAAST-Client" ><img src="https://sonarcloud.io/images/project_badges/sonarcloud-white.svg" alt="SonarCloud badge" width="105"/></a>
 
 ![FAAAST-Client Logo](misc/images/Fa3st-Client_negativ.png)
 
 The **F**raunhofer **A**dvanced **A**sset **A**dministration **S**hell **Tools** (**FA³ST**) Client is a Java-based client
-library for version 3 of the [AAS API](https://github.com/admin-shell-io/aas-specs-api) and
-aims to simplify development of AAS client applications.
+library for version 3.0.1 of the [AAS API](https://github.com/admin-shell-io/aas-specs-api/tree/v3.0.1) and
+aims to simplify development of AAS client applications. See also the [OpenAPI](https://app.swaggerhub.com/apis/Plattform_i40/Entire-API-Collection/V3.0.1) Documentation.
 
-
-## Supports
-*   CRUD operations for the major interfaces:
-* Asset Administration Shell API, Submodel API
-* Asset Administration Shell Repository API, Submodel Repository API, Concept Description Repository API
-* Asset Administration Shell Registry API, Submodel Registry API
-* Description API
-*   Searching for specific identifiables in repositories
-*   Paging
-*   Synchronous Operations
-*   Basic Authentication
-
-## Unsupported
-*   Asynchronous Operations
-*   Value-only Operations 
-*   Serialization API
-*   AASX File Server API
-*   Service Specifications and Profiles
-
-## Installation
+## Usage
 
 ### Requirements
 Java Runtime 17 or newer.
 
-### Using with maven
+### with maven
 
 Add the dependency:
 ```xml
 <dependency>
 	<groupId>de.fraunhofer.iosb.ilt.faaast.client</groupId>
 	<artifactId>faaast-client</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 </dependency>
 
 ```
 
-### Using with gradle
+### with gradle
 
 Add the dependency:
 ```gradle
-compile 'de.fraunhofer.iosb.ilt.faaast.client:faaast-client:1.0.0-SNAPSHOT'
+compile 'de.fraunhofer.iosb.ilt.faaast.client:faaast-client:1.0.0'
 ```
+
+### Quick start
+```java
+URI serviceUri = new URI("https://www.example.org/api/v3.0");
+AASRepositoryInterface aasRepository = new AASRepositoryInterface(serviceUri);
+// Retrieve the AAS from the server.
+AssetAdministrationShell aas = aasRepository.getAASInterface("globalUniqueId").get();
+// Add a specific asset id to the asset information.
+List<SpecificAssetId> specificAssetIds = new ArrayList<>();
+specificAssetIds.add(new DefaultSpecificAssetId.Builder().name("specificAssetId").value("serialNumber").build());
+AssetInformation updatedAssetInformation = requestAas.getAssetInformation();
+updatedAssetInformation.setSpecificAssetIds(specificAssetIds);
+requestAas.setAssetInformation(updatedAssetInformation);
+// Update the AAS on the server.
+aasRepository.getAASInterface("globalUniqueId").patch(aas);
+```
+
+
+## Supported Features
+*   CRUD operations for the major interfaces:
+	* Asset Administration Shell API, Submodel API
+	* Asset Administration Shell Repository API, Submodel Repository API, Concept Description Repository API
+	* Asset Administration Shell Registry API, Submodel Registry API
+	* Description API
+*   Searching for specific identifiables in repositories
+*   Paging
+*   Synchronous Operations
+*   Basic Authentication
+
 
 ## API
 
@@ -76,9 +86,6 @@ The description interface can be used to request a self-description of the featu
 The source code below demonstrates the CRUD operations for AAS objects. Operations for other entities work similarly.
 
 ```java
-import org.eclipse.digitaltwin.aas4j.v3.model.*;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.*;
-
 URI serviceUri = new URI("https://www.example.org/api/v3.0");
 AASRepositoryInterface aasRepository = new AASRepositoryInterface(serviceUri);
 
@@ -224,8 +231,12 @@ with these parameters. For more complex security a custom http client (with the 
 to instantiate an interface for connection with that server.
 
 ## Roadmap
-* Support asynchronous / value-only operations
-* Page Scrolling
+*   Asynchronous Operations
+*   Value-only Operations
+*   Serialization API
+*   Service Specifications and Profiles
+*   Page Scrolling
+
 
 ## Changelog 
 
@@ -259,7 +270,7 @@ Contributions are greatly appreciated!
 
 ## Contact
 
-maximilian.kuehn@iosb.fraunhofer.de
+faaast@iosb.fraunhofer.de
 
 ## License
 
