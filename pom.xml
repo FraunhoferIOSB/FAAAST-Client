@@ -72,7 +72,7 @@
         <maven.plugin.owasp.version>10.0.4</maven.plugin.owasp.version>
         <maven.plugin.source.version>3.3.1</maven.plugin.source.version>
         <maven.plugin.spotless.version>2.43.0</maven.plugin.spotless.version>
-        <maven.plugin.surefire.version>3.5.1</maven.plugin.surefire.version>
+        <maven.plugin.surefire.version>3.5.2</maven.plugin.surefire.version>
         <okhttp3.version>4.12.0</okhttp3.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <root.basedir>${maven.multiModuleProjectDirectory}</root.basedir>
