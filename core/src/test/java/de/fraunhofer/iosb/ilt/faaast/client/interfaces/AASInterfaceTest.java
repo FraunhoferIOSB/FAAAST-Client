@@ -23,6 +23,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+
+import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
@@ -52,7 +54,7 @@ public class AASInterfaceTest {
 
 
     @Test
-    public void testGetAssetAdministrationShell() throws SerializationException, InterruptedException, ClientException {
+    public void testGetAssetAdministrationShell() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         AssetAdministrationShell requestAas = new DefaultAssetAdministrationShell();
 
         String serializedAas = serializer.write(requestAas);
@@ -69,7 +71,7 @@ public class AASInterfaceTest {
 
 
     @Test
-    public void testPutAssetAdministrationShell() throws SerializationException, InterruptedException, ClientException {
+    public void testPutAssetAdministrationShell() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         AssetAdministrationShell requestAas = new DefaultAssetAdministrationShell();
 
         String serializedAas = serializer.write(requestAas);
@@ -85,7 +87,7 @@ public class AASInterfaceTest {
 
 
     @Test
-    public void testGetAssetAdministrationShellAsReference() throws SerializationException, InterruptedException, ClientException {
+    public void testGetAssetAdministrationShellAsReference() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         Reference requestAasReference = new DefaultReference.Builder()
                 .type(ReferenceTypes.MODEL_REFERENCE)
                 .keys(new DefaultKey())
@@ -105,7 +107,7 @@ public class AASInterfaceTest {
 
 
     @Test
-    public void testGetAssetInformation() throws SerializationException, InterruptedException, ClientException {
+    public void testGetAssetInformation() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         AssetInformation requestAssetInformation = new DefaultAssetInformation();
         server.enqueue(new MockResponse().setBody(serializer.write(requestAssetInformation)));
 
@@ -120,7 +122,7 @@ public class AASInterfaceTest {
 
 
     @Test
-    public void testPutAssetInformation() throws SerializationException, InterruptedException, ClientException {
+    public void testPutAssetInformation() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         AssetInformation requestAssetInformation = new DefaultAssetInformation();
         String serializedAssetInfo = serializer.write(requestAssetInformation);
         server.enqueue(new MockResponse().setBody(serializedAssetInfo));
@@ -135,7 +137,7 @@ public class AASInterfaceTest {
 
 
     @Test
-    public void testGetThumbnail() throws InterruptedException, SerializationException, ClientException {
+    public void testGetThumbnail() throws InterruptedException, SerializationException, ClientException, UnsupportedModifierException {
         AssetAdministrationShell requestAas = new DefaultAssetAdministrationShell();
         Resource requestThumbnail = new DefaultResource();
         AssetInformation assetInformation = new DefaultAssetInformation();
@@ -156,7 +158,7 @@ public class AASInterfaceTest {
 
 
     @Test
-    public void testPutThumbnail() throws InterruptedException, SerializationException, ClientException {
+    public void testPutThumbnail() throws InterruptedException, SerializationException, ClientException, UnsupportedModifierException {
         AssetAdministrationShell requestAas = new DefaultAssetAdministrationShell.Builder().build();
         Resource requestThumbnail = new DefaultResource();
         AssetInformation assetInformation = new DefaultAssetInformation();
@@ -178,7 +180,7 @@ public class AASInterfaceTest {
 
 
     @Test
-    public void testDeleteThumbnail() throws InterruptedException, SerializationException, ClientException {
+    public void testDeleteThumbnail() throws InterruptedException, SerializationException, ClientException, UnsupportedModifierException {
         AssetAdministrationShell requestAas = new DefaultAssetAdministrationShell();
         Resource requestThumbnail = new DefaultResource();
         AssetInformation assetInformation = new DefaultAssetInformation();
@@ -198,7 +200,7 @@ public class AASInterfaceTest {
 
 
     @Test
-    public void testGetAllSubmodelReferences() throws SerializationException, InterruptedException, ClientException {
+    public void testGetAllSubmodelReferences() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         List<Reference> requestSubmodelReferenceList = new ArrayList<>();
         requestSubmodelReferenceList.add(new DefaultReference());
         server.enqueue(new MockResponse().setBody(serializer.write(requestSubmodelReferenceList)));
@@ -215,7 +217,7 @@ public class AASInterfaceTest {
 
 
     @Test
-    public void testPostSubmodelReference() throws SerializationException, InterruptedException, ClientException {
+    public void testPostSubmodelReference() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         Reference requestSubmodelReference = new DefaultReference();
         server.enqueue(new MockResponse().setBody(serializer.write(requestSubmodelReference)));
 
@@ -229,7 +231,7 @@ public class AASInterfaceTest {
 
 
     @Test
-    public void testDeleteSubmodelReference() throws SerializationException, InterruptedException, ClientException {
+    public void testDeleteSubmodelReference() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         Reference requestSubmodelReference = new DefaultReference();
         server.enqueue(new MockResponse().setBody(serializer.write(requestSubmodelReference)));
         String requestSubmodelId = Base64.getUrlEncoder().encodeToString("submodelId".getBytes());

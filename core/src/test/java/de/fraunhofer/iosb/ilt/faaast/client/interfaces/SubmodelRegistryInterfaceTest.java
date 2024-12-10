@@ -18,8 +18,9 @@ import de.fraunhofer.iosb.ilt.faaast.client.exception.ClientException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.ApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
-import de.fraunhofer.iosb.ilt.faaast.service.model.descriptor.SubmodelDescriptor;
-import de.fraunhofer.iosb.ilt.faaast.service.model.descriptor.impl.DefaultSubmodelDescriptor;
+import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelDescriptor;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelDescriptor;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public class SubmodelRegistryInterfaceTest {
 
 
     @Test
-    public void testGetAll() throws ClientException, SerializationException, InterruptedException {
+    public void testGetAll() throws ClientException, SerializationException, InterruptedException, UnsupportedModifierException {
         String serializedSubmodelDescriptors = serializer.write(requestSubmodelDescriptors);
         server.enqueue(new MockResponse().setBody(serializedSubmodelDescriptors));
 
@@ -84,7 +85,7 @@ public class SubmodelRegistryInterfaceTest {
 
 
     @Test
-    public void testPost() throws SerializationException, ClientException, InterruptedException {
+    public void testPost() throws SerializationException, ClientException, InterruptedException, UnsupportedModifierException {
         DefaultSubmodelDescriptor requestSubmodelDescriptor = requestSubmodelDescriptors.get(0);
         String serializedSubmodelDescriptors = serializer.write(requestSubmodelDescriptor);
         server.enqueue(new MockResponse().setBody(serializedSubmodelDescriptors));
@@ -100,7 +101,7 @@ public class SubmodelRegistryInterfaceTest {
 
 
     @Test
-    public void testGetById() throws SerializationException, ClientException, InterruptedException {
+    public void testGetById() throws SerializationException, ClientException, InterruptedException, UnsupportedModifierException {
         DefaultSubmodelDescriptor requestSubmodelDescriptor = requestSubmodelDescriptors.get(0);
         String requestSubmodelIdentifier = requestSubmodelDescriptor.getId();
         String serializedSubmodelDescriptor = serializer.write(requestSubmodelDescriptor);
@@ -119,7 +120,7 @@ public class SubmodelRegistryInterfaceTest {
 
 
     @Test
-    public void testPutById() throws ClientException, SerializationException, InterruptedException {
+    public void testPutById() throws ClientException, SerializationException, InterruptedException, UnsupportedModifierException {
         DefaultSubmodelDescriptor requestSubmodelDescriptor = requestSubmodelDescriptors.get(0);
         String requestSubmodelIdentifier = requestSubmodelDescriptor.getId();
         String serializedSubmodelDescriptors = serializer.write(requestSubmodelDescriptor);
@@ -136,7 +137,7 @@ public class SubmodelRegistryInterfaceTest {
 
 
     @Test
-    public void testDeleteById() throws SerializationException, ClientException, InterruptedException {
+    public void testDeleteById() throws SerializationException, ClientException, InterruptedException, UnsupportedModifierException {
         SubmodelDescriptor requestSubmodelDescriptor = requestSubmodelDescriptors.get(0);
         String requestSubmodelIdentifier = requestSubmodelDescriptor.getId();
         String serializedSubmodelDescriptors = serializer.write(requestSubmodelDescriptor);

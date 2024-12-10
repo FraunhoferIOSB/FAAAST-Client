@@ -42,7 +42,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |
-        mvn install sonar:sonar -Dsonar.projectKey=FraunhoferIOSB_FAAAST-Client --settings maven-ci-settings.xml -B
+        mvn install sonar:sonar -Pcoverage -Dsonar.projectKey=FraunhoferIOSB_FAAAST-Client --settings maven-ci-settings.xml -B
 
     - name: Restore CVD Database from Cache
       uses: actions/cache/restore@v4
@@ -76,8 +76,6 @@ jobs:
     - name: Set env variables
       run: |
         echo "Exporting Variables"
-        export SERVICE_NAME=$(mvn -pl service -Dexec.executable='echo' -Dexec.args='${project.build.finalName}' exec:exec -q)
-        echo "SERVICE_ARTIFACT=${SERVICE_NAME}.jar"   >> $GITHUB_ENV
         export version=$(mvn -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec -q)
         echo "VERSION=${version}"     >> $GITHUB_ENV
 
