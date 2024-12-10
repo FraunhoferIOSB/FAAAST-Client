@@ -1,5 +1,4 @@
-# FA³ST Client 
-[![Maven Build](https://github.com/FraunhoferIOSB/FAAAST-Client/actions/workflows/maven-build.yml/badge.svg?branch=main)](https://github.com/FraunhoferIOSB/FAAST-Client/actions)[![Codacy Badge](https://app.codacy.com/project/badge/Grade/c6e2e44a488d498bab020cf1058c3445)](https://app.codacy.com/gh/FraunhoferIOSB/FAAAST-Client/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)<a href="https://sonarcloud.io/summary/new_code?id=FraunhoferIOSB_FAAAST-Client" ><img src="https://sonarcloud.io/images/project_badges/sonarcloud-white.svg" alt="SonarCloud badge" width="105"/></a>
+# FA³ST Client [![Maven Build](https://github.com/FraunhoferIOSB/FAAAST-Client/actions/workflows/maven-build.yml/badge.svg?branch=main)](https://github.com/FraunhoferIOSB/FAAST-Client/actions)[![Codacy Badge](https://app.codacy.com/project/badge/Grade/c6e2e44a488d498bab020cf1058c3445)](https://app.codacy.com/gh/FraunhoferIOSB/FAAAST-Client/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)<a href="https://sonarcloud.io/summary/new_code?id=FraunhoferIOSB_FAAAST-Client" ><img src="https://sonarcloud.io/images/project_badges/sonarcloud-white.svg" alt="SonarCloud badge" width="105"/></a>
 
 ![FAAAST-Client Logo](misc/images/Fa3st-Client_negativ.png)
 
