@@ -53,7 +53,7 @@
         </snapshotRepository>
     </distributionManagement>
     <properties>
-        <aas4j.version>1.0.2</aas4j.version>
+        <aas4j.version>1.0.3</aas4j.version>
         <checkstyle.version>10.18.2</checkstyle.version>
         <faaast.service.version>1.2.0-SNAPSHOT</faaast.service.version>
         <junit.version>4.13.2</junit.version>
