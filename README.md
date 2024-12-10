@@ -1,7 +1,7 @@
 # FA³ST Client 
 [![Build Status](https://github.com/FraunhoferIOSB/FAAST-Client/workflows/Maven%20Build/badge.svg)](https://github.com/FraunhoferIOSB/FAAST-Client/actions) [![codecov](https://codecov.io/gh/FraunhoferIOSB/FAAAST-Client/branch/master/graph/badge.svg)](https://codecov.io/gh/FraunhoferIOSB/FAAAST-Client) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/???)](https://www.codacy.com/gh/FraunhoferIOSB/FAAAST-Client?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=FraunhoferIOSB/FAAAST-Client&amp;utm_campaign=Badge_Grade)
 
-![FAAAST-Client Logo](images/Fa3st-Client_negativ.png)
+![FAAAST-Client Logo](misc/images/Fa3st-Client_negativ.png)
 
 The **F**raunhofer **A**dvanced **A**sset **A**dministration **S**hell **Tools** (**FA³ST**) Client is a Java-based client
 library for version 3 of the [AAS API](https://github.com/admin-shell-io/aas-specs-api) and
