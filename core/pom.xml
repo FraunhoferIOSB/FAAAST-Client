@@ -11,12 +11,7 @@
     <name>core</name>
     <description>Main functionality of the FA³ST Client.</description>
     <properties>
-        <aas4j.version>1.0.2</aas4j.version>
-        <faaast.service.version>1.2.0-SNAPSHOT</faaast.service.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <okhttp3.version>4.12.0</okhttp3.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <root.basedir>${project.parent.basedir}</root.basedir>
     </properties>
     <dependencies>
         <dependency>

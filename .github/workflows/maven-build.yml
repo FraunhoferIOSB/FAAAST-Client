@@ -76,8 +76,6 @@ jobs:
     - name: Set env variables
       run: |
         echo "Exporting Variables"
-        export SERVICE_NAME=$(mvn -pl service -Dexec.executable='echo' -Dexec.args='${project.build.finalName}' exec:exec -q)
-        echo "SERVICE_ARTIFACT=${SERVICE_NAME}.jar"   >> $GITHUB_ENV
         export version=$(mvn -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec -q)
         echo "VERSION=${version}"     >> $GITHUB_ENV
 

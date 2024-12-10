@@ -53,8 +53,10 @@
         </snapshotRepository>
     </distributionManagement>
     <properties>
+        <aas4j.version>1.0.2</aas4j.version>
         <checkstyle.version>10.18.2</checkstyle.version>
-        <checkstyle.version>10.18.2</checkstyle.version>
+        <checkstyle.version>10.1F.2</checkstyle.version>
+        <faaast.service.version>1.2.0-SNAPSHOT</faaast.service.version>
         <junit.version>4.13.2</junit.version>
         <logback.version>1.5.8</logback.version>
         <maven.compiler.source>17</maven.compiler.source>
@@ -73,7 +75,7 @@
         <maven.plugin.source.version>3.3.1</maven.plugin.source.version>
         <maven.plugin.spotless.version>2.43.0</maven.plugin.spotless.version>
         <maven.plugin.surefire.version>3.5.1</maven.plugin.surefire.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <okhttp3.version>4.12.0</okhttp3.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <root.basedir>${maven.multiModuleProjectDirectory}</root.basedir>
         <slf4j.version>2.0.16</slf4j.version>
@@ -336,6 +338,12 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
     </build>
     <profiles>
         <profile>
