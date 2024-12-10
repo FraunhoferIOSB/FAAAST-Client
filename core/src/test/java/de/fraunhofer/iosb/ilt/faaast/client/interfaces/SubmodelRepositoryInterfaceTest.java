@@ -20,6 +20,7 @@ import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.model.IdShortPath;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.OutputModifier;
+import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.Datatype;
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.PropertyValue;
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.primitive.StringValue;
@@ -102,7 +103,7 @@ public class SubmodelRepositoryInterfaceTest {
 
 
     @Test
-    public void testGetAll() throws ClientException, InterruptedException, SerializationException {
+    public void testGetAll() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         String serializedSubmodelList = serializer.write(requestSubmodelList);
         server.enqueue(new MockResponse().setBody(serializedSubmodelList));
 
@@ -117,7 +118,7 @@ public class SubmodelRepositoryInterfaceTest {
 
 
     @Test
-    public void testGetAllReference() throws ClientException, InterruptedException, SerializationException {
+    public void testGetAllReference() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         List<Reference> requestSubmodelReferences = new ArrayList<>();
         requestSubmodelReferences.add(new DefaultReference());
         requestSubmodelReferences.add(new DefaultReference());
@@ -136,7 +137,7 @@ public class SubmodelRepositoryInterfaceTest {
 
 
     @Test
-    public void post() throws SerializationException, InterruptedException, ClientException {
+    public void post() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         Submodel requestSubmodel = requestSubmodelList.get(0);
         String serializedSubmodel = serializer.write(requestSubmodel);
         server.enqueue(new MockResponse().setBody(serializedSubmodel));
@@ -151,7 +152,7 @@ public class SubmodelRepositoryInterfaceTest {
 
 
     @Test
-    public void delete() throws SerializationException, InterruptedException, ClientException {
+    public void delete() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         Submodel requestSubmodel = requestSubmodelList.get(0);
         String serializedSubmodel = serializer.write(requestSubmodel);
         String requestSubmodelIdentifier = requestSubmodel.getId();
@@ -168,7 +169,7 @@ public class SubmodelRepositoryInterfaceTest {
 
 
     @Test
-    public void testGetSubmodel() throws SerializationException, InterruptedException, ClientException {
+    public void testGetSubmodel() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         Submodel requestSubmodel = requestSubmodelList.get(0);
 
         String serializedAas = serializer.write(requestSubmodel);
@@ -185,7 +186,7 @@ public class SubmodelRepositoryInterfaceTest {
 
 
     @Test
-    public void testGetSubmodelElementValueRequest() throws ClientException, SerializationException {
+    public void testGetSubmodelElementValueRequest() throws ClientException, SerializationException, UnsupportedModifierException {
         PropertyValue requestValue = new PropertyValue.Builder().value(new StringValue("de")).build();
         String serializedValue = serializer.write(requestValue);
         server.enqueue(new MockResponse().setBody(serializedValue));
@@ -202,7 +203,7 @@ public class SubmodelRepositoryInterfaceTest {
 
 
     @Test
-    public void testGetSubmodelElementValue() throws SerializationException, InterruptedException, ClientException {
+    public void testGetSubmodelElementValue() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         String requestSubmodelId = requestSubmodelList.get(0).getId();
         Double value = 2.0;
         String serializedPropertyValue = serializer.write(value);
@@ -223,7 +224,7 @@ public class SubmodelRepositoryInterfaceTest {
 
 
     @Test
-    public void testPatchSubmodelElementValue() throws SerializationException, InterruptedException, ClientException {
+    public void testPatchSubmodelElementValue() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         DefaultProperty property = new DefaultProperty.Builder().value("2.0").valueType(DataTypeDefXsd.FLOAT).idShort("value").build();
         String serializedPropertyValue = serializer.write(property, OutputModifier.DEFAULT);
         String requestSubmodelId = requestSubmodelList.get(0).getId();

@@ -41,7 +41,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
      *
      * @param serviceUri Uri used to communicate with the FA³ST service.
      */
-    protected ConceptDescriptionRepositoryInterface(URI serviceUri) {
+    public ConceptDescriptionRepositoryInterface(URI serviceUri) {
         super(serviceUri, "/concept-descriptions/");
     }
 
@@ -53,7 +53,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
      * @param password String to enable basic authentication
      * @param serviceUri Uri used to communicate with the FA³ST service.
      */
-    protected ConceptDescriptionRepositoryInterface(URI serviceUri, String user, String password) {
+    public ConceptDescriptionRepositoryInterface(URI serviceUri, String user, String password) {
         super(serviceUri, "/concept-descriptions/", user, password);
     }
 
@@ -64,7 +64,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
      * @param httpClient allows user to specify custom http-client.
      * @param serviceUri the serviceUri
      */
-    protected ConceptDescriptionRepositoryInterface(URI serviceUri, HttpClient httpClient) {
+    public ConceptDescriptionRepositoryInterface(URI serviceUri, HttpClient httpClient) {
         super(serviceUri, "/concept-descriptions/", httpClient);
     }
 
