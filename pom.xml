@@ -55,7 +55,6 @@
     <properties>
         <aas4j.version>1.0.2</aas4j.version>
         <checkstyle.version>10.18.2</checkstyle.version>
-        <checkstyle.version>10.1F.2</checkstyle.version>
         <faaast.service.version>1.2.0-SNAPSHOT</faaast.service.version>
         <junit.version>4.13.2</junit.version>
         <logback.version>1.5.8</logback.version>
@@ -70,7 +69,6 @@
         <maven.plugin.jar.version>3.4.2</maven.plugin.jar.version>
         <maven.plugin.javadoc.version>3.10.1</maven.plugin.javadoc.version>
         <maven.plugin.nexus-staging.version>1.7.0</maven.plugin.nexus-staging.version>
-        <maven.plugin.nexus-staging.version>1.7.0</maven.plugin.nexus-staging.version>
         <maven.plugin.owasp.version>10.0.4</maven.plugin.owasp.version>
         <maven.plugin.source.version>3.3.1</maven.plugin.source.version>
         <maven.plugin.spotless.version>2.43.0</maven.plugin.spotless.version>
@@ -80,14 +78,9 @@
         <root.basedir>${maven.multiModuleProjectDirectory}</root.basedir>
         <slf4j.version>2.0.16</slf4j.version>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.language>java</sonar.language>
-        <sonar.language>java</sonar.language>
-        <sonar.organization>fraunhofer-iosb</sonar.organization>
         <sonar.organization>fraunhofer-iosb</sonar.organization>
         <surefire.version>3.2.2</surefire.version>
     </properties>
