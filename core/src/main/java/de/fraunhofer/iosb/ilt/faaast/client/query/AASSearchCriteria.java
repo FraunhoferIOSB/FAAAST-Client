@@ -32,7 +32,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
  * idShort and a List of AssetIdentification objects.
  */
 public class AASSearchCriteria extends AssetAdministrationShellSearchCriteria implements SearchCriteria {
-    public static AASSearchCriteria DEFAULT = new AASSearchCriteria();
+    public static final AASSearchCriteria DEFAULT = new AASSearchCriteria();
 
     public static class Builder extends AssetAdministrationShellSearchCriteria.AbstractBuilder<AASSearchCriteria, Builder> {
         @Override
@@ -71,13 +71,11 @@ public class AASSearchCriteria extends AssetAdministrationShellSearchCriteria im
 
     private String serializeAssetIdentification(AssetIdentification assetId) {
         try {
-            if (assetId instanceof SpecificAssetIdentification) {
-
-                return EncodingHelper.base64Encode(new JsonSerializer().write(
-                        new DefaultSpecificAssetId.Builder()
-                                .value(assetId.getValue())
-                                .name(((SpecificAssetIdentification) assetId).getKey())
-                                .build()));
+            if (assetId instanceof SpecificAssetIdentification specificAssetIdentification) {
+                return EncodingHelper.base64Encode(new JsonSerializer().write(new DefaultSpecificAssetId.Builder()
+                        .value(assetId.getValue())
+                        .name(specificAssetIdentification.getKey())
+                        .build()));
             }
             else if (assetId instanceof GlobalAssetIdentification) {
                 return EncodingHelper.base64Encode(new JsonSerializer().write(

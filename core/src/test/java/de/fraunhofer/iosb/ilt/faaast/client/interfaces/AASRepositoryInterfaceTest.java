@@ -59,7 +59,7 @@ import static org.junit.Assert.assertNull;
 
 public class AASRepositoryInterfaceTest {
 
-    private static AASRepositoryInterface AASRepositoryInterface;
+    private static AASRepositoryInterface aasRepositoryInterface;
     private static ApiSerializer serializer;
     private static MockWebServer server;
     private static List<AssetAdministrationShell> requestAssetAdministrationShellList;
@@ -70,7 +70,7 @@ public class AASRepositoryInterfaceTest {
         server.requireClientAuth();
         server.start();
         URI serviceUri = server.url("/example.com/api/v3.0").uri();
-        AASRepositoryInterface = new AASRepositoryInterface(serviceUri);
+        aasRepositoryInterface = new AASRepositoryInterface(serviceUri);
         serializer = new JsonApiSerializer();
 
         requestAssetAdministrationShellList = new ArrayList<>();
@@ -103,7 +103,7 @@ public class AASRepositoryInterfaceTest {
         String serializedAasPage = serializer.write(aasPage);
         server.enqueue(new MockResponse().setBody(serializedAasPage));
 
-        Page<AssetAdministrationShell> responseAssetAdministrationShellPage = AASRepositoryInterface.get(
+        Page<AssetAdministrationShell> responseAssetAdministrationShellPage = aasRepositoryInterface.get(
                 new PagingInfo.Builder()
                         .limit(1)
                         .build());
@@ -127,7 +127,7 @@ public class AASRepositoryInterfaceTest {
         List<AssetIdentification> assetIdentificationList = createAssetIdentificationList();
         List<String> serializedAssetIdentificationList = serializeAssetIdentificationList(assetIdentificationList);
 
-        Page<AssetAdministrationShell> responseAssetAdministrationShellPage = AASRepositoryInterface.get(
+        Page<AssetAdministrationShell> responseAssetAdministrationShellPage = aasRepositoryInterface.get(
                 new PagingInfo.Builder()
                         .cursor("1")
                         .limit(1)
@@ -198,7 +198,7 @@ public class AASRepositoryInterfaceTest {
         String serializedAas = serializer.write(requestAssetAdministrationShell);
         server.enqueue(new MockResponse().setBody(serializedAas));
 
-        AssetAdministrationShell responseAssetAdministrationShell = AASRepositoryInterface.post(
+        AssetAdministrationShell responseAssetAdministrationShell = aasRepositoryInterface.post(
                 requestAssetAdministrationShell);
         RecordedRequest request = server.takeRequest();
 
@@ -216,7 +216,7 @@ public class AASRepositoryInterfaceTest {
         String serializedAasReferenceList = serializer.write(requestAasReferenceList);
         server.enqueue(new MockResponse().setBody(serializedAasReferenceList));
 
-        List<Reference> responseAasReferenceList = AASRepositoryInterface.getAllAsReference();
+        List<Reference> responseAasReferenceList = aasRepositoryInterface.getAllAsReference();
         RecordedRequest request = server.takeRequest();
 
         assertEquals("GET", request.getMethod());
@@ -233,7 +233,7 @@ public class AASRepositoryInterfaceTest {
         String requestAasIdentifier = requestAssetAdministrationShell.getId();
         server.enqueue(new MockResponse().setBody(serializedAas));
 
-        AASRepositoryInterface.delete(requestAasIdentifier);
+        aasRepositoryInterface.delete(requestAasIdentifier);
         RecordedRequest request = server.takeRequest();
 
         assertEquals("DELETE", request.getMethod());
@@ -250,7 +250,7 @@ public class AASRepositoryInterfaceTest {
         String serializedAas = serializer.write(requestAas);
         server.enqueue(new MockResponse().setBody(serializedAas));
 
-        AssetAdministrationShell responseAas = AASRepositoryInterface.getAASInterface(requestAas.getId()).get();
+        AssetAdministrationShell responseAas = aasRepositoryInterface.getAASInterface(requestAas.getId()).get();
 
         RecordedRequest request = server.takeRequest();
         assertEquals("GET", request.getMethod());

@@ -178,7 +178,6 @@ public class SubmodelInterfaceTest {
         SubmodelElement requestSubmodelElement = requestSubmodel.getSubmodelElements().get(0);
         String serializedSubmodelElement = serializer.write(requestSubmodelElement);
         server.enqueue(new MockResponse().setBody(serializedSubmodelElement));
-
         SubmodelElement responseSubmodelElement = submodelInterface.postElement(requestSubmodelElement);
         RecordedRequest request = server.takeRequest();
 

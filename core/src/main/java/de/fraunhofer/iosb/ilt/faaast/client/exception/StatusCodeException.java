@@ -24,8 +24,8 @@ import java.net.http.HttpResponse;
  */
 public abstract class StatusCodeException extends ClientException {
 
-    private final HttpResponse<?> response;
-    private final HttpRequest request;
+    private final URI serviceUri;
+    private final int statusCode;
 
     /**
      * Constructor.
@@ -33,16 +33,15 @@ public abstract class StatusCodeException extends ClientException {
      * @param request The http Request
      * @param response The http Response
      */
-    public StatusCodeException(HttpRequest request, HttpResponse<String> response) {
+    protected StatusCodeException(HttpRequest request, HttpResponse<String> response) {
         super("httpMethod='" + request.method() + "',\n" +
                 "requestUri='" + request.uri() + "',\n" +
                 "ResponseUri='" + response.uri() + "',\n" +
                 "statusCode='" + response.statusCode() + "',\n" +
                 "requestBody=\n" + request.bodyPublisher().toString() + "',\n" +
                 "responseBody=\n" + response.body());
-
-        this.response = response;
-        this.request = request;
+        this.serviceUri = response.uri();
+        this.statusCode = response.statusCode();
     }
 
 
@@ -52,7 +51,7 @@ public abstract class StatusCodeException extends ClientException {
      * @return the URI that generated the failure response
      */
     public URI getServiceUri() {
-        return response.uri();
+        return serviceUri;
     }
 
 
@@ -62,26 +61,6 @@ public abstract class StatusCodeException extends ClientException {
      * @return the statusCode
      */
     public int getStatusCode() {
-        return response.statusCode();
-    }
-
-
-    /**
-     * The content returned by the server.
-     *
-     * @return the response body
-     */
-    public HttpResponse<?> getResponse() {
-        return response;
-    }
-
-
-    /**
-     * The content sent to the server.
-     *
-     * @return the response body
-     */
-    public HttpRequest getRequest() {
-        return request;
+        return statusCode;
     }
 }

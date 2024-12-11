@@ -37,13 +37,15 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
  */
 public class AASRepositoryInterface extends BaseInterface {
 
+    private static final String API_PATH = "/shells/";
+
     /**
      * Creates a new Asset Administration Shell Repository Interface.
      *
      * @param serviceUri Uri used to communicate with the FA³ST service.
      */
     public AASRepositoryInterface(URI serviceUri) {
-        super(serviceUri, "/shells/");
+        super(serviceUri, API_PATH);
     }
 
 
@@ -55,7 +57,7 @@ public class AASRepositoryInterface extends BaseInterface {
      * @param serviceUri Uri used to communicate with the FA³ST service.
      */
     public AASRepositoryInterface(URI serviceUri, String user, String password) {
-        super(serviceUri, "/shells/", user, password);
+        super(serviceUri, API_PATH, user, password);
     }
 
 
@@ -66,7 +68,7 @@ public class AASRepositoryInterface extends BaseInterface {
      * @param serviceUri Uri used to communicate with the FA³ST service.
      */
     public AASRepositoryInterface(URI serviceUri, HttpClient httpClient) {
-        super(serviceUri, "/shells/", httpClient);
+        super(serviceUri, API_PATH, httpClient);
     }
 
 

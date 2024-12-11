@@ -36,13 +36,15 @@ import java.util.List;
  */
 public class SubmodelRegistryInterface extends BaseInterface {
 
+    private static final String API_PATH = "/submodel-descriptors/";
+
     /**
      * Creates a new Submodel Registry Interface.
      *
      * @param serviceURI Uri used to communicate with the FA³ST Service.
      */
     public SubmodelRegistryInterface(URI serviceURI) {
-        super(serviceURI, "/submodel-descriptors/");
+        super(serviceURI, API_PATH);
     }
 
 
@@ -54,7 +56,7 @@ public class SubmodelRegistryInterface extends BaseInterface {
      * @param serviceURI Uri used to communicate with the FA³ST Service.
      */
     public SubmodelRegistryInterface(URI serviceURI, String user, String password) {
-        super(serviceURI, "/submodel-descriptors/", user, password);
+        super(serviceURI, API_PATH, user, password);
     }
 
 
@@ -65,7 +67,7 @@ public class SubmodelRegistryInterface extends BaseInterface {
      * @param serviceURI Uri used to communicate with the FA³ST Service.
      */
     public SubmodelRegistryInterface(URI serviceURI, HttpClient httpClient) {
-        super(serviceURI, "/submodel-descriptors/", httpClient);
+        super(serviceURI, API_PATH, httpClient);
     }
 
 
@@ -195,6 +197,7 @@ public class SubmodelRegistryInterface extends BaseInterface {
      *             </div>
      * @throws ConnectivityException if the connection to the server cannot be established.
      */
+    @Override
     public void delete(String submodelIdentifier) throws StatusCodeException, ConnectivityException {
         super.delete(idPath(submodelIdentifier));
     }
