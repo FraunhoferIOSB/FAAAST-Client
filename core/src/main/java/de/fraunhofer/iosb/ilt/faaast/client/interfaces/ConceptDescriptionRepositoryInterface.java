@@ -56,7 +56,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
      * @param password String to enable basic authentication
      */
     protected ConceptDescriptionRepositoryInterface(URI endpoint, String user, String password) {
-        super(resolve(endpoint, API_PATH));
+        super(resolve(endpoint, API_PATH), user, password);
     }
 
 
