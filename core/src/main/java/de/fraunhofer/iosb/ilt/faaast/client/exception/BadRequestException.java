@@ -14,7 +14,6 @@
  */
 package de.fraunhofer.iosb.ilt.faaast.client.exception;
 
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 
@@ -23,7 +22,13 @@ import java.net.http.HttpResponse;
  * (e.g., malformed request syntax, size too large, invalid request message framing, or deceptive request routing).
  */
 public class BadRequestException extends StatusCodeException {
-    public BadRequestException(HttpRequest request, HttpResponse<String> response) {
-        super(request, response);
+
+    /**
+     * Constructs a new exception.
+     *
+     * @param response the response representing the exception
+     */
+    public BadRequestException(HttpResponse<String> response) {
+        super(response);
     }
 }

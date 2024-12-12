@@ -12,16 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.fraunhofer.iosb.ilt.faaast.client.query;
+package de.fraunhofer.iosb.ilt.faaast.client.http;
 
 /**
- * Default implementation of search criteria.
- * This class is used in methods that require a search criteria input parameter when no filters should be applied.
+ * Enum describing supported HTTP methods.
  */
-public class DefaultSearchCriteria implements SearchCriteria {
-
-    @Override
-    public String toQueryString() {
-        return "";
-    }
+public enum HttpMethod {
+    GET,
+    PUT,
+    DELETE,
+    PATCH,
+    POST
 }

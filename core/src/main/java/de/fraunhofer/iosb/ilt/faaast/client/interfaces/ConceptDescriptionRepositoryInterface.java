@@ -36,43 +36,45 @@ import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
  */
 public class ConceptDescriptionRepositoryInterface extends BaseInterface {
 
+    private static final String API_PATH = "/concept-descriptions";
+
     /**
      * Creates a new Concept Description Interface.
      *
-     * @param serviceUri Uri used to communicate with the FA³ST service.
+     * @param endpoint Uri used to communicate with the FA³ST service
      */
-    public ConceptDescriptionRepositoryInterface(URI serviceUri) {
-        super(serviceUri, "/concept-descriptions/");
+    protected ConceptDescriptionRepositoryInterface(URI endpoint) {
+        super(resolve(endpoint, API_PATH));
     }
 
 
     /**
      * Creates a new Concept Description Interface
      *
+     * @param endpoint Uri used to communicate with the FA³ST service
      * @param user String to enable basic authentication
      * @param password String to enable basic authentication
-     * @param serviceUri Uri used to communicate with the FA³ST service.
      */
-    public ConceptDescriptionRepositoryInterface(URI serviceUri, String user, String password) {
-        super(serviceUri, "/concept-descriptions/", user, password);
+    protected ConceptDescriptionRepositoryInterface(URI endpoint, String user, String password) {
+        super(resolve(endpoint, API_PATH), user, password);
     }
 
 
     /**
      * Creates a new Concept Description Interface.
      *
-     * @param httpClient allows user to specify custom http-client.
-     * @param serviceUri the serviceUri
+     * @param endpoint the endpoint
+     * @param httpClient allows user to specify custom http-client
      */
-    public ConceptDescriptionRepositoryInterface(URI serviceUri, HttpClient httpClient) {
-        super(serviceUri, "/concept-descriptions/", httpClient);
+    protected ConceptDescriptionRepositoryInterface(URI endpoint, HttpClient httpClient) {
+        super(resolve(endpoint, API_PATH), httpClient);
     }
 
 
     /**
      * Retrieves all Concept Descriptions from the server.
      *
-     * @return List of all Concept Descriptions.
+     * @return List of all Concept Descriptions
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -83,7 +85,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<ConceptDescription> getAll() throws StatusCodeException, ConnectivityException {
         return getAll(ConceptDescriptionSearchCriteria.DEFAULT);
@@ -93,8 +95,8 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
     /**
      * Retrieves Concept Descriptions according to specific search criteria.
      *
-     * @param conceptDescriptionSearchCriteria specific search criteria: idShort, isCaseOf or dataSpecificationRef.
-     * @return List of Concept Descriptions matching search criteria.
+     * @param conceptDescriptionSearchCriteria specific search criteria: idShort, isCaseOf or dataSpecificationRef
+     * @return List of Concept Descriptions matching search criteria
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -105,18 +107,18 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<ConceptDescription> getAll(ConceptDescriptionSearchCriteria conceptDescriptionSearchCriteria) throws StatusCodeException, ConnectivityException {
-        return getList(basePath(), conceptDescriptionSearchCriteria, Content.DEFAULT, QueryModifier.DEFAULT, ConceptDescription.class);
+        return getList(conceptDescriptionSearchCriteria, Content.DEFAULT, QueryModifier.DEFAULT, ConceptDescription.class);
     }
 
 
     /**
      * Retrieves a page of Concept Descriptions.
      *
-     * @param pagingInfo Metadata for controlling the pagination of results.
-     * @return A page of Concept Descriptions.
+     * @param pagingInfo Metadata for controlling the pagination of results
+     * @return A page of Concept Descriptions
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -127,7 +129,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public Page<ConceptDescription> get(PagingInfo pagingInfo) throws StatusCodeException, ConnectivityException {
         return get(pagingInfo, ConceptDescriptionSearchCriteria.DEFAULT);
@@ -150,11 +152,11 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public Page<ConceptDescription> get(PagingInfo pagingInfo, ConceptDescriptionSearchCriteria conceptDescriptionSearchCriteria)
             throws StatusCodeException, ConnectivityException {
-        return getPage(basePath(), Content.DEFAULT, QueryModifier.DEFAULT, pagingInfo, conceptDescriptionSearchCriteria, ConceptDescription.class);
+        return getPage(Content.DEFAULT, QueryModifier.DEFAULT, pagingInfo, conceptDescriptionSearchCriteria, ConceptDescription.class);
     }
 
 
@@ -174,10 +176,10 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public ConceptDescription post(ConceptDescription conceptDescription) throws StatusCodeException, ConnectivityException {
-        return post(basePath(), conceptDescription, ConceptDescription.class);
+        return post(conceptDescription, ConceptDescription.class);
     }
 
 
@@ -196,7 +198,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public ConceptDescription get(String cdIdentifier) throws StatusCodeException, ConnectivityException {
         return get(idPath(cdIdentifier), ConceptDescription.class);
@@ -207,6 +209,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
      * Replaces an existing Concept Description
      *
      * @param conceptDescription Concept Description object
+     * @param cdIdentifier The Concept Description’s unique id
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -217,7 +220,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public void put(ConceptDescription conceptDescription, String cdIdentifier) throws StatusCodeException, ConnectivityException {
         put(idPath(cdIdentifier), conceptDescription);
@@ -238,8 +241,9 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
+    @Override
     public void delete(String cdIdentifier) throws StatusCodeException, ConnectivityException {
         super.delete(idPath(cdIdentifier));
     }

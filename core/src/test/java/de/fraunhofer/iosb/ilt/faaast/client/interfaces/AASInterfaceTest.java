@@ -37,7 +37,7 @@ import static org.junit.Assert.assertEquals;
 
 
 public class AASInterfaceTest {
-    private AASInterface AASInterface;
+    private AASInterface aasInterface;
     private ApiSerializer serializer;
     private MockWebServer server;
 
@@ -45,11 +45,11 @@ public class AASInterfaceTest {
     public void setup() throws IOException {
         server = new MockWebServer();
         server.start();
-        URI serviceUri = server.url("api/v3.0/aas/").uri();
+        URI serviceUri = server.url("api/v3.0/aas").uri();
 
         serializer = new JsonApiSerializer();
 
-        AASInterface = new AASInterface(serviceUri);
+        aasInterface = new AASInterface(serviceUri);
     }
 
 
@@ -60,12 +60,12 @@ public class AASInterfaceTest {
         String serializedAas = serializer.write(requestAas);
         server.enqueue(new MockResponse().setBody(serializedAas));
 
-        AssetAdministrationShell responseAas = AASInterface.get();
+        AssetAdministrationShell responseAas = aasInterface.get();
 
         RecordedRequest request = server.takeRequest();
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals("/api/v3.0/aas/", request.getPath());
+        assertEquals("/api/v3.0/aas", request.getPath());
         assertEquals(requestAas, responseAas);
     }
 
@@ -75,14 +75,14 @@ public class AASInterfaceTest {
         AssetAdministrationShell requestAas = new DefaultAssetAdministrationShell();
 
         String serializedAas = serializer.write(requestAas);
-        server.enqueue(new MockResponse().setBody(serializedAas));
-        AASInterface.put(requestAas);
+        server.enqueue(new MockResponse().setResponseCode(204));
+        aasInterface.put(requestAas);
 
         RecordedRequest request = server.takeRequest();
 
         assertEquals("PUT", request.getMethod());
         assertEquals(serializedAas, request.getBody().readUtf8());
-        assertEquals("/api/v3.0/aas/", request.getPath());
+        assertEquals("/api/v3.0/aas", request.getPath());
     }
 
 
@@ -96,7 +96,7 @@ public class AASInterfaceTest {
         String serializedAasReference = serializer.write(requestAasReference);
         server.enqueue(new MockResponse().setBody(serializedAasReference));
 
-        Reference responseAasReference = AASInterface.getAsReference();
+        Reference responseAasReference = aasInterface.getAsReference();
         RecordedRequest request = server.takeRequest();
 
         assertEquals("GET", request.getMethod());
@@ -111,12 +111,12 @@ public class AASInterfaceTest {
         AssetInformation requestAssetInformation = new DefaultAssetInformation();
         server.enqueue(new MockResponse().setBody(serializer.write(requestAssetInformation)));
 
-        AssetInformation responseAssetInformation = AASInterface.getAssetInformation();
+        AssetInformation responseAssetInformation = aasInterface.getAssetInformation();
         RecordedRequest request = server.takeRequest();
 
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals("/api/v3.0/aas/asset-information/", request.getPath());
+        assertEquals("/api/v3.0/aas/asset-information", request.getPath());
         assertEquals(requestAssetInformation, responseAssetInformation);
     }
 
@@ -125,14 +125,14 @@ public class AASInterfaceTest {
     public void testPutAssetInformation() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         AssetInformation requestAssetInformation = new DefaultAssetInformation();
         String serializedAssetInfo = serializer.write(requestAssetInformation);
-        server.enqueue(new MockResponse().setBody(serializedAssetInfo));
+        server.enqueue(new MockResponse().setResponseCode(204));
 
-        AASInterface.putAssetInformation(requestAssetInformation);
+        aasInterface.putAssetInformation(requestAssetInformation);
         RecordedRequest request = server.takeRequest();
 
         assertEquals("PUT", request.getMethod());
         assertEquals(serializedAssetInfo, request.getBody().readUtf8());
-        assertEquals("/api/v3.0/aas/asset-information/", request.getPath());
+        assertEquals("/api/v3.0/aas/asset-information", request.getPath());
     }
 
 
@@ -146,13 +146,13 @@ public class AASInterfaceTest {
 
         server.enqueue(new MockResponse().setBody(serializer.write(requestThumbnail)));
 
-        Resource responseThumbnail = AASInterface.getThumbnail();
+        Resource responseThumbnail = aasInterface.getThumbnail();
 
         RecordedRequest request = server.takeRequest();
 
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals("/api/v3.0/aas/asset-information/thumbnail/", request.getPath());
+        assertEquals("/api/v3.0/aas/asset-information/thumbnail", request.getPath());
         assertEquals(requestThumbnail, responseThumbnail);
     }
 
@@ -165,9 +165,9 @@ public class AASInterfaceTest {
         assetInformation.setDefaultThumbnail(requestThumbnail);
         requestAas.setAssetInformation(assetInformation);
 
-        server.enqueue(new MockResponse().setBody(serializer.write(requestThumbnail)));
+        server.enqueue(new MockResponse().setResponseCode(204));
 
-        AASInterface.putThumbnail(requestThumbnail);
+        aasInterface.putThumbnail(requestThumbnail);
 
         RecordedRequest request = server.takeRequest();
 
@@ -175,27 +175,27 @@ public class AASInterfaceTest {
 
         assertEquals("PUT", request.getMethod());
         assertEquals(serializedThumbnail, request.getBody().readUtf8());
-        assertEquals("/api/v3.0/aas/asset-information/thumbnail/", request.getPath());
+        assertEquals("/api/v3.0/aas/asset-information/thumbnail", request.getPath());
     }
 
 
     @Test
-    public void testDeleteThumbnail() throws InterruptedException, SerializationException, ClientException, UnsupportedModifierException {
+    public void testDeleteThumbnail() throws InterruptedException, ClientException {
         AssetAdministrationShell requestAas = new DefaultAssetAdministrationShell();
         Resource requestThumbnail = new DefaultResource();
         AssetInformation assetInformation = new DefaultAssetInformation();
         assetInformation.setDefaultThumbnail(requestThumbnail);
         requestAas.setAssetInformation(assetInformation);
 
-        server.enqueue(new MockResponse().setBody(serializer.write(requestThumbnail)));
+        server.enqueue(new MockResponse().setResponseCode(200));
 
-        AASInterface.deleteThumbnail();
+        aasInterface.deleteThumbnail();
 
         RecordedRequest request = server.takeRequest();
 
         assertEquals("DELETE", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals("/api/v3.0/aas/asset-information/thumbnail/", request.getPath());
+        assertEquals("/api/v3.0/aas/asset-information/thumbnail", request.getPath());
     }
 
 
@@ -205,12 +205,12 @@ public class AASInterfaceTest {
         requestSubmodelReferenceList.add(new DefaultReference());
         server.enqueue(new MockResponse().setBody(serializer.write(requestSubmodelReferenceList)));
 
-        List<Reference> responseList = AASInterface.getAllSubmodelReferences();
+        List<Reference> responseList = aasInterface.getAllSubmodelReferences();
         RecordedRequest request = server.takeRequest();
 
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals("/api/v3.0/aas/submodel-refs/", request.getPath());
+        assertEquals("/api/v3.0/aas/submodel-refs", request.getPath());
 
         assertEquals(requestSubmodelReferenceList, responseList);
     }
@@ -219,28 +219,29 @@ public class AASInterfaceTest {
     @Test
     public void testPostSubmodelReference() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         Reference requestSubmodelReference = new DefaultReference();
-        server.enqueue(new MockResponse().setBody(serializer.write(requestSubmodelReference)));
+        server.enqueue(new MockResponse()
+                .setResponseCode(201)
+                .setBody(serializer.write(requestSubmodelReference)));
 
-        Reference responseSubmodelReference = AASInterface.postSubmodelReference(requestSubmodelReference);
+        Reference responseSubmodelReference = aasInterface.postSubmodelReference(requestSubmodelReference);
         RecordedRequest request = server.takeRequest();
 
         assertEquals("POST", request.getMethod());
-        assertEquals("/api/v3.0/aas/submodel-refs/", request.getPath());
+        assertEquals("/api/v3.0/aas/submodel-refs", request.getPath());
         assertEquals(requestSubmodelReference, responseSubmodelReference);
     }
 
 
     @Test
-    public void testDeleteSubmodelReference() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
-        Reference requestSubmodelReference = new DefaultReference();
-        server.enqueue(new MockResponse().setBody(serializer.write(requestSubmodelReference)));
+    public void testDeleteSubmodelReference() throws InterruptedException, ClientException {
+        server.enqueue(new MockResponse().setResponseCode(204));
         String requestSubmodelId = Base64.getUrlEncoder().encodeToString("submodelId".getBytes());
 
-        AASInterface.deleteSubmodelReference(requestSubmodelId);
+        aasInterface.deleteSubmodelReference(requestSubmodelId);
         RecordedRequest request = server.takeRequest();
 
         assertEquals("DELETE", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals("/api/v3.0/aas/submodel-refs/" + requestSubmodelId, request.getPath());
+        assertEquals("/api/v3.0/aas/submodel-refs" + requestSubmodelId, request.getPath());
     }
 }

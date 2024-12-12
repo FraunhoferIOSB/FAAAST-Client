@@ -14,7 +14,6 @@
  */
 package de.fraunhofer.iosb.ilt.faaast.client.exception;
 
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 
@@ -22,7 +21,13 @@ import java.net.http.HttpResponse;
  * A generic error message, given when an unexpected condition was encountered and no more specific message is suitable.
  */
 public class InternalServerErrorException extends StatusCodeException {
-    public InternalServerErrorException(HttpRequest request, HttpResponse<String> response) {
-        super(request, response);
+
+    /**
+     * Constructs a new exception.
+     *
+     * @param response the response representing the exception
+     */
+    public InternalServerErrorException(HttpResponse<String> response) {
+        super(response);
     }
 }

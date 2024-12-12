@@ -21,16 +21,17 @@ import java.util.stream.Stream;
 
 
 /**
- * Allows to filter Concept Descriptions in a Concept Description Repository based on
- * idShort, isCaseOf and dataSpecification.
+ * Allows to filter Concept Descriptions in a Concept Description Repository based on idShort, isCaseOf and
+ * dataSpecification.
  */
 public class ConceptDescriptionSearchCriteria extends de.fraunhofer.iosb.ilt.faaast.service.persistence.ConceptDescriptionSearchCriteria implements SearchCriteria {
-    public static ConceptDescriptionSearchCriteria DEFAULT = new ConceptDescriptionSearchCriteria();
+
+    public static final ConceptDescriptionSearchCriteria DEFAULT = new ConceptDescriptionSearchCriteria();
 
     /**
      * Serializes isCaseOf, idShort and dataSpecification as filters in a query string for the use in a http request.
      * 
-     * @return The query string.
+     * @return The query string
      */
     @Override
     public String toQueryString() {
@@ -43,5 +44,19 @@ public class ConceptDescriptionSearchCriteria extends de.fraunhofer.iosb.ilt.faa
         return Stream.of(isCaseOfString, idShortString, dataSpecificationRefString)
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.joining("&"));
+    }
+
+    public static class Builder
+            extends de.fraunhofer.iosb.ilt.faaast.service.persistence.ConceptDescriptionSearchCriteria.AbstractBuilder<ConceptDescriptionSearchCriteria, Builder> {
+        @Override
+        protected Builder getSelf() {
+            return this;
+        }
+
+
+        @Override
+        protected ConceptDescriptionSearchCriteria newBuildingInstance() {
+            return new ConceptDescriptionSearchCriteria();
+        }
     }
 }

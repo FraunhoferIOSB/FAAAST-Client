@@ -14,6 +14,7 @@
  */
 package de.fraunhofer.iosb.ilt.faaast.client.util;
 
+import de.fraunhofer.iosb.ilt.faaast.client.http.HttpMethod;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 
 import java.io.IOException;
@@ -30,18 +31,9 @@ import java.net.http.HttpResponse;
  * This class wraps HttpClient and manages request building and sending,
  * throwing a ConnectivityException in case of failures during the request.
  */
-public final class HttpClientUtility {
+public final class HttpHelper {
 
-    private final HttpClient httpClient;
-
-    /**
-     * Constructs a new HttpClientUtility with the given HttpClient.
-     *
-     * @param httpClient the HttpClient instance to be used for sending requests
-     */
-    public HttpClientUtility(HttpClient httpClient) {
-        this.httpClient = httpClient;
-    }
+    private HttpHelper() {}
 
 
     /**
@@ -50,7 +42,7 @@ public final class HttpClientUtility {
      * @param uri the target URI to send the GET request to
      * @return the HttpResponse containing the response body as a string
      */
-    public HttpRequest createGetRequest(URI uri) {
+    public static HttpRequest createGetRequest(URI uri) {
         return HttpRequest.newBuilder().uri(uri).GET().build();
     }
 
@@ -62,7 +54,7 @@ public final class HttpClientUtility {
      * @param body the request body as a string
      * @return the HttpResponse containing the response body as a string
      */
-    public HttpRequest createPostRequest(URI uri, String body) {
+    public static HttpRequest createPostRequest(URI uri, String body) {
         return HttpRequest.newBuilder()
                 .uri(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(body))
@@ -77,7 +69,7 @@ public final class HttpClientUtility {
      * @param body the request body as a string
      * @return the HttpResponse containing the response body as a string
      */
-    public HttpRequest createPutRequest(URI uri, String body) {
+    public static HttpRequest createPutRequest(URI uri, String body) {
         return HttpRequest.newBuilder()
                 .uri(uri)
                 .PUT(HttpRequest.BodyPublishers.ofString(body))
@@ -92,10 +84,10 @@ public final class HttpClientUtility {
      * @param body the request body as a string
      * @return the HttpResponse containing the response body as a string
      */
-    public HttpRequest createPatchRequest(URI uri, String body) {
+    public static HttpRequest createPatchRequest(URI uri, String body) {
         return HttpRequest.newBuilder()
                 .uri(uri)
-                .method("PATCH", HttpRequest.BodyPublishers.ofString(body))
+                .method(HttpMethod.PATCH.name(), HttpRequest.BodyPublishers.ofString(body))
                 .build();
     }
 
@@ -106,7 +98,7 @@ public final class HttpClientUtility {
      * @param uri the target URI to send the DELETE request to
      * @return the HttpResponse containing the response body as a string
      */
-    public HttpRequest createDeleteRequest(URI uri) {
+    public static HttpRequest createDeleteRequest(URI uri) {
         return HttpRequest.newBuilder().uri(uri).DELETE().build();
     }
 
@@ -116,11 +108,12 @@ public final class HttpClientUtility {
      * Handles any IOException or InterruptedException by throwing
      * a ConnectivityException.
      *
+     * @param httpClient the client to use
      * @param request the HttpRequest to be sent
      * @return the HttpResponse containing the response body as a string
      * @throws ConnectivityException if a connectivity error occurs during the request
      */
-    public HttpResponse<String> send(HttpRequest request) throws ConnectivityException {
+    public static HttpResponse<String> send(HttpClient httpClient, HttpRequest request) throws ConnectivityException {
         try {
             return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         }

@@ -14,7 +14,7 @@
  */
 package de.fraunhofer.iosb.ilt.faaast.client.exception;
 
-import java.net.http.HttpRequest;
+import java.net.URI;
 import java.net.http.HttpResponse;
 
 
@@ -22,12 +22,25 @@ import java.net.http.HttpResponse;
  * This exception is thrown if the server responds with an error code that is not handled by the client.
  */
 public class UnsupportedStatusCodeException extends RuntimeException {
-    public UnsupportedStatusCodeException(HttpRequest request, HttpResponse<String> response) {
-        super("httpMethod='" + request.method() + "',\n" +
-                "requestUri='" + request.uri() + "',\n" +
-                "ResponseUri='" + response.uri() + "',\n" +
-                "statusCode='" + response.statusCode() + "',\n" +
-                "requestBody=\n" + request.bodyPublisher().toString() + "',\n" +
-                "responseBody=\n" + response.body());
+
+    /**
+     * Constructs a new exception.
+     *
+     * @param response the response representing the exception
+     */
+    public UnsupportedStatusCodeException(HttpResponse<String> response) {
+        this(response.uri(), response.statusCode(), response.body());
+    }
+
+
+    /**
+     * Constructs a new exception.
+     *
+     * @param uri the uri called
+     * @param statusCode the status code received
+     * @param body the body of the response
+     */
+    public UnsupportedStatusCodeException(URI uri, int statusCode, String body) {
+        super(String.format("Received HTTP status code %d (uri: %s uri, response body: %s)", statusCode, uri, body));
     }
 }

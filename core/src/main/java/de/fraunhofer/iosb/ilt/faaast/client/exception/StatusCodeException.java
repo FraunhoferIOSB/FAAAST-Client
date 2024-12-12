@@ -15,7 +15,6 @@
 package de.fraunhofer.iosb.ilt.faaast.client.exception;
 
 import java.net.URI;
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 
@@ -24,25 +23,32 @@ import java.net.http.HttpResponse;
  */
 public abstract class StatusCodeException extends ClientException {
 
-    private final HttpResponse<?> response;
-    private final HttpRequest request;
+    private final URI uri;
+    private final int statusCode;
+    private final String body;
 
     /**
-     * Constructor.
+     * Constructs a new exception.
      *
-     * @param request The http Request
-     * @param response The http Response
+     * @param response the response representing the exception
      */
-    public StatusCodeException(HttpRequest request, HttpResponse<String> response) {
-        super("httpMethod='" + request.method() + "',\n" +
-                "requestUri='" + request.uri() + "',\n" +
-                "ResponseUri='" + response.uri() + "',\n" +
-                "statusCode='" + response.statusCode() + "',\n" +
-                "requestBody=\n" + request.bodyPublisher().toString() + "',\n" +
-                "responseBody=\n" + response.body());
+    protected StatusCodeException(HttpResponse<String> response) {
+        this(response.uri(), response.statusCode(), response.body());
+    }
 
-        this.response = response;
-        this.request = request;
+
+    /**
+     * Constructs a new exception.
+     *
+     * @param uri the uri called
+     * @param statusCode the status code received
+     * @param body the body of the response
+     */
+    protected StatusCodeException(URI uri, int statusCode, String body) {
+        super(String.format("Received HTTP status code %d (uri: %s uri, response body: %s)", statusCode, uri, body));
+        this.uri = uri;
+        this.statusCode = statusCode;
+        this.body = body;
     }
 
 
@@ -51,8 +57,8 @@ public abstract class StatusCodeException extends ClientException {
      *
      * @return the URI that generated the failure response
      */
-    public URI getServiceUri() {
-        return response.uri();
+    public URI getUri() {
+        return uri;
     }
 
 
@@ -62,26 +68,16 @@ public abstract class StatusCodeException extends ClientException {
      * @return the statusCode
      */
     public int getStatusCode() {
-        return response.statusCode();
+        return statusCode;
     }
 
 
     /**
-     * The content returned by the server.
+     * The body of the response.
      *
-     * @return the response body
+     * @return the body of the response
      */
-    public HttpResponse<?> getResponse() {
-        return response;
-    }
-
-
-    /**
-     * The content sent to the server.
-     *
-     * @return the response body
-     */
-    public HttpRequest getRequest() {
-        return request;
+    public String getBody() {
+        return body;
     }
 }

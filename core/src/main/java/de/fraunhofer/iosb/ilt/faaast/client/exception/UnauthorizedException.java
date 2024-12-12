@@ -14,7 +14,6 @@
  */
 package de.fraunhofer.iosb.ilt.faaast.client.exception;
 
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 
@@ -25,7 +24,13 @@ import java.net.http.HttpResponse;
  * resource.
  */
 public class UnauthorizedException extends StatusCodeException {
-    public UnauthorizedException(HttpRequest request, HttpResponse<String> response) {
-        super(request, response);
+
+    /**
+     * Constructs a new exception.
+     *
+     * @param response the response representing the exception
+     */
+    public UnauthorizedException(HttpResponse<String> response) {
+        super(response);
     }
 }

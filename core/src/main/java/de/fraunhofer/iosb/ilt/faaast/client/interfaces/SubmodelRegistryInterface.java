@@ -36,43 +36,45 @@ import java.util.List;
  */
 public class SubmodelRegistryInterface extends BaseInterface {
 
+    private static final String API_PATH = "/submodel-descriptors";
+
     /**
      * Creates a new Submodel Registry Interface.
      *
-     * @param serviceURI Uri used to communicate with the FA³ST Service.
+     * @param endpoint Uri used to communicate with the FA³ST Service
      */
-    public SubmodelRegistryInterface(URI serviceURI) {
-        super(serviceURI, "/submodel-descriptors/");
+    public SubmodelRegistryInterface(URI endpoint) {
+        super(resolve(endpoint, API_PATH));
     }
 
 
     /**
      * Creates a new Submodel Registry Interface.
      *
-     * @param user String to allow for basic authentication.
-     * @param password String to allow for basic authentication.
-     * @param serviceURI Uri used to communicate with the FA³ST Service.
+     * @param endpoint Uri used to communicate with the FA³ST Service
+     * @param user String to allow for basic authentication
+     * @param password String to allow for basic authentication
      */
-    public SubmodelRegistryInterface(URI serviceURI, String user, String password) {
-        super(serviceURI, "/submodel-descriptors/", user, password);
+    public SubmodelRegistryInterface(URI endpoint, String user, String password) {
+        super(resolve(endpoint, API_PATH), user, password);
     }
 
 
     /**
      * Creates a new Submodel Registry Interface.
      *
-     * @param httpClient Allows the user to specify a custom httpClient.
-     * @param serviceURI Uri used to communicate with the FA³ST Service.
+     * @param endpoint Uri used to communicate with the FA³ST Service
+     * @param httpClient Allows the user to specify a custom httpClient
      */
-    public SubmodelRegistryInterface(URI serviceURI, HttpClient httpClient) {
-        super(serviceURI, "/submodel-descriptors/", httpClient);
+    public SubmodelRegistryInterface(URI endpoint, HttpClient httpClient) {
+        super(resolve(endpoint, API_PATH), httpClient);
     }
 
 
     /**
      * Retrieves a list of all Submodel Descriptors.
      *
-     * @return A list containing all Submodel Descriptors.
+     * @return A list containing all Submodel Descriptors
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -83,18 +85,18 @@ public class SubmodelRegistryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<DefaultSubmodelDescriptor> getAll() throws StatusCodeException, ConnectivityException {
-        return getList(basePath(), DefaultSubmodelDescriptor.class);
+        return getList(DefaultSubmodelDescriptor.class);
     }
 
 
     /**
      * Returns a page of Submodel Descriptors.
      *
-     * @param pagingInfo Metadata for controlling the pagination of results.
-     * @return A page of Submodel Descriptors.
+     * @param pagingInfo Metadata for controlling the pagination of results
+     * @return A page of Submodel Descriptors
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -105,18 +107,18 @@ public class SubmodelRegistryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public Page<DefaultSubmodelDescriptor> get(PagingInfo pagingInfo) throws StatusCodeException, ConnectivityException {
-        return getPage(basePath(), pagingInfo, DefaultSubmodelDescriptor.class);
+        return getPage(pagingInfo, DefaultSubmodelDescriptor.class);
     }
 
 
     /**
      * Creates a new Submodel Descriptor, i.e. registers a Submodel.
      *
-     * @param submodelDescriptor Object containing the Submodel’s identification and endpoint information.
-     * @return Created Submodel Descriptor.
+     * @param submodelDescriptor Object containing the Submodel’s identification and endpoint information
+     * @return Created Submodel Descriptor
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -128,18 +130,18 @@ public class SubmodelRegistryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public DefaultSubmodelDescriptor post(SubmodelDescriptor submodelDescriptor) throws StatusCodeException, ConnectivityException {
-        return post(basePath(), submodelDescriptor, DefaultSubmodelDescriptor.class);
+        return post(submodelDescriptor, DefaultSubmodelDescriptor.class);
     }
 
 
     /**
      * Returns a specific Submodel Descriptor.
      *
-     * @param submodelIdentifier The Submodel’s unique id.
-     * @return Requested Submodel Descriptor.
+     * @param submodelIdentifier The Submodel’s unique id
+     * @return Requested Submodel Descriptor
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -150,7 +152,7 @@ public class SubmodelRegistryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public DefaultSubmodelDescriptor get(String submodelIdentifier) throws StatusCodeException, ConnectivityException {
         return get(idPath(submodelIdentifier), DefaultSubmodelDescriptor.class);
@@ -160,8 +162,8 @@ public class SubmodelRegistryInterface extends BaseInterface {
     /**
      * Replaces an existing Submodel Descriptor, i.e. replaces registration information.
      *
-     * @param submodelIdentifier The Submodel’s unique id.
-     * @param submodelDescriptor Object containing the Submodel’s identification and endpoint information.
+     * @param submodelIdentifier The Submodel’s unique id
+     * @param submodelDescriptor Object containing the Submodel’s identification and endpoint information
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -172,7 +174,7 @@ public class SubmodelRegistryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public void put(String submodelIdentifier, DefaultSubmodelDescriptor submodelDescriptor) throws StatusCodeException, ConnectivityException {
         super.put(idPath(submodelIdentifier), submodelDescriptor);
@@ -182,7 +184,7 @@ public class SubmodelRegistryInterface extends BaseInterface {
     /**
      * Deletes a Submodel Descriptor, i.e. de-registers a Submodel.
      *
-     * @param submodelIdentifier The Submodel’s unique id.
+     * @param submodelIdentifier The Submodel’s unique id
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -193,8 +195,9 @@ public class SubmodelRegistryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
+    @Override
     public void delete(String submodelIdentifier) throws StatusCodeException, ConnectivityException {
         super.delete(idPath(submodelIdentifier));
     }

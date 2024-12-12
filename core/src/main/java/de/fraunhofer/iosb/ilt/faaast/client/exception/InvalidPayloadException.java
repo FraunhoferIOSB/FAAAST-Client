@@ -14,19 +14,27 @@
  */
 package de.fraunhofer.iosb.ilt.faaast.client.exception;
 
-import de.fraunhofer.iosb.ilt.faaast.service.dataformat.DeserializationException;
-import org.json.JSONException;
-
-
 /**
  * This exception is thrown if the server responds with a body that cannot be deserialized.
  */
 public class InvalidPayloadException extends RuntimeException {
+
+    /**
+     * Constructs a new exception.
+     *
+     * @param cause the cause of the exception
+     */
     public InvalidPayloadException(Throwable cause) {
         super(cause);
     }
 
 
+    /**
+     * Constructs a new exception.
+     *
+     * @param message the message
+     * @param cause the cause of the exception
+     */
     public InvalidPayloadException(String message, Throwable cause) {
         super(message, cause);
     }

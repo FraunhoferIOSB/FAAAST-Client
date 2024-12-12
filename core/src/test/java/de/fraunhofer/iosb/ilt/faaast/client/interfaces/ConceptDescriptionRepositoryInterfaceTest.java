@@ -22,7 +22,6 @@ import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifier
 import de.fraunhofer.iosb.ilt.faaast.service.util.EncodingHelper;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -63,7 +62,7 @@ public class ConceptDescriptionRepositoryInterfaceTest {
 
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals("/api/v3.0/concept-descriptions/", request.getPath());
+        assertEquals("/api/v3.0/concept-descriptions", request.getPath());
         assertEquals(requestConceptDescriptions, responseServiceDescription);
     }
 
@@ -75,14 +74,16 @@ public class ConceptDescriptionRepositoryInterfaceTest {
         requestConceptDescription.setId(cdIdentifier);
 
         String serializedConceptDescription = serializer.write(requestConceptDescription);
-        server.enqueue(new MockResponse().setBody(serializedConceptDescription));
+        server.enqueue(new MockResponse()
+                .setResponseCode(201)
+                .setBody(serializedConceptDescription));
 
         ConceptDescription returnConceptDescription = conceptDescriptionRepositoryInterface.post(requestConceptDescription);
         RecordedRequest request = server.takeRequest();
 
         assertEquals("POST", request.getMethod());
         assertEquals(requestConceptDescription, returnConceptDescription);
-        assertEquals("/api/v3.0/concept-descriptions/", request.getPath());
+        assertEquals("/api/v3.0/concept-descriptions", request.getPath());
     }
 
 
@@ -100,8 +101,7 @@ public class ConceptDescriptionRepositoryInterfaceTest {
 
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals("/api/v3.0/concept-descriptions/" +
-                Base64.getUrlEncoder().encodeToString(cdIdentifier.getBytes()) + "/", request.getPath());
+        assertEquals("/api/v3.0/concept-descriptions/" + EncodingHelper.base64UrlEncode(cdIdentifier), request.getPath());
         assertEquals(requestConceptDescription, responseServiceDescription);
     }
 
@@ -113,33 +113,30 @@ public class ConceptDescriptionRepositoryInterfaceTest {
         requestConceptDescription.setId(cdIdentifier);
 
         String serializedConceptDescription = serializer.write(requestConceptDescription);
-        server.enqueue(new MockResponse().setBody(serializedConceptDescription));
+        server.enqueue(new MockResponse().setResponseCode(204));
 
         conceptDescriptionRepositoryInterface.put(requestConceptDescription, cdIdentifier);
         RecordedRequest request = server.takeRequest();
 
         assertEquals("PUT", request.getMethod());
         assertEquals(serializedConceptDescription, request.getBody().readUtf8());
-        assertEquals("/api/v3.0/concept-descriptions/" +
-                Base64.getUrlEncoder().encodeToString(cdIdentifier.getBytes()) + "/", request.getPath());
+        assertEquals("/api/v3.0/concept-descriptions/" + EncodingHelper.base64UrlEncode(cdIdentifier), request.getPath());
     }
 
 
     @Test
-    public void testDelete() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
+    public void testDelete() throws InterruptedException, ClientException {
         ConceptDescription requestConceptDescription = new DefaultConceptDescription();
         String cdIdentifier = "cdIdentifier";
         requestConceptDescription.setId(cdIdentifier);
 
-        String serializedConceptDescription = serializer.write(requestConceptDescription);
-        server.enqueue(new MockResponse().setBody(serializedConceptDescription));
+        server.enqueue(new MockResponse().setResponseCode(204));
 
         conceptDescriptionRepositoryInterface.delete(requestConceptDescription.getId());
         RecordedRequest request = server.takeRequest();
 
         assertEquals("DELETE", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals("/api/v3.0/concept-descriptions/" +
-                Base64.getUrlEncoder().encodeToString(cdIdentifier.getBytes()) + "/", request.getPath());
+        assertEquals("/api/v3.0/concept-descriptions/" + EncodingHelper.base64UrlEncode(cdIdentifier), request.getPath());
     }
 }

@@ -32,25 +32,13 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
  * idShort and a List of AssetIdentification objects.
  */
 public class AASSearchCriteria extends AssetAdministrationShellSearchCriteria implements SearchCriteria {
-    public static AASSearchCriteria DEFAULT = new AASSearchCriteria();
 
-    public static class Builder extends AssetAdministrationShellSearchCriteria.AbstractBuilder<AASSearchCriteria, Builder> {
-        @Override
-        protected Builder getSelf() {
-            return this;
-        }
-
-
-        @Override
-        protected AASSearchCriteria newBuildingInstance() {
-            return new AASSearchCriteria();
-        }
-    }
+    public static final AASSearchCriteria DEFAULT = new AASSearchCriteria();
 
     /**
      * Serializes the asset kind and asset type as filters in a query string for the use in a http request.
      * 
-     * @return The query string.
+     * @return The query string
      */
     @Override
     public String toQueryString() {
@@ -71,12 +59,11 @@ public class AASSearchCriteria extends AssetAdministrationShellSearchCriteria im
 
     private String serializeAssetIdentification(AssetIdentification assetId) {
         try {
-            if (assetId instanceof SpecificAssetIdentification) {
-
+            if (assetId instanceof SpecificAssetIdentification specificAssetIdentification) {
                 return EncodingHelper.base64Encode(new JsonSerializer().write(
                         new DefaultSpecificAssetId.Builder()
                                 .value(assetId.getValue())
-                                .name(((SpecificAssetIdentification) assetId).getKey())
+                                .name(specificAssetIdentification.getKey())
                                 .build()));
             }
             else if (assetId instanceof GlobalAssetIdentification) {
@@ -91,5 +78,18 @@ public class AASSearchCriteria extends AssetAdministrationShellSearchCriteria im
             throw new InvalidPayloadException(e);
         }
         return "";
+    }
+
+    public static class Builder extends AssetAdministrationShellSearchCriteria.AbstractBuilder<AASSearchCriteria, Builder> {
+        @Override
+        protected Builder getSelf() {
+            return this;
+        }
+
+
+        @Override
+        protected AASSearchCriteria newBuildingInstance() {
+            return new AASSearchCriteria();
+        }
     }
 }
