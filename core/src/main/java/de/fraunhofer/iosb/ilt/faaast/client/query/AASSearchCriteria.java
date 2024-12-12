@@ -60,10 +60,11 @@ public class AASSearchCriteria extends AssetAdministrationShellSearchCriteria im
     private String serializeAssetIdentification(AssetIdentification assetId) {
         try {
             if (assetId instanceof SpecificAssetIdentification specificAssetIdentification) {
-                return EncodingHelper.base64Encode(new JsonSerializer().write(new DefaultSpecificAssetId.Builder()
-                        .value(assetId.getValue())
-                        .name(specificAssetIdentification.getKey())
-                        .build()));
+                return EncodingHelper.base64Encode(new JsonSerializer().write(
+                        new DefaultSpecificAssetId.Builder()
+                                .value(assetId.getValue())
+                                .name(specificAssetIdentification.getKey())
+                                .build()));
             }
             else if (assetId instanceof GlobalAssetIdentification) {
                 return EncodingHelper.base64Encode(new JsonSerializer().write(

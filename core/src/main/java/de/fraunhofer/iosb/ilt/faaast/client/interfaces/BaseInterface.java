@@ -29,13 +29,6 @@ import de.fraunhofer.iosb.ilt.faaast.client.query.SearchCriteria;
 import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpMethod;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
-import static de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus.BAD_REQUEST;
-import static de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus.CONFLICT;
-import static de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus.FORBIDDEN;
-import static de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus.METHOD_NOT_ALLOWED;
-import static de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus.NOT_FOUND;
-import static de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus.UNAUTHORIZED;
 import de.fraunhofer.iosb.ilt.faaast.client.util.QueryHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.DeserializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
@@ -102,12 +95,12 @@ public abstract class BaseInterface {
      * @param user String to allow for basic authentication
      * @param password String to allow for basic authentication
      */
-    protected BaseInterface(URI endpoint, String username, String password) {
+    protected BaseInterface(URI endpoint, String user, String password) {
         this(endpoint, HttpClient.newBuilder()
                 .authenticator(new Authenticator() {
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(username, password.toCharArray());
+                        return new PasswordAuthentication(user, password.toCharArray());
                     }
                 }).build());
     }
@@ -766,7 +759,7 @@ public abstract class BaseInterface {
      * Executes a HTTP DELETE.
      *
      * @param path the URL path relative to the current endpoint
-     * @param expectedStatusCode the expected HTTP status code
+     * @param expectedStatus the expected HTTP status code
      * @throws ConnectivityException if connection to the server fails
      * @throws StatusCodeException if HTTP request returns invalid statsu code
      */

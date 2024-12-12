@@ -44,7 +44,7 @@ public abstract class StatusCodeException extends ClientException {
      * @param statusCode the status code received
      * @param body the body of the response
      */
-    public StatusCodeException(URI uri, int statusCode, String body) {
+    protected StatusCodeException(URI uri, int statusCode, String body) {
         super(String.format("Received HTTP status code %d (uri: %s uri, response body: %s)", statusCode, uri, body));
         this.uri = uri;
         this.statusCode = statusCode;
