@@ -14,14 +14,28 @@
  */
 package de.fraunhofer.iosb.ilt.faaast.client.interfaces;
 
+import de.fraunhofer.iosb.ilt.faaast.client.exception.BadRequestException;
+import de.fraunhofer.iosb.ilt.faaast.client.exception.ConflictException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
+import de.fraunhofer.iosb.ilt.faaast.client.exception.ForbiddenException;
+import de.fraunhofer.iosb.ilt.faaast.client.exception.InternalServerErrorException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.InvalidPayloadException;
+import de.fraunhofer.iosb.ilt.faaast.client.exception.MethodNotAllowedException;
+import de.fraunhofer.iosb.ilt.faaast.client.exception.NotFoundException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
-import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeExceptionFactory;
+import de.fraunhofer.iosb.ilt.faaast.client.exception.UnauthorizedException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.UnsupportedStatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.query.SearchCriteria;
 import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
+import de.fraunhofer.iosb.ilt.faaast.client.http.HttpMethod;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
+import static de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus.BAD_REQUEST;
+import static de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus.CONFLICT;
+import static de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus.FORBIDDEN;
+import static de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus.METHOD_NOT_ALLOWED;
+import static de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus.NOT_FOUND;
+import static de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus.UNAUTHORIZED;
 import de.fraunhofer.iosb.ilt.faaast.client.util.QueryHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.DeserializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
@@ -44,6 +58,7 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -60,6 +75,12 @@ import org.json.JSONObject;
  */
 public abstract class BaseInterface {
     private static final String URI_PATH_SEPERATOR = "/";
+    private static final List<HttpStatus> SUPPORTED_DEFAULT_HTTP_STATUS = List.of(
+            HttpStatus.BAD_REQUEST,
+            HttpStatus.UNAUTHORIZED,
+            HttpStatus.FORBIDDEN,
+            HttpStatus.NOT_FOUND,
+            HttpStatus.INTERNAL_SERVER_ERROR);
 
     protected final HttpClient httpClient;
     private final URI endpoint;
@@ -234,7 +255,7 @@ public abstract class BaseInterface {
     protected <T> T get(String path, QueryModifier modifier, Content content, Class<T> responseType) throws ConnectivityException, StatusCodeException {
         HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, content, modifier)));
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
-        validateStatusCode(request, response, HttpStatus.OK);
+        validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         return parseBody(response, responseType);
     }
 
@@ -254,7 +275,7 @@ public abstract class BaseInterface {
     protected <T extends ElementValue> T getValue(String path, QueryModifier modifier, TypeInfo<?> typeInfo) throws ConnectivityException, StatusCodeException {
         HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, Content.VALUE, modifier)));
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
-        validateStatusCode(request, response, HttpStatus.OK);
+        validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         try {
             return new JsonApiDeserializer().readValue(response.body(), typeInfo);
         }
@@ -348,7 +369,7 @@ public abstract class BaseInterface {
             throws ConnectivityException, StatusCodeException {
         HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, content, modifier, PagingInfo.ALL, searchCriteria)));
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
-        validateStatusCode(request, response, HttpStatus.OK);
+        validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         try {
             return new JsonApiDeserializer().readList(response.body(), responseType);
         }
@@ -468,7 +489,7 @@ public abstract class BaseInterface {
             throws ConnectivityException, StatusCodeException {
         HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, content, modifier, pagingInfo, searchCriteria)));
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
-        validateStatusCode(request, response, HttpStatus.OK);
+        validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         try {
             return deserializePage(response.body(), responseType);
         }
@@ -569,13 +590,8 @@ public abstract class BaseInterface {
                 resolve(QueryHelper.apply(path, content, QueryModifier.DEFAULT)),
                 serialize(entity, content, modifier));
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
-        validateStatusCode(request, response, expectedStatusCode);
-        try {
-            return new JsonApiDeserializer().read(response.body(), responseType);
-        }
-        catch (DeserializationException e) {
-            throw new InvalidPayloadException(e);
-        }
+        validateStatusCode(HttpMethod.POST, response, expectedStatusCode);
+        return parseBody(response, responseType);
     }
 
 
@@ -646,7 +662,7 @@ public abstract class BaseInterface {
                 resolve(QueryHelper.apply(path, content, modifier)),
                 serialize(entity, content, modifier));
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
-        validateStatusCode(request, response, HttpStatus.NO_CONTENT);
+        validateStatusCode(HttpMethod.PUT, response, HttpStatus.NO_CONTENT);
     }
 
 
@@ -719,7 +735,7 @@ public abstract class BaseInterface {
                 resolve(QueryHelper.apply(path, content, modifier)),
                 serialize(entity, content, modifier));
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
-        validateStatusCode(request, response, HttpStatus.NO_CONTENT);
+        validateStatusCode(HttpMethod.PATCH, response, HttpStatus.NO_CONTENT);
     }
 
 
@@ -737,7 +753,7 @@ public abstract class BaseInterface {
                 resolve(QueryHelper.apply(path, Content.VALUE, modifier)),
                 serializeEntity(entity));
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
-        validateStatusCode(request, response, HttpStatus.NO_CONTENT);
+        validateStatusCode(HttpMethod.PATCH, response, HttpStatus.NO_CONTENT);
     }
 
 
@@ -757,7 +773,7 @@ public abstract class BaseInterface {
     protected void delete(String path, HttpStatus expectedStatus) throws ConnectivityException, StatusCodeException {
         HttpRequest request = HttpHelper.createDeleteRequest(resolve(path));
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
-        validateStatusCode(request, response, expectedStatus);
+        validateStatusCode(HttpMethod.DELETE, response, expectedStatus);
     }
 
 
@@ -876,15 +892,37 @@ public abstract class BaseInterface {
     }
 
 
-    private static void validateStatusCode(HttpRequest request, HttpResponse<String> response, HttpStatus expected) throws StatusCodeException {
+    private static void validateStatusCode(HttpMethod method, HttpResponse<String> response, HttpStatus expected) throws StatusCodeException {
+        if (Objects.isNull(response)) {
+            throw new IllegalArgumentException("response must be non-null");
+        }
         if (Objects.equals(expected.getCode(), response.statusCode())) {
             return;
         }
+        List<HttpStatus> supported = new ArrayList<>(SUPPORTED_DEFAULT_HTTP_STATUS);
+        if (Objects.equals(method, HttpMethod.POST)) {
+            supported.add(HttpStatus.METHOD_NOT_ALLOWED);
+            supported.add(HttpStatus.CONFLICT);
+        }
+
         try {
-            throw StatusCodeExceptionFactory.create(HttpStatus.from(response.statusCode()), request, response);
+            HttpStatus status = HttpStatus.from(response.statusCode());
+            if (!supported.contains(status)) {
+                throw new UnsupportedStatusCodeException(response);
+            }
+            throw switch (status) {
+                case BAD_REQUEST -> new BadRequestException(response);
+                case UNAUTHORIZED -> new UnauthorizedException(response);
+                case FORBIDDEN -> new ForbiddenException(response);
+                case NOT_FOUND -> new NotFoundException(response);
+                case METHOD_NOT_ALLOWED -> new MethodNotAllowedException(response);
+                case CONFLICT -> new ConflictException(response);
+                case INTERNAL_SERVER_ERROR -> new InternalServerErrorException(response);
+                default -> throw new UnsupportedStatusCodeException(response);
+            };
         }
         catch (IllegalArgumentException e) {
-            throw new UnsupportedStatusCodeException(request, response);
+            throw new UnsupportedStatusCodeException(response);
         }
     }
 

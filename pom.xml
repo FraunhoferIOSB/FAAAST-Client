@@ -55,7 +55,7 @@
     <properties>
         <aas4j.version>1.0.3</aas4j.version>
         <checkstyle.version>10.20.2</checkstyle.version>
-        <faaast.service.version>1.2.0-SNAPSHOT</faaast.service.version>
+        <faaast.service.version>1.2.0</faaast.service.version>
         <junit.version>4.13.2</junit.version>
         <logback.version>1.5.8</logback.version>
         <maven.compiler.source>17</maven.compiler.source>

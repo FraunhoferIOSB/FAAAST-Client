@@ -15,8 +15,8 @@
 package de.fraunhofer.iosb.ilt.faaast.client.exception;
 
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Objects;
 
 
 public class StatusCodeExceptionFactory {
@@ -28,21 +28,28 @@ public class StatusCodeExceptionFactory {
      * Creates a new exception based on the status code.
      * 
      * @param status the HTTP status
-     * @param request the request
      * @param response the response
      * @return an exception corresponding to the status code
      * @throws UnsupportedStatusCodeException if status code is not supported
      */
-    public static StatusCodeException create(HttpStatus status, HttpRequest request, HttpResponse<String> response) {
-        return switch (status) {
-            case BAD_REQUEST -> new BadRequestException(request, response);
-            case UNAUTHORIZED -> new UnauthorizedException(request, response);
-            case FORBIDDEN -> new ForbiddenException(request, response);
-            case NOT_FOUND -> new NotFoundException(request, response);
-            case METHOD_NOT_ALLOWED -> new MethodNotAllowedException(request, response);
-            case CONFLICT -> new ConflictException(request, response);
-            case INTERNAL_SERVER_ERROR -> new InternalServerErrorException(request, response);
-            default -> throw new UnsupportedStatusCodeException(request, response);
-        };
+    public static StatusCodeException create(HttpResponse<String> response) {
+        if (Objects.isNull(response)) {
+            throw new IllegalArgumentException("response must be non-null");
+        }
+        try {
+            return switch (HttpStatus.from(response.statusCode())) {
+                case BAD_REQUEST -> new BadRequestException(response);
+                case UNAUTHORIZED -> new UnauthorizedException(response);
+                case FORBIDDEN -> new ForbiddenException(response);
+                case NOT_FOUND -> new NotFoundException(response);
+                case METHOD_NOT_ALLOWED -> new MethodNotAllowedException(response);
+                case CONFLICT -> new ConflictException(response);
+                case INTERNAL_SERVER_ERROR -> new InternalServerErrorException(response);
+                default -> throw new UnsupportedStatusCodeException(response);
+            };
+        }
+        catch (IllegalArgumentException e) {
+            throw new UnsupportedStatusCodeException(response);
+        }
     }
 }

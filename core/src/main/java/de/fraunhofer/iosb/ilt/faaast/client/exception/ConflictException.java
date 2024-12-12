@@ -14,7 +14,6 @@
  */
 package de.fraunhofer.iosb.ilt.faaast.client.exception;
 
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 
@@ -27,10 +26,9 @@ public class ConflictException extends StatusCodeException {
     /**
      * Constructs a new exception.
      *
-     * @param request the request causing the exception
      * @param response the response representing the exception
      */
-    public ConflictException(HttpRequest request, HttpResponse<String> response) {
-        super(request, response);
+    public ConflictException(HttpResponse<String> response) {
+        super(response);
     }
 }

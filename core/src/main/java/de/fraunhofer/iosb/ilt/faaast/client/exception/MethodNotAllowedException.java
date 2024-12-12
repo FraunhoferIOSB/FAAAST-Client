@@ -14,7 +14,6 @@
  */
 package de.fraunhofer.iosb.ilt.faaast.client.exception;
 
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 
@@ -28,10 +27,9 @@ public class MethodNotAllowedException extends StatusCodeException {
     /**
      * Constructs a new exception.
      *
-     * @param request the request causing the exception
      * @param response the response representing the exception
      */
-    public MethodNotAllowedException(HttpRequest request, HttpResponse<String> response) {
-        super(request, response);
+    public MethodNotAllowedException(HttpResponse<String> response) {
+        super(response);
     }
 }

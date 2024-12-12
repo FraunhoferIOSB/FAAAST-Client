@@ -81,7 +81,7 @@ public class StatusCodeExceptionTest {
     @Test
     public void testMethodNotAllowed() {
         server.enqueue(new MockResponse().setResponseCode(405));
-        assertThrows(MethodNotAllowedException.class, () -> concreteSubclass.getAll());
+        assertThrows(UnsupportedStatusCodeException.class, () -> concreteSubclass.getAll());
 
         server.enqueue(new MockResponse().setResponseCode(405));
         assertThrows(MethodNotAllowedException.class, () -> concreteSubclass.post(new DefaultSubmodel()));
@@ -91,7 +91,7 @@ public class StatusCodeExceptionTest {
     @Test
     public void testConflict() {
         server.enqueue(new MockResponse().setResponseCode(409));
-        assertThrows(ConflictException.class, () -> concreteSubclass.getAll());
+        assertThrows(UnsupportedStatusCodeException.class, () -> concreteSubclass.getAll());
 
         server.enqueue(new MockResponse().setResponseCode(409));
         assertThrows(ConflictException.class, () -> concreteSubclass.post(new DefaultSubmodel()));
