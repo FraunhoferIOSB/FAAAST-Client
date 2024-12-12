@@ -25,6 +25,13 @@ import java.net.http.HttpResponse;
  * The request should not be repeated.
  */
 public class ForbiddenException extends StatusCodeException {
+
+    /**
+     * Constructs a new exception.
+     *
+     * @param request the request causing the exception
+     * @param response the response representing the exception
+     */
     public ForbiddenException(HttpRequest request, HttpResponse<String> response) {
         super(request, response);
     }

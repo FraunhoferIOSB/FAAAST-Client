@@ -25,11 +25,11 @@ import de.fraunhofer.iosb.ilt.faaast.service.model.value.Datatype;
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.PropertyValue;
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.primitive.StringValue;
 import de.fraunhofer.iosb.ilt.faaast.service.typing.ElementValueTypeInfo;
+import de.fraunhofer.iosb.ilt.faaast.service.util.EncodingHelper;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -112,7 +112,7 @@ public class SubmodelRepositoryInterfaceTest {
 
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals("/api/v3.0/submodels/", request.getPath());
+        assertEquals("/api/v3.0/submodels", request.getPath());
         assertEquals(requestSubmodelList, responseSubmodelList);
     }
 
@@ -140,31 +140,31 @@ public class SubmodelRepositoryInterfaceTest {
     public void post() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         Submodel requestSubmodel = requestSubmodelList.get(0);
         String serializedSubmodel = serializer.write(requestSubmodel);
-        server.enqueue(new MockResponse().setBody(serializedSubmodel));
+        server.enqueue(new MockResponse()
+                .setResponseCode(201)
+                .setBody(serializedSubmodel));
 
         Submodel responseSubmodel = submodelRepositoryInterface.post(requestSubmodel);
         RecordedRequest request = server.takeRequest();
 
         assertEquals("POST", request.getMethod());
         assertEquals(requestSubmodel, responseSubmodel);
-        assertEquals("/api/v3.0/submodels/", request.getPath());
+        assertEquals("/api/v3.0/submodels", request.getPath());
     }
 
 
     @Test
     public void delete() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         Submodel requestSubmodel = requestSubmodelList.get(0);
-        String serializedSubmodel = serializer.write(requestSubmodel);
         String requestSubmodelIdentifier = requestSubmodel.getId();
-        server.enqueue(new MockResponse().setBody(serializedSubmodel));
+        server.enqueue(new MockResponse().setResponseCode(204));
 
         submodelRepositoryInterface.delete(requestSubmodelIdentifier);
         RecordedRequest request = server.takeRequest();
 
         assertEquals("DELETE", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals("/api/v3.0/submodels/" +
-                Base64.getUrlEncoder().encodeToString(requestSubmodelIdentifier.getBytes()) + "/", request.getPath());
+        assertEquals("/api/v3.0/submodels/" + EncodingHelper.base64UrlEncode(requestSubmodelIdentifier), request.getPath());
     }
 
 
@@ -180,7 +180,7 @@ public class SubmodelRepositoryInterfaceTest {
         RecordedRequest request = server.takeRequest();
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals("/api/v3.0/submodels/" + Base64.getUrlEncoder().encodeToString(requestSubmodel.getId().getBytes()) + "/", request.getPath());
+        assertEquals("/api/v3.0/submodels/" + EncodingHelper.base64UrlEncode(requestSubmodel.getId()), request.getPath());
         assertEquals(requestSubmodel, responseSubmodel);
     }
 
@@ -216,9 +216,12 @@ public class SubmodelRepositoryInterfaceTest {
         RecordedRequest request = server.takeRequest();
 
         assertEquals("GET", request.getMethod());
-        assertEquals("/api/v3.0/submodels/"
-                + Base64.getUrlEncoder().encodeToString(requestSubmodelId.getBytes())
-                + "/submodel-elements/" + idShort.toString() + "/$value", request.getPath());
+
+        assertEquals(
+                String.format("/api/v3.0/submodels/%s/submodel-elements/%s/$value",
+                        EncodingHelper.base64UrlEncode(requestSubmodelId),
+                        idShort),
+                request.getPath());
         assertEquals(value, Double.valueOf(responseSubmodelElementValue.getValue().asString()));
     }
 
@@ -228,7 +231,7 @@ public class SubmodelRepositoryInterfaceTest {
         DefaultProperty property = new DefaultProperty.Builder().value("2.0").valueType(DataTypeDefXsd.FLOAT).idShort("value").build();
         String serializedPropertyValue = serializer.write(property, OutputModifier.DEFAULT);
         String requestSubmodelId = requestSubmodelList.get(0).getId();
-        server.enqueue(new MockResponse().setBody(serializedPropertyValue));
+        server.enqueue(new MockResponse().setResponseCode(204));
         IdShortPath idShort = new IdShortPath.Builder().idShort(
                 requestSubmodelList.get(0).getId()).build();
 
@@ -237,8 +240,10 @@ public class SubmodelRepositoryInterfaceTest {
 
         assertEquals("PATCH", request.getMethod());
         assertEquals(serializedPropertyValue, request.getBody().readUtf8());
-        assertEquals("/api/v3.0/submodels/"
-                + Base64.getUrlEncoder().encodeToString(requestSubmodelId.getBytes())
-                + "/submodel-elements/" + idShort.toString() + "/$value", request.getPath());
+        assertEquals(
+                String.format("/api/v3.0/submodels/%s/submodel-elements/%s/$value",
+                        EncodingHelper.base64UrlEncode(requestSubmodelId),
+                        idShort),
+                request.getPath());
     }
 }

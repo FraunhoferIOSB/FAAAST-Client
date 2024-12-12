@@ -17,11 +17,12 @@ package de.fraunhofer.iosb.ilt.faaast.client.interfaces;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.InvalidPayloadException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
+import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeExceptionFactory;
+import de.fraunhofer.iosb.ilt.faaast.client.exception.UnsupportedStatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.query.SearchCriteria;
-import de.fraunhofer.iosb.ilt.faaast.client.util.ExceptionHandler;
-import de.fraunhofer.iosb.ilt.faaast.client.util.HttpClientUtility;
-import de.fraunhofer.iosb.ilt.faaast.client.util.HttpMethod;
-import de.fraunhofer.iosb.ilt.faaast.client.util.UriBuilder;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
+import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
+import de.fraunhofer.iosb.ilt.faaast.client.util.QueryHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.DeserializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiDeserializer;
@@ -39,10 +40,12 @@ import de.fraunhofer.iosb.ilt.faaast.service.util.EncodingHelper;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
+import java.util.Objects;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,91 +59,204 @@ import org.json.JSONObject;
  * Subclasses extend these methods to interact with specific APIs.
  */
 public abstract class BaseInterface {
-    protected String basePath;
-    protected URI serviceUri;
-    protected UriBuilder uriBuilder;
-    private final HttpClientUtility httpClientUtility;
-    private final HttpClient httpClient;
+    private static final String URI_PATH_SEPERATOR = "/";
 
-    protected BaseInterface(URI serviceUri, String basePath) {
-        this.basePath = serviceUri + basePath;
-        this.serviceUri = serviceUri;
-        this.uriBuilder = new UriBuilder(serviceUri);
-        this.httpClient = HttpClient.newHttpClient();
-        this.httpClientUtility = new HttpClientUtility(httpClient);
+    protected final HttpClient httpClient;
+    private final URI endpoint;
+
+    /**
+     * Creates a new instance.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST service
+     */
+    protected BaseInterface(URI endpoint) {
+        this(endpoint, HttpClient.newHttpClient());
     }
 
 
-    protected BaseInterface(URI serviceUri, String basePath, String username, String password) {
-        this.basePath = serviceUri + basePath;
-        this.serviceUri = serviceUri;
-        this.uriBuilder = new UriBuilder(serviceUri);
-        this.httpClient = HttpClient.newBuilder()
+    /**
+     * Creates a new instance.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST Service
+     * @param user String to allow for basic authentication
+     * @param password String to allow for basic authentication
+     */
+    protected BaseInterface(URI endpoint, String username, String password) {
+        this(endpoint, HttpClient.newBuilder()
                 .authenticator(new Authenticator() {
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(username, password.toCharArray());
                     }
-                }).build();
-        this.httpClientUtility = new HttpClientUtility(httpClient);
+                }).build());
     }
 
 
-    protected BaseInterface(URI serviceUri, String basePath, HttpClient httpClient) {
-        this.basePath = serviceUri + basePath;
-        this.serviceUri = serviceUri;
-        this.uriBuilder = new UriBuilder(serviceUri);
+    /**
+     * Creates a new instance.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST service
+     * @param httpClient Allows user to specify custom http-client
+     */
+    protected BaseInterface(URI endpoint, HttpClient httpClient) {
+        this.endpoint = sanitizeEndpoint(endpoint);
         this.httpClient = httpClient;
-        this.httpClientUtility = new HttpClientUtility(httpClient);
     }
 
 
+    /**
+     * Executes a HTTP GET and parses the response body as {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
+    protected <T> T get(Class<T> responseType) throws ConnectivityException, StatusCodeException {
+        return get((String) null, Content.DEFAULT, responseType);
+    }
+
+
+    /**
+     * Executes a HTTP GET and parses the response body as {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param path the URL path relative to the current endpoint
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
     protected <T> T get(String path, Class<T> responseType) throws ConnectivityException, StatusCodeException {
         return get(path, Content.DEFAULT, responseType);
     }
 
 
+    /**
+     * Executes a HTTP GET and parses the response body as {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param content the content modifier
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
+    protected <T> T get(Content content, Class<T> responseType) throws ConnectivityException, StatusCodeException {
+        return get(null, QueryModifier.DEFAULT, content, responseType);
+    }
+
+
+    /**
+     * Executes a HTTP GET and parses the response body as {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param path the URL path relative to the current endpoint
+     * @param content the content modifier
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
     protected <T> T get(String path, Content content, Class<T> responseType) throws ConnectivityException, StatusCodeException {
         return get(path, QueryModifier.DEFAULT, content, responseType);
     }
 
 
-    protected <T> T get(String path, QueryModifier queryModifier, Class<T> responseType) throws ConnectivityException, StatusCodeException {
-        return get(path, queryModifier, Content.DEFAULT, responseType);
+    /**
+     * Executes a HTTP GET and parses the response body as {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param modifier the query modifier
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
+    protected <T> T get(QueryModifier modifier, Class<T> responseType) throws ConnectivityException, StatusCodeException {
+        return get(null, modifier, Content.DEFAULT, responseType);
     }
 
 
+    /**
+     * Executes a HTTP GET and parses the response body as {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param path the URL path relative to the current endpoint
+     * @param modifier the query modifier
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
+    protected <T> T get(String path, QueryModifier modifier, Class<T> responseType) throws ConnectivityException, StatusCodeException {
+        return get(path, modifier, Content.DEFAULT, responseType);
+    }
+
+
+    /**
+     * Executes a HTTP GET and parses the response body as {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param modifier the query modifier
+     * @param content the content modifier
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
+    protected <T> T get(QueryModifier modifier, Content content, Class<T> responseType) throws ConnectivityException, StatusCodeException {
+        return get(null, modifier, content, responseType);
+    }
+
+
+    /**
+     * Executes a HTTP GET and parses the response body as {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param path the URL path relative to the current endpoint
+     * @param modifier the query modifier
+     * @param content the content modifier
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
     protected <T> T get(String path, QueryModifier modifier, Content content, Class<T> responseType) throws ConnectivityException, StatusCodeException {
-
-        HttpRequest request = httpClientUtility.createGetRequest(uriBuilder.getUri(path, content, modifier));
-        HttpResponse<String> response = httpClientUtility.send(request);
-
-        try {
-            if (response.statusCode() == 200) {
-                return new JsonApiDeserializer().read(response.body(), responseType);
-            }
-            else {
-                throw ExceptionHandler.handleException(HttpMethod.GET, request, response);
-            }
-        }
-        catch (DeserializationException e) {
-            throw new InvalidPayloadException(e);
-        }
+        HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, content, modifier)));
+        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        validateStatusCode(request, response, HttpStatus.OK);
+        return parseBody(response, responseType);
     }
 
 
+    /**
+     * Executes a HTTP GET and parses the response body as {@code responseType} using valueOnly serialization.
+     *
+     * @param <T> the result type
+     * @param path the URL path relative to the current endpoint
+     * @param modifier the query modifier
+     * @param typeInfo the type information about the AAS element to be returned
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
     protected <T extends ElementValue> T getValue(String path, QueryModifier modifier, TypeInfo<?> typeInfo) throws ConnectivityException, StatusCodeException {
-
-        HttpRequest request = httpClientUtility.createGetRequest(uriBuilder.getUri(path, Content.VALUE, modifier));
-        HttpResponse<String> response = httpClientUtility.send(request);
-
+        HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, Content.VALUE, modifier)));
+        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        validateStatusCode(request, response, HttpStatus.OK);
         try {
-            if (response.statusCode() == 200) {
-                return new JsonApiDeserializer().readValue(response.body(), typeInfo);
-            }
-            else {
-                throw ExceptionHandler.handleException(HttpMethod.GET, request, response);
-            }
+            return new JsonApiDeserializer().readValue(response.body(), typeInfo);
         }
         catch (DeserializationException e) {
             throw new InvalidPayloadException(e);
@@ -148,33 +264,93 @@ public abstract class BaseInterface {
     }
 
 
-    protected <T> List<T> getList(String path, Class<T> responseType)
-            throws ConnectivityException, StatusCodeException {
+    /**
+     * Executes a HTTP GET and parses the response body as a list of {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
+    protected <T> List<T> getList(Class<T> responseType) throws ConnectivityException, StatusCodeException {
+        return getList(null, QueryModifier.DEFAULT, responseType);
+    }
+
+
+    /**
+     * Executes a HTTP GET and parses the response body as a list of {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param path the URL path relative to the current endpoint
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
+    protected <T> List<T> getList(String path, Class<T> responseType) throws ConnectivityException, StatusCodeException {
         return getList(path, QueryModifier.DEFAULT, responseType);
     }
 
 
-    protected <T> List<T> getList(String path, QueryModifier modifier, Class<T> responseType)
-            throws ConnectivityException, StatusCodeException {
+    /**
+     * Executes a HTTP GET and parses the response body as a list of {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param path the URL path relative to the current endpoint
+     * @param modifier the query modifier
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
+    protected <T> List<T> getList(String path, QueryModifier modifier, Class<T> responseType) throws ConnectivityException, StatusCodeException {
         return getList(path, SearchCriteria.DEFAULT, Content.DEFAULT, modifier, responseType);
     }
 
 
+    /**
+     * Executes a HTTP GET and parses the response body as a list of {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param searchCriteria the search criteria
+     * @param content the content modifier
+     * @param modifier the query modifier
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
+    protected <T> List<T> getList(SearchCriteria searchCriteria, Content content, QueryModifier modifier, Class<T> responseType) throws ConnectivityException, StatusCodeException {
+        return getList(null, searchCriteria, content, modifier, responseType);
+    }
+
+
+    /**
+     * Executes a HTTP GET and parses the response body as a list of {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param path the URL path relative to the current endpoint
+     * @param searchCriteria the search criteria
+     * @param content the content modifier
+     * @param modifier the query modifier
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
     protected <T> List<T> getList(String path, SearchCriteria searchCriteria, Content content, QueryModifier modifier, Class<T> responseType)
             throws ConnectivityException, StatusCodeException {
-
-        HttpRequest request = httpClientUtility.createGetRequest(uriBuilder.getUri(
-                path, content, modifier, new PagingInfo.Builder().build(), searchCriteria));
-        HttpResponse<String> response = httpClientUtility.send(request);
-
-        uriBuilder.getUri(path, content, modifier, new PagingInfo.Builder().build(), searchCriteria);
+        HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, content, modifier, PagingInfo.ALL, searchCriteria)));
+        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        validateStatusCode(request, response, HttpStatus.OK);
         try {
-            if (response.statusCode() == 200) {
-                return new JsonApiDeserializer().readList(response.body(), responseType);
-            }
-            else {
-                throw ExceptionHandler.handleException(HttpMethod.GET, request, response);
-            }
+            return new JsonApiDeserializer().readList(response.body(), responseType);
         }
         catch (DeserializationException e) {
             throw new InvalidPayloadException(e);
@@ -182,38 +358,119 @@ public abstract class BaseInterface {
     }
 
 
-    protected <T> Page<T> getPage(String path, PagingInfo pagingInfo, Class<T> responseType)
-            throws ConnectivityException, StatusCodeException {
+    /**
+     * Executes a HTTP GET and parses the response body as a page of {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param pagingInfo the paging information
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
+    protected <T> Page<T> getPage(PagingInfo pagingInfo, Class<T> responseType) throws ConnectivityException, StatusCodeException {
+        return getPage((String) null, pagingInfo, responseType);
+    }
+
+
+    /**
+     * Executes a HTTP GET and parses the response body as a page of {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param path the URL path relative to the current endpoint
+     * @param pagingInfo the paging information
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
+    protected <T> Page<T> getPage(String path, PagingInfo pagingInfo, Class<T> responseType) throws ConnectivityException, StatusCodeException {
         return getPage(path, QueryModifier.DEFAULT, pagingInfo, responseType);
     }
 
 
-    protected <T> Page<T> getPage(String path, QueryModifier modifier, PagingInfo pagingInfo, Class<T> responseType)
-            throws ConnectivityException, StatusCodeException {
+    /**
+     * Executes a HTTP GET and parses the response body as a page of {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param path the URL path relative to the current endpoint
+     * @param modifier the query modifier
+     * @param pagingInfo the paging information
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
+    protected <T> Page<T> getPage(String path, QueryModifier modifier, PagingInfo pagingInfo, Class<T> responseType) throws ConnectivityException, StatusCodeException {
         return getPage(path, Content.DEFAULT, modifier, pagingInfo, responseType);
     }
 
 
+    /**
+     * Executes a HTTP GET and parses the response body as a page of {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param path the URL path relative to the current endpoint
+     * @param content the content modifier
+     * @param modifier the query modifier
+     * @param pagingInfo the paging information
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
     protected <T> Page<T> getPage(String path, Content content, QueryModifier modifier, PagingInfo pagingInfo, Class<T> responseType)
             throws ConnectivityException, StatusCodeException {
         return getPage(path, content, modifier, pagingInfo, SearchCriteria.DEFAULT, responseType);
     }
 
 
+    /**
+     * Executes a HTTP GET and parses the response body as a page of {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param content the content modifier
+     * @param modifier the query modifier
+     * @param pagingInfo the paging information
+     * @param searchCriteria the search criteria
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
+    protected <T> Page<T> getPage(Content content, QueryModifier modifier, PagingInfo pagingInfo, SearchCriteria searchCriteria, Class<T> responseType)
+            throws ConnectivityException, StatusCodeException {
+        return getPage(null, content, modifier, pagingInfo, searchCriteria, responseType);
+    }
+
+
+    /**
+     * Executes a HTTP GET and parses the response body as a page of {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param path the URL path relative to the current endpoint
+     * @param content the content modifier
+     * @param modifier the query modifier
+     * @param pagingInfo the paging information
+     * @param searchCriteria the search criteria
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
     protected <T> Page<T> getPage(String path, Content content, QueryModifier modifier, PagingInfo pagingInfo, SearchCriteria searchCriteria, Class<T> responseType)
             throws ConnectivityException, StatusCodeException {
-
-        HttpRequest request = httpClientUtility.createGetRequest(uriBuilder.getUri(
-                path, content, modifier, pagingInfo, searchCriteria));
-        HttpResponse<String> response = httpClientUtility.send(request);
-
+        HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, content, modifier, pagingInfo, searchCriteria)));
+        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        validateStatusCode(request, response, HttpStatus.OK);
         try {
-            if (response.statusCode() == 200) {
-                return deserializePage(response.body(), responseType);
-            }
-            else {
-                throw ExceptionHandler.handleException(HttpMethod.GET, request, response);
-            }
+            return deserializePage(response.body(), responseType);
         }
         catch (DeserializationException | JSONException e) {
             throw new InvalidPayloadException(e);
@@ -221,46 +478,100 @@ public abstract class BaseInterface {
     }
 
 
-    protected <T extends ElementValue> T postValue(String path, Object entity, TypeInfo<?> typeInfo, QueryModifier modifier)
-            throws ConnectivityException, StatusCodeException {
-
-        HttpRequest request = httpClientUtility.createPostRequest(uriBuilder.getUri(
-                path, Content.VALUE, QueryModifier.DEFAULT),
-                serialize(entity, Content.VALUE, modifier));
-        HttpResponse<String> response = httpClientUtility.send(request);
-
-        try {
-            if (response.statusCode() == 200 || response.statusCode() == 201) {
-                return new JsonApiDeserializer().readValue(response.body(), typeInfo);
-            }
-            else {
-                throw ExceptionHandler.handleException(HttpMethod.POST, request, response);
-            }
-        }
-        catch (DeserializationException e) {
-            throw new InvalidPayloadException(e);
-        }
+    /**
+     * Executes a HTTP POST and parses the response body as {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param entity the payload to send in the POST body
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
+    protected <T> T post(Object entity, Class<T> responseType) throws ConnectivityException, StatusCodeException {
+        return post(null, entity, QueryModifier.DEFAULT, Content.DEFAULT, responseType);
     }
 
 
+    /**
+     * Executes a HTTP POST and parses the response body as {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param path the URL path relative to the current endpoint
+     * @param entity the payload to send in the POST body
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
     protected <T> T post(String path, Object entity, Class<T> responseType) throws ConnectivityException, StatusCodeException {
         return post(path, entity, QueryModifier.DEFAULT, Content.DEFAULT, responseType);
     }
 
 
+    /**
+     * Executes a HTTP POST and parses the response body as {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param path the URL path relative to the current endpoint
+     * @param entity the payload to send in the POST body
+     * @param expectedStatusCode the expected HTTP status code
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
+    protected <T> T post(String path, Object entity, HttpStatus expectedStatusCode, Class<T> responseType) throws ConnectivityException, StatusCodeException {
+        return post(path, entity, QueryModifier.DEFAULT, Content.DEFAULT, expectedStatusCode, responseType);
+    }
+
+
+    /**
+     * Executes a HTTP POST and parses the response body as {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param path the URL path relative to the current endpoint
+     * @param entity the payload to send in the POST body
+     * @param modifier the query modifier
+     * @param content the content modifier
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
     protected <T> T post(String path, Object entity, QueryModifier modifier, Content content, Class<T> responseType) throws ConnectivityException, StatusCodeException {
+        return post(path, entity, modifier, content, HttpStatus.CREATED, responseType);
+    }
 
-        HttpRequest request = httpClientUtility.createPostRequest(uriBuilder.getUri(path, content, QueryModifier.DEFAULT),
+
+    /**
+     * Executes a HTTP POST and parses the response body as {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param path the URL path relative to the current endpoint
+     * @param entity the payload to send in the POST body
+     * @param modifier the query modifier
+     * @param content the content modifier
+     * @param expectedStatusCode the expected HTTP status code
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
+    protected <T> T post(String path, Object entity, QueryModifier modifier, Content content, HttpStatus expectedStatusCode, Class<T> responseType)
+            throws ConnectivityException, StatusCodeException {
+        HttpRequest request = HttpHelper.createPostRequest(
+                resolve(QueryHelper.apply(path, content, QueryModifier.DEFAULT)),
                 serialize(entity, content, modifier));
-        HttpResponse<String> response = httpClientUtility.send(request);
-
+        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        validateStatusCode(request, response, expectedStatusCode);
         try {
-            if (response.statusCode() == 200 || response.statusCode() == 201) {
-                return new JsonApiDeserializer().read(response.body(), responseType);
-            }
-            else {
-                throw ExceptionHandler.handleException(HttpMethod.POST, request, response);
-            }
+            return new JsonApiDeserializer().read(response.body(), responseType);
         }
         catch (DeserializationException e) {
             throw new InvalidPayloadException(e);
@@ -268,91 +579,266 @@ public abstract class BaseInterface {
     }
 
 
+    /**
+     * Executes a HTTP PUT.
+     * 
+     * @param entity the payload to send in the body
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     */
+    protected void put(Object entity) throws ConnectivityException, StatusCodeException {
+        put(null, entity, QueryModifier.DEFAULT);
+    }
+
+
+    /**
+     * Executes a HTTP PUT.
+     *
+     * @param path the URL path relative to the current endpoint
+     * @param entity the payload to send in the body
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     */
     protected void put(String path, Object entity) throws ConnectivityException, StatusCodeException {
         put(path, entity, QueryModifier.DEFAULT);
     }
 
 
+    /**
+     * Executes a HTTP PUT.
+     *
+     * @param entity the payload to send in the body
+     * @param modifier the query modifier
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     */
+    protected void put(Object entity, QueryModifier modifier) throws ConnectivityException, StatusCodeException {
+        put(null, entity, Content.DEFAULT, modifier);
+    }
+
+
+    /**
+     * Executes a HTTP PUT.
+     *
+     * @param path the URL path relative to the current endpoint
+     * @param entity the payload to send in the body
+     * @param modifier the query modifier
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     */
     protected void put(String path, Object entity, QueryModifier modifier) throws ConnectivityException, StatusCodeException {
         put(path, entity, Content.DEFAULT, modifier);
     }
 
 
-    protected void put(String path, Object entity, Content content, QueryModifier modifier)
-            throws ConnectivityException, StatusCodeException {
-
-        HttpRequest request = httpClientUtility.createPutRequest(
-                uriBuilder.getUri(path, content, modifier),
+    /**
+     * Executes a HTTP PUT.
+     *
+     * @param path the URL path relative to the current endpoint
+     * @param entity the payload to send in the body
+     * @param content the content modifier
+     * @param modifier the query modifier
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     */
+    protected void put(String path, Object entity, Content content, QueryModifier modifier) throws ConnectivityException, StatusCodeException {
+        HttpRequest request = HttpHelper.createPutRequest(
+                resolve(QueryHelper.apply(path, content, modifier)),
                 serialize(entity, content, modifier));
-        HttpResponse<String> response = httpClientUtility.send(request);
-
-        if (response.statusCode() != 200 && response.statusCode() != 204) {
-            throw ExceptionHandler.handleException(HttpMethod.PUT, request, response);
-        }
+        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        validateStatusCode(request, response, HttpStatus.NO_CONTENT);
     }
 
 
+    /**
+     * Executes a HTTP PATCH.
+     *
+     * @param path the URL path relative to the current endpoint
+     * @param entity the payload to send in the body
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     */
     protected void patch(String path, Object entity) throws ConnectivityException, StatusCodeException {
         patch(path, entity, QueryModifier.DEFAULT);
     }
 
 
+    /**
+     * Executes a HTTP PATCH.
+     *
+     * @param entity the payload to send in the body
+     * @param modifier the query modifier
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     */
+    protected void patch(Object entity, QueryModifier modifier) throws ConnectivityException, StatusCodeException {
+        patch(null, entity, Content.DEFAULT, modifier);
+    }
+
+
+    /**
+     * Executes a HTTP PATCH.
+     *
+     * @param path the URL path relative to the current endpoint
+     * @param entity the payload to send in the body
+     * @param modifier the query modifier
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     */
     protected void patch(String path, Object entity, QueryModifier modifier) throws ConnectivityException, StatusCodeException {
         patch(path, entity, Content.DEFAULT, modifier);
     }
 
 
-    protected void patch(String path, Object entity, Content content, QueryModifier modifier)
-            throws ConnectivityException, StatusCodeException {
-
-        HttpRequest request = httpClientUtility.createPatchRequest(
-                uriBuilder.getUri(path, content, modifier),
-                serialize(entity, content, modifier));
-        HttpResponse<String> response = httpClientUtility.send(request);
-
-        if (response.statusCode() != 200 && response.statusCode() != 204) {
-            throw ExceptionHandler.handleException(HttpMethod.PATCH, request, response);
-        }
+    /**
+     * Executes a HTTP PATCH.
+     *
+     * @param entity the payload to send in the body
+     * @param content the content modifier
+     * @param modifier the query modifier
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     */
+    protected void patch(Object entity, Content content, QueryModifier modifier) throws ConnectivityException, StatusCodeException {
+        patch(null, entity, content, modifier);
     }
 
 
-    protected void patchValue(String path, Object entity, QueryModifier modifier)
-            throws ConnectivityException, StatusCodeException {
+    /**
+     * Executes a HTTP PATCH.
+     *
+     * @param path the URL path relative to the current endpoint
+     * @param entity the payload to send in the body
+     * @param content the content modifier
+     * @param modifier the query modifier
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     */
+    protected void patch(String path, Object entity, Content content, QueryModifier modifier) throws ConnectivityException, StatusCodeException {
+        HttpRequest request = HttpHelper.createPatchRequest(
+                resolve(QueryHelper.apply(path, content, modifier)),
+                serialize(entity, content, modifier));
+        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        validateStatusCode(request, response, HttpStatus.NO_CONTENT);
+    }
 
-        HttpRequest request = httpClientUtility.createPatchRequest(
-                uriBuilder.getUri(path, Content.VALUE, modifier),
+
+    /**
+     * Executes a HTTP PATCH with valueOnly serialization.
+     *
+     * @param path the URL path relative to the current endpoint
+     * @param entity the payload to send in the body
+     * @param modifier the query modifier
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     */
+    protected void patchValue(String path, Object entity, QueryModifier modifier) throws ConnectivityException, StatusCodeException {
+        HttpRequest request = HttpHelper.createPatchRequest(
+                resolve(QueryHelper.apply(path, Content.VALUE, modifier)),
                 serializeEntity(entity));
-        HttpResponse<String> response = httpClientUtility.send(request);
-
-        if (response.statusCode() != 200 && response.statusCode() != 204) {
-            throw ExceptionHandler.handleException(HttpMethod.PATCH, request, response);
-        }
+        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        validateStatusCode(request, response, HttpStatus.NO_CONTENT);
     }
 
 
     protected void delete(String path) throws ConnectivityException, StatusCodeException {
+        delete(path, HttpStatus.NO_CONTENT);
+    }
 
-        HttpRequest request = httpClientUtility.createDeleteRequest(uriBuilder.getUri(path));
-        HttpResponse<String> response = httpClientUtility.send(request);
 
-        if (response.statusCode() != 200 && response.statusCode() != 204) {
-            throw ExceptionHandler.handleException(HttpMethod.DELETE, request, response);
+    /**
+     * Executes a HTTP DELETE.
+     *
+     * @param path the URL path relative to the current endpoint
+     * @param expectedStatusCode the expected HTTP status code
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     */
+    protected void delete(String path, HttpStatus expectedStatus) throws ConnectivityException, StatusCodeException {
+        HttpRequest request = HttpHelper.createDeleteRequest(resolve(path));
+        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        validateStatusCode(request, response, expectedStatus);
+    }
+
+
+    /**
+     * Creates a URL path for an id in the form of "/{base64URL-encoded id}".
+     * 
+     * @param id the id
+     * @return the URL path with the encoded id
+     */
+    protected String idPath(String id) {
+        return "/" + EncodingHelper.base64UrlEncode(id);
+    }
+
+
+    /**
+     * Resolves a path to the current {@code endpoint}.
+     * 
+     * @param path the path to resolve
+     * @return the resolved path relative to the current {@code endpoint}
+     */
+    protected URI resolve(String path) {
+        return resolve(endpoint, path);
+    }
+
+
+    /**
+     * Resolves a path to a given {@code baseUri}.
+     * 
+     * @param baseUri the URI to resolve the path to
+     * @param path the path to resolve
+     * @return the resolved path relative to the current {@code baseUri}
+     */
+    protected static URI resolve(URI baseUri, String path) {
+        if (Objects.isNull(path) || path.isBlank()) {
+            return baseUri;
+        }
+        String actualPath = path;
+        if (actualPath.startsWith(URI_PATH_SEPERATOR)) {
+            actualPath = "." + actualPath;
+        }
+        else if (!actualPath.startsWith("./")) {
+            actualPath = "./" + actualPath;
+        }
+        if (actualPath.endsWith(URI_PATH_SEPERATOR)) {
+            actualPath = actualPath.substring(0, actualPath.length() - 1);
+        }
+        try {
+            return new URI(baseUri + URI_PATH_SEPERATOR).resolve(actualPath);
+        }
+        catch (URISyntaxException e) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            "error resolving path (endpoint: %s, path: %s)",
+                            baseUri,
+                            actualPath),
+                    e);
         }
     }
 
 
-    protected String basePath() {
-        return basePath;
+    private static URI sanitizeEndpoint(URI endpoint) {
+        URI result = endpoint;
+        if (endpoint.getPath().endsWith(URI_PATH_SEPERATOR)) {
+            try {
+                result = new URI(endpoint.toString().substring(0, endpoint.toString().length() - 1));
+            }
+            catch (URISyntaxException e) {
+                throw new IllegalArgumentException(String.format("error sanitizing endpoint URI (endpoint: %s", endpoint), e);
+            }
+        }
+        return result;
     }
 
 
-    protected String idPath(String id) {
-        return basePath() + EncodingHelper.base64UrlEncode(id) + "/";
-    }
-
-
-    protected HttpClient httpClient() {
-        return this.httpClient;
+    private static <T> T parseBody(HttpResponse<String> response, Class<T> responseType) {
+        try {
+            return new JsonApiDeserializer().read(response.body(), responseType);
+        }
+        catch (DeserializationException e) {
+            throw new InvalidPayloadException(e);
+        }
     }
 
 
@@ -388,4 +874,18 @@ public abstract class BaseInterface {
                 .metadata(new JsonApiDeserializer().read(metadata.toString(), PagingMetadata.class))
                 .build();
     }
+
+
+    private static void validateStatusCode(HttpRequest request, HttpResponse<String> response, HttpStatus expected) throws StatusCodeException {
+        if (Objects.equals(expected.getCode(), response.statusCode())) {
+            return;
+        }
+        try {
+            throw StatusCodeExceptionFactory.create(HttpStatus.from(response.statusCode()), request, response);
+        }
+        catch (IllegalArgumentException e) {
+            throw new UnsupportedStatusCodeException(request, response);
+        }
+    }
+
 }

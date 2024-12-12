@@ -16,6 +16,7 @@ package de.fraunhofer.iosb.ilt.faaast.client.interfaces;
 
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
+import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Content;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
@@ -41,28 +42,40 @@ public class AASInterface extends BaseInterface {
     /**
      * Creates a new Asset Administration Shell Interface.
      *
-     * @param serviceUri Uri used to communicate with the FA³ST service.
+     * @param endpoint Uri used to communicate with the FA³ST service
      */
-    public AASInterface(URI serviceUri) {
-        super(serviceUri, "");
+    public AASInterface(URI endpoint) {
+        super(endpoint);
     }
 
 
     /**
      * Creates a new Asset Administration Shell Interface.
      *
-     * @param httpClient Allows user to specify custom http-client.
-     * @param serviceUri Uri used to communicate with the FA³ST service.
+     * @param endpoint Uri used to communicate with the FA³ST Service
+     * @param user String to allow for basic authentication
+     * @param password String to allow for basic authentication
      */
-    public AASInterface(URI serviceUri, HttpClient httpClient) {
-        super(serviceUri, "", httpClient);
+    public AASInterface(URI endpoint, String user, String password) {
+        super(endpoint, user, password);
+    }
+
+
+    /**
+     * Creates a new Asset Administration Shell Interface.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST service
+     * @param httpClient Allows user to specify custom http-client
+     */
+    public AASInterface(URI endpoint, HttpClient httpClient) {
+        super(endpoint, httpClient);
     }
 
 
     /**
      * Retrieves the Asset Administration Shell (AAS) from the server.
      *
-     * @return The requested Asset Administration Shell object.
+     * @return The requested Asset Administration Shell object
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -73,17 +86,17 @@ public class AASInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public AssetAdministrationShell get() throws StatusCodeException, ConnectivityException {
-        return get(basePath(), AssetAdministrationShell.class);
+        return get(AssetAdministrationShell.class);
     }
 
 
     /**
      * Replaces the current Asset Administration Shell with a new one.
      *
-     * @param aas The new Asset Administration Shell object to replace the current one.
+     * @param aas The new Asset Administration Shell object to replace the current one
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -94,17 +107,17 @@ public class AASInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public void put(AssetAdministrationShell aas) throws StatusCodeException, ConnectivityException {
-        put(basePath(), aas);
+        super.put(aas);
     }
 
 
     /**
      * Retrieves the Asset Administration Shell (AAS) as a reference.
      *
-     * @return The requested Asset Administration Shell reference.
+     * @return The requested Asset Administration Shell reference
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -115,17 +128,17 @@ public class AASInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public Reference getAsReference() throws StatusCodeException, ConnectivityException {
-        return get(basePath(), Content.REFERENCE, Reference.class);
+        return get(Content.REFERENCE, Reference.class);
     }
 
 
     /**
      * Retrieves the asset information associated with the Asset Administration Shell.
      *
-     * @return The requested Asset Information object.
+     * @return The requested Asset Information object
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -136,7 +149,7 @@ public class AASInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public AssetInformation getAssetInformation() throws StatusCodeException, ConnectivityException {
         return get(assetInfoPath(), AssetInformation.class);
@@ -146,7 +159,7 @@ public class AASInterface extends BaseInterface {
     /**
      * Updates the asset information of the Asset Administration Shell.
      *
-     * @param assetInfo The new Asset Information object to replace the current one.
+     * @param assetInfo The new Asset Information object to replace the current one
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -157,7 +170,7 @@ public class AASInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public void putAssetInformation(AssetInformation assetInfo) throws StatusCodeException, ConnectivityException {
         put(assetInfoPath(), assetInfo);
@@ -167,7 +180,7 @@ public class AASInterface extends BaseInterface {
     /**
      * Retrieves the thumbnail image associated with the Asset Administration Shell.
      *
-     * @return The requested thumbnail as a Resource object.
+     * @return The requested thumbnail as a Resource object
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -178,7 +191,7 @@ public class AASInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public Resource getThumbnail() throws StatusCodeException, ConnectivityException {
         return get(thumbnailPath(), Resource.class);
@@ -188,7 +201,7 @@ public class AASInterface extends BaseInterface {
     /**
      * Replaces the current thumbnail image of the Asset Administration Shell.
      *
-     * @param file The new thumbnail file to replace the current one.
+     * @param file The new thumbnail file to replace the current one
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -199,7 +212,7 @@ public class AASInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public void putThumbnail(Resource file) throws StatusCodeException, ConnectivityException {
         put(thumbnailPath(), file);
@@ -219,17 +232,17 @@ public class AASInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public void deleteThumbnail() throws StatusCodeException, ConnectivityException {
-        delete(thumbnailPath());
+        delete(thumbnailPath(), HttpStatus.OK);
     }
 
 
     /**
      * Retrieves all references to submodels within the Asset Administration Shell.
      *
-     * @return A list of references to all submodels.
+     * @return A list of references to all submodels
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -240,7 +253,7 @@ public class AASInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<Reference> getAllSubmodelReferences() throws StatusCodeException, ConnectivityException {
         return getList(submodelRefPath(), Reference.class);
@@ -250,8 +263,8 @@ public class AASInterface extends BaseInterface {
     /**
      * Retrieves a page of references to submodels.
      *
-     * @param pagingInfo Metadata for controlling the pagination of results.
-     * @return A page of references to submodels.
+     * @param pagingInfo Metadata for controlling the pagination of results
+     * @return A page of references to submodels
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -262,7 +275,7 @@ public class AASInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public Page<Reference> getSubmodelReference(PagingInfo pagingInfo) throws StatusCodeException, ConnectivityException {
         return getPage(submodelRefPath(), pagingInfo, Reference.class);
@@ -272,8 +285,8 @@ public class AASInterface extends BaseInterface {
     /**
      * Creates a new reference to a submodel within the Asset Administration Shell.
      *
-     * @param reference The reference to the submodel to be added.
-     * @return The created submodel reference.
+     * @param reference The reference to the submodel to be added
+     * @return The created submodel reference
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -285,7 +298,7 @@ public class AASInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public Reference postSubmodelReference(Reference reference) throws StatusCodeException, ConnectivityException {
         return post(submodelRefPath(), reference, Reference.class);
@@ -295,7 +308,7 @@ public class AASInterface extends BaseInterface {
     /**
      * Deletes a specific submodel reference from the Asset Administration Shell.
      *
-     * @param submodelId The unique identifier of the submodel to delete.
+     * @param submodelId The unique identifier of the submodel to delete
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -306,7 +319,7 @@ public class AASInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public void deleteSubmodelReference(String submodelId) throws StatusCodeException, ConnectivityException {
         delete(submodelRefPath() + submodelId);
@@ -316,7 +329,7 @@ public class AASInterface extends BaseInterface {
     /**
      * Deletes a specific submodel from the Asset Administration Shell.
      *
-     * @param submodelId The unique identifier of the submodel to delete.
+     * @param submodelId The unique identifier of the submodel to delete
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -327,7 +340,7 @@ public class AASInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public void deleteSubmodel(String submodelId) throws StatusCodeException, ConnectivityException {
         delete(submodelPath() + submodelId);
@@ -339,30 +352,31 @@ public class AASInterface extends BaseInterface {
      * Although submodels can be managed directly through this interface,
      * it is recommended to use the Submodel Repository Interface.
      *
-     * @param submodelId The unique identifier of the submodel to retrieve.
-     * @return The SubmodelInterface object for interacting with the specified submodel.
+     * @param submodelId The unique identifier of the submodel to retrieve
+     * @return The SubmodelInterface object for interacting with the specified submodel
      */
     public SubmodelInterface getSubmodelInterface(String submodelId) {
-        return new SubmodelInterface(URI.create(idPath(submodelId)));
+        return new SubmodelInterface(resolve(idPath(submodelId)));
     }
 
 
-    private String assetInfoPath() {
-        return basePath() + "asset-information/";
+    private static String assetInfoPath() {
+        return "/asset-information";
     }
 
 
-    private String submodelRefPath() {
-        return basePath() + "submodel-refs/";
+    private static String submodelRefPath() {
+        return "/submodel-refs";
     }
 
 
-    private String submodelPath() {
-        return basePath() + "submodels/";
+    private static String submodelPath() {
+        return "/submodels";
     }
 
 
-    private String thumbnailPath() {
-        return assetInfoPath() + "thumbnail/";
+    private static String thumbnailPath() {
+        return assetInfoPath() + "/thumbnail";
     }
+
 }

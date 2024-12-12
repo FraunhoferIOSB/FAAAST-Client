@@ -25,6 +25,13 @@ import java.net.http.HttpResponse;
  * resource.
  */
 public class UnauthorizedException extends StatusCodeException {
+
+    /**
+     * Constructs a new exception.
+     *
+     * @param request the request causing the exception
+     * @param response the response representing the exception
+     */
     public UnauthorizedException(HttpRequest request, HttpResponse<String> response) {
         super(request, response);
     }

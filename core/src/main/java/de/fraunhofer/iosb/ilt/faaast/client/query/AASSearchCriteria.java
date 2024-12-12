@@ -32,25 +32,13 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
  * idShort and a List of AssetIdentification objects.
  */
 public class AASSearchCriteria extends AssetAdministrationShellSearchCriteria implements SearchCriteria {
+
     public static final AASSearchCriteria DEFAULT = new AASSearchCriteria();
-
-    public static class Builder extends AssetAdministrationShellSearchCriteria.AbstractBuilder<AASSearchCriteria, Builder> {
-        @Override
-        protected Builder getSelf() {
-            return this;
-        }
-
-
-        @Override
-        protected AASSearchCriteria newBuildingInstance() {
-            return new AASSearchCriteria();
-        }
-    }
 
     /**
      * Serializes the asset kind and asset type as filters in a query string for the use in a http request.
      * 
-     * @return The query string.
+     * @return The query string
      */
     @Override
     public String toQueryString() {
@@ -89,5 +77,18 @@ public class AASSearchCriteria extends AssetAdministrationShellSearchCriteria im
             throw new InvalidPayloadException(e);
         }
         return "";
+    }
+
+    public static class Builder extends AssetAdministrationShellSearchCriteria.AbstractBuilder<AASSearchCriteria, Builder> {
+        @Override
+        protected Builder getSelf() {
+            return this;
+        }
+
+
+        @Override
+        protected AASSearchCriteria newBuildingInstance() {
+            return new AASSearchCriteria();
+        }
     }
 }

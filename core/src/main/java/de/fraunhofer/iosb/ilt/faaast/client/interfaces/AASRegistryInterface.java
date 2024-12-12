@@ -39,45 +39,45 @@ import java.util.List;
  */
 public class AASRegistryInterface extends BaseInterface {
 
-    private static final String API_PATH = "/shell-descriptors/";
+    private static final String API_PATH = "/shell-descriptors";
 
     /**
      * Creates a new Asset Administration Shell Registry Interface.
      *
-     * @param serviceUri Uri used to communicate with the FA³ST Service.
+     * @param endpoint Uri used to communicate with the FA³ST Service
      */
-    public AASRegistryInterface(URI serviceUri) {
-        super(serviceUri, API_PATH);
+    public AASRegistryInterface(URI endpoint) {
+        super(resolve(endpoint, API_PATH));
     }
 
 
     /**
      * Creates a new Asset Administration Shell Registry Interface.
      *
-     * @param user String to allow for basic authentication.
-     * @param password String to allow for basic authentication.
-     * @param serviceUri Uri used to communicate with the FA³ST Service.
+     * @param endpoint Uri used to communicate with the FA³ST Service
+     * @param user String to allow for basic authentication
+     * @param password String to allow for basic authentication
      */
-    public AASRegistryInterface(URI serviceUri, String user, String password) {
-        super(serviceUri, API_PATH, user, password);
+    public AASRegistryInterface(URI endpoint, String user, String password) {
+        super(resolve(endpoint, API_PATH), user, password);
     }
 
 
     /**
      * Creates a new Asset Administration Shell Registry Interface.
      *
-     * @param httpClient Allows the user to specify a custom httpClient.
-     * @param serviceUri Uri used to communicate with the FA³ST Service.
+     * @param endpoint Uri used to communicate with the FA³ST Service
+     * @param httpClient Allows the user to specify a custom httpClient
      */
-    public AASRegistryInterface(URI serviceUri, HttpClient httpClient) {
-        super(serviceUri, API_PATH, httpClient);
+    public AASRegistryInterface(URI endpoint, HttpClient httpClient) {
+        super(resolve(endpoint, API_PATH), httpClient);
     }
 
 
     /**
      * Returns all Asset Administration Shell Descriptors in a List.
      *
-     * @return List containing all Asset Administration Shell Descriptors.
+     * @return List containing all Asset Administration Shell Descriptors
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -88,18 +88,18 @@ public class AASRegistryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<DefaultAssetAdministrationShellDescriptor> getAll() throws StatusCodeException, ConnectivityException {
-        return getList(basePath(), DefaultAssetAdministrationShellDescriptor.class);
+        return getList(DefaultAssetAdministrationShellDescriptor.class);
     }
 
 
     /**
      * Returns a page of Asset Administration Shell Descriptors.
      *
-     * @param pagingInfo Metadata for controlling the pagination of results.
-     * @return A page of Asset Administration Shell Descriptors.
+     * @param pagingInfo Metadata for controlling the pagination of results
+     * @return A page of Asset Administration Shell Descriptors
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -110,7 +110,7 @@ public class AASRegistryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public Page<DefaultAssetAdministrationShellDescriptor> get(PagingInfo pagingInfo) throws StatusCodeException, ConnectivityException {
         return get(pagingInfo, AASDescriptorSearchCriteria.DEFAULT);
@@ -120,9 +120,9 @@ public class AASRegistryInterface extends BaseInterface {
     /**
      * Returns a Page of Asset Administration Shell Descriptors.
      *
-     * @param pagingInfo Metadata for controlling the pagination of results.
-     * @param aasDescriptorSearchCriteria Allows to filter Descriptors based on AssetType and AssetKind.
-     * @return A page of Asset Administration Shell Descriptors.
+     * @param pagingInfo Metadata for controlling the pagination of results
+     * @param aasDescriptorSearchCriteria Allows to filter Descriptors based on AssetType and AssetKind
+     * @return A page of Asset Administration Shell Descriptors
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -133,19 +133,19 @@ public class AASRegistryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public Page<DefaultAssetAdministrationShellDescriptor> get(PagingInfo pagingInfo, AASDescriptorSearchCriteria aasDescriptorSearchCriteria)
             throws StatusCodeException, ConnectivityException {
-        return getPage(basePath(), Content.DEFAULT, QueryModifier.DEFAULT, pagingInfo, aasDescriptorSearchCriteria, DefaultAssetAdministrationShellDescriptor.class);
+        return getPage(Content.DEFAULT, QueryModifier.DEFAULT, pagingInfo, aasDescriptorSearchCriteria, DefaultAssetAdministrationShellDescriptor.class);
     }
 
 
     /**
      * Creates a new Asset Administration Shell Descriptor, i.e. registers an AAS.
      *
-     * @param shellDescriptor Object containing the Asset Administration Shell’s identification and endpoint information.
-     * @return Created Asset Administration Shell Descriptor.
+     * @param shellDescriptor Object containing the Asset Administration Shell’s identification and endpoint information
+     * @return Created Asset Administration Shell Descriptor
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -157,7 +157,7 @@ public class AASRegistryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public DefaultAssetAdministrationShellDescriptor post(DefaultAssetAdministrationShellDescriptor shellDescriptor) throws StatusCodeException, ConnectivityException {
         return post(idPath(shellDescriptor.getId()), shellDescriptor, DefaultAssetAdministrationShellDescriptor.class);
@@ -167,8 +167,8 @@ public class AASRegistryInterface extends BaseInterface {
     /**
      * Returns a specific Asset Administration Shell Descriptor.
      *
-     * @param aasIdentifier The Asset Administration Shell’s unique id.
-     * @return Requested Asset Administration Shell Descriptor.
+     * @param aasIdentifier The Asset Administration Shell’s unique id
+     * @return Requested Asset Administration Shell Descriptor
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -179,7 +179,7 @@ public class AASRegistryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public DefaultAssetAdministrationShellDescriptor get(String aasIdentifier) throws StatusCodeException, ConnectivityException {
         return get(idPath(aasIdentifier), DefaultAssetAdministrationShellDescriptor.class);
@@ -189,8 +189,8 @@ public class AASRegistryInterface extends BaseInterface {
     /**
      * Replaces an existing Asset Administration Shell Descriptor, i.e. replaces registration information.
      *
-     * @param aasIdentifier The Asset Administration Shell’s unique id.
-     * @param shellDescriptor Object containing the Asset Administration Shell’s identification and endpoint information.
+     * @param aasIdentifier The Asset Administration Shell’s unique id
+     * @param shellDescriptor Object containing the Asset Administration Shell’s identification and endpoint information
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -201,7 +201,7 @@ public class AASRegistryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public void put(String aasIdentifier, AssetAdministrationShellDescriptor shellDescriptor) throws StatusCodeException, ConnectivityException {
         super.put(idPath(aasIdentifier), shellDescriptor);
@@ -211,7 +211,7 @@ public class AASRegistryInterface extends BaseInterface {
     /**
      * Deletes an Asset Administration Shell Descriptor, i.e. de-registers an AAS.
      *
-     * @param aasIdentifier The Asset Administration Shell’s unique id.
+     * @param aasIdentifier The Asset Administration Shell’s unique id
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -222,7 +222,7 @@ public class AASRegistryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     @Override
     public void delete(String aasIdentifier) throws StatusCodeException, ConnectivityException {
@@ -234,9 +234,9 @@ public class AASRegistryInterface extends BaseInterface {
      * Returns the Submodel Registry Interface.
      *
      * @param aasIdentifier The unique id of the Submodel for the reference to be deleted
-     * @return
+     * @return the {@link SubmodelRegistryInterface}
      */
     public SubmodelRegistryInterface getSubmodelRegistryInterface(String aasIdentifier) {
-        return new SubmodelRegistryInterface(URI.create(idPath(aasIdentifier)));
+        return new SubmodelRegistryInterface(resolve(idPath(aasIdentifier)));
     }
 }

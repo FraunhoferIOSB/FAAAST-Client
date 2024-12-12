@@ -26,7 +26,6 @@ import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingMetadata;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -69,7 +68,7 @@ public class AASRepositoryInterfaceTest {
         server = new MockWebServer();
         server.requireClientAuth();
         server.start();
-        URI serviceUri = server.url("/example.com/api/v3.0").uri();
+        URI serviceUri = server.url("/example/api/v3.0").uri();
         aasRepositoryInterface = new AASRepositoryInterface(serviceUri);
         serializer = new JsonApiSerializer();
 
@@ -85,7 +84,7 @@ public class AASRepositoryInterfaceTest {
         AssetAdministrationShell requestAssetAdministrationShell = new DefaultAssetAdministrationShell.Builder().build();
         requestAssetAdministrationShell.setIdShort(idShort);
         requestAssetAdministrationShell.setId(idShort);
-        String requestGlobalAssetId = Base64.getUrlEncoder().encodeToString(globalAssetId.getBytes()) + "/";
+        String requestGlobalAssetId = EncodingHelper.base64UrlEncode(globalAssetId);
         AssetInformation requestAssetInformation = new DefaultAssetInformation.Builder()
                 .globalAssetId(requestGlobalAssetId).build();
         requestAssetAdministrationShell.setAssetInformation(requestAssetInformation);
@@ -111,7 +110,7 @@ public class AASRepositoryInterfaceTest {
 
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals("/example.com/api/v3.0/shells/?limit=1", request.getPath());
+        assertEquals("/example/api/v3.0/shells/?limit=1", request.getPath());
         assertEquals("1", responseAssetAdministrationShellPage.getMetadata().getCursor());
     }
 
@@ -196,7 +195,9 @@ public class AASRepositoryInterfaceTest {
     public void postAssetAdministrationShell() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         AssetAdministrationShell requestAssetAdministrationShell = requestAssetAdministrationShellList.get(0);
         String serializedAas = serializer.write(requestAssetAdministrationShell);
-        server.enqueue(new MockResponse().setBody(serializedAas));
+        server.enqueue(new MockResponse()
+                .setResponseCode(201)
+                .setBody(serializedAas));
 
         AssetAdministrationShell responseAssetAdministrationShell = aasRepositoryInterface.post(
                 requestAssetAdministrationShell);
@@ -204,7 +205,7 @@ public class AASRepositoryInterfaceTest {
 
         assertEquals("POST", request.getMethod());
         assertEquals(requestAssetAdministrationShell, responseAssetAdministrationShell);
-        assertEquals("/example.com/api/v3.0/shells/", request.getPath());
+        assertEquals("/example/api/v3.0/shells", request.getPath());
     }
 
 
@@ -221,7 +222,7 @@ public class AASRepositoryInterfaceTest {
 
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals("/example.com/api/v3.0/shells/$reference", request.getPath());
+        assertEquals("/example/api/v3.0/shells/$reference", request.getPath());
         assertEquals(responseAasReferenceList, requestAasReferenceList);
     }
 
@@ -229,17 +230,15 @@ public class AASRepositoryInterfaceTest {
     @Test
     public void delete() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         AssetAdministrationShell requestAssetAdministrationShell = requestAssetAdministrationShellList.get(0);
-        String serializedAas = serializer.write(requestAssetAdministrationShell);
         String requestAasIdentifier = requestAssetAdministrationShell.getId();
-        server.enqueue(new MockResponse().setBody(serializedAas));
+        server.enqueue(new MockResponse().setResponseCode(204));
 
         aasRepositoryInterface.delete(requestAasIdentifier);
         RecordedRequest request = server.takeRequest();
 
         assertEquals("DELETE", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals("/example.com/api/v3.0/shells/" +
-                Base64.getUrlEncoder().encodeToString(requestAasIdentifier.getBytes()) + "/", request.getPath());
+        assertEquals("/example/api/v3.0/shells/" + EncodingHelper.base64UrlEncode(requestAasIdentifier), request.getPath());
     }
 
 
@@ -255,7 +254,7 @@ public class AASRepositoryInterfaceTest {
         RecordedRequest request = server.takeRequest();
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals("/example.com/api/v3.0/shells/" + Base64.getUrlEncoder().encodeToString(requestAas.getId().getBytes()) + "/", request.getPath());
+        assertEquals("/example/api/v3.0/shells/" + EncodingHelper.base64UrlEncode(requestAas.getId()), request.getPath());
         assertEquals(requestAas, responseAas);
     }
 }

@@ -26,6 +26,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
  * asset kind and asset type.
  */
 public class AASDescriptorSearchCriteria implements SearchCriteria {
+
     public static final AASDescriptorSearchCriteria DEFAULT = new AASDescriptorSearchCriteria.Builder().build();
     private final AssetKind assetKind;
     private final String assetType;
@@ -38,8 +39,8 @@ public class AASDescriptorSearchCriteria implements SearchCriteria {
 
     /**
      * Getter method for retrieving the asset kind used to filter Asset Administration Shell descriptors.
-     * 
-     * @return The asset kind object.
+     *
+     * @return The asset kind object
      */
     public AssetKind getAssetKind() {
         return assetKind;
@@ -48,11 +49,30 @@ public class AASDescriptorSearchCriteria implements SearchCriteria {
 
     /**
      * Getter method for retrieving the asset type used to filter Asset Administration Shell descriptors.
-     * 
-     * @return The asset type object.
+     *
+     * @return The asset type object
      */
     public String getAssetType() {
         return assetType;
+    }
+
+
+    /**
+     * Serializes the asset kind and asset type as filters in a query string for the use in a http request.
+     *
+     * @return The query string
+     */
+    @Override
+    public String toQueryString() {
+        String assetKindString = assetKind == null ? ""
+                : "assetKind=" + EnumSerializer.serializeEnumName(assetKind.name());
+
+        String assetTypeString = assetType == null ? ""
+                : "assetType=" + EncodingHelper.base64Encode(assetType);
+
+        return Stream.of(assetKindString, assetTypeString)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.joining("&"));
     }
 
     public static class Builder {
@@ -74,23 +94,5 @@ public class AASDescriptorSearchCriteria implements SearchCriteria {
         public AASDescriptorSearchCriteria build() {
             return new AASDescriptorSearchCriteria(this);
         }
-    }
-
-    /**
-     * Serializes the asset kind and asset type as filters in a query string for the use in a http request.
-     * 
-     * @return The query string.
-     */
-    @Override
-    public String toQueryString() {
-        String assetKindString = assetKind == null ? ""
-                : "assetKind=" + EnumSerializer.serializeEnumName(assetKind.name());
-
-        String assetTypeString = assetType == null ? ""
-                : "assetType=" + EncodingHelper.base64Encode(assetType);
-
-        return Stream.of(assetKindString, assetTypeString)
-                .filter(s -> !s.isEmpty())
-                .collect(Collectors.joining("&"));
     }
 }

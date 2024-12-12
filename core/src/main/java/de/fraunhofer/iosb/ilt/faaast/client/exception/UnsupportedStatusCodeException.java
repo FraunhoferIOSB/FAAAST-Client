@@ -22,6 +22,13 @@ import java.net.http.HttpResponse;
  * This exception is thrown if the server responds with an error code that is not handled by the client.
  */
 public class UnsupportedStatusCodeException extends RuntimeException {
+
+    /**
+     * Constructs a new exception.
+     *
+     * @param request the request causing the exception
+     * @param response the response representing the exception
+     */
     public UnsupportedStatusCodeException(HttpRequest request, HttpResponse<String> response) {
         super("httpMethod='" + request.method() + "',\n" +
                 "requestUri='" + request.uri() + "',\n" +

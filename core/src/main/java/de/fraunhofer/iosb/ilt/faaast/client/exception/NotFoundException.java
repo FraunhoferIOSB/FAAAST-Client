@@ -23,6 +23,13 @@ import java.net.http.HttpResponse;
  * permissible.
  */
 public class NotFoundException extends StatusCodeException {
+
+    /**
+     * Constructs a new exception.
+     *
+     * @param request the request causing the exception
+     * @param response the response representing the exception
+     */
     public NotFoundException(HttpRequest request, HttpResponse<String> response) {
         super(request, response);
     }

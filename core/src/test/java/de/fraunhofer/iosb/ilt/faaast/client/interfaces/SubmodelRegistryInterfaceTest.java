@@ -19,12 +19,12 @@ import de.fraunhofer.iosb.ilt.faaast.service.dataformat.ApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
+import de.fraunhofer.iosb.ilt.faaast.service.util.EncodingHelper;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelDescriptor;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -79,7 +79,7 @@ public class SubmodelRegistryInterfaceTest {
 
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals("/api/v3.0/submodel-descriptors/", request.getPath());
+        assertEquals("/api/v3.0/submodel-descriptors", request.getPath());
         assertEquals(requestSubmodelDescriptors, responseSubmodelDescriptors);
     }
 
@@ -88,7 +88,9 @@ public class SubmodelRegistryInterfaceTest {
     public void testPost() throws SerializationException, ClientException, InterruptedException, UnsupportedModifierException {
         DefaultSubmodelDescriptor requestSubmodelDescriptor = requestSubmodelDescriptors.get(0);
         String serializedSubmodelDescriptors = serializer.write(requestSubmodelDescriptor);
-        server.enqueue(new MockResponse().setBody(serializedSubmodelDescriptors));
+        server.enqueue(new MockResponse()
+                .setResponseCode(201)
+                .setBody(serializedSubmodelDescriptors));
 
         DefaultSubmodelDescriptor responseSubmodelDescriptor = submodelRegistryInterface.post(requestSubmodelDescriptor);
 
@@ -96,7 +98,7 @@ public class SubmodelRegistryInterfaceTest {
 
         assertEquals("POST", request.getMethod());
         assertEquals(requestSubmodelDescriptor, responseSubmodelDescriptor);
-        assertEquals("/api/v3.0/submodel-descriptors/", request.getPath());
+        assertEquals("/api/v3.0/submodel-descriptors", request.getPath());
     }
 
 
@@ -113,8 +115,7 @@ public class SubmodelRegistryInterfaceTest {
 
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals("/api/v3.0/submodel-descriptors/" +
-                Base64.getUrlEncoder().encodeToString(requestSubmodelIdentifier.getBytes()) + "/", request.getPath());
+        assertEquals("/api/v3.0/submodel-descriptors/" + EncodingHelper.base64UrlEncode(requestSubmodelIdentifier), request.getPath());
         assertEquals(requestSubmodelDescriptor, responseSubmodelDescriptor);
     }
 
@@ -124,15 +125,14 @@ public class SubmodelRegistryInterfaceTest {
         DefaultSubmodelDescriptor requestSubmodelDescriptor = requestSubmodelDescriptors.get(0);
         String requestSubmodelIdentifier = requestSubmodelDescriptor.getId();
         String serializedSubmodelDescriptors = serializer.write(requestSubmodelDescriptor);
-        server.enqueue(new MockResponse().setBody(serializedSubmodelDescriptors));
+        server.enqueue(new MockResponse().setResponseCode(204));
 
         submodelRegistryInterface.put(requestSubmodelIdentifier, requestSubmodelDescriptor);
         RecordedRequest request = server.takeRequest();
 
         assertEquals("PUT", request.getMethod());
         assertEquals(serializedSubmodelDescriptors, request.getBody().readUtf8());
-        assertEquals("/api/v3.0/submodel-descriptors/" +
-                Base64.getUrlEncoder().encodeToString(requestSubmodelIdentifier.getBytes()) + "/", request.getPath());
+        assertEquals("/api/v3.0/submodel-descriptors/" + EncodingHelper.base64UrlEncode(requestSubmodelIdentifier), request.getPath());
     }
 
 
@@ -140,15 +140,13 @@ public class SubmodelRegistryInterfaceTest {
     public void testDeleteById() throws SerializationException, ClientException, InterruptedException, UnsupportedModifierException {
         SubmodelDescriptor requestSubmodelDescriptor = requestSubmodelDescriptors.get(0);
         String requestSubmodelIdentifier = requestSubmodelDescriptor.getId();
-        String serializedSubmodelDescriptors = serializer.write(requestSubmodelDescriptor);
-        server.enqueue(new MockResponse().setBody(serializedSubmodelDescriptors));
+        server.enqueue(new MockResponse().setResponseCode(204));
 
         submodelRegistryInterface.delete(requestSubmodelIdentifier);
         RecordedRequest request = server.takeRequest();
 
         assertEquals("DELETE", request.getMethod());
         assertEquals(0, request.getBody().size());
-        assertEquals("/api/v3.0/submodel-descriptors/" +
-                Base64.getUrlEncoder().encodeToString(requestSubmodelIdentifier.getBytes()) + "/", request.getPath());
+        assertEquals("/api/v3.0/submodel-descriptors/" + EncodingHelper.base64UrlEncode(requestSubmodelIdentifier), request.getPath());
     }
 }

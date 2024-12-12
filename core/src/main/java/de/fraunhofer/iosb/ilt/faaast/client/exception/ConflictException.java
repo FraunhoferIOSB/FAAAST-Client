@@ -23,6 +23,13 @@ import java.net.http.HttpResponse;
  * such as an edit conflict between multiple simultaneous updates.
  */
 public class ConflictException extends StatusCodeException {
+
+    /**
+     * Constructs a new exception.
+     *
+     * @param request the request causing the exception
+     * @param response the response representing the exception
+     */
     public ConflictException(HttpRequest request, HttpResponse<String> response) {
         super(request, response);
     }

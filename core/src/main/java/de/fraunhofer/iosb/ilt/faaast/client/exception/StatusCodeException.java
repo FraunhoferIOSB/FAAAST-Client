@@ -28,10 +28,10 @@ public abstract class StatusCodeException extends ClientException {
     private final int statusCode;
 
     /**
-     * Constructor.
+     * Constructs a new exception.
      *
-     * @param request The http Request
-     * @param response The http Response
+     * @param request the request causing the exception
+     * @param response the response representing the exception
      */
     protected StatusCodeException(HttpRequest request, HttpResponse<String> response) {
         super("httpMethod='" + request.method() + "',\n" +

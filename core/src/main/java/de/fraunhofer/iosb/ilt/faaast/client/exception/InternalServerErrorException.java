@@ -22,6 +22,13 @@ import java.net.http.HttpResponse;
  * A generic error message, given when an unexpected condition was encountered and no more specific message is suitable.
  */
 public class InternalServerErrorException extends StatusCodeException {
+
+    /**
+     * Constructs a new exception.
+     *
+     * @param request the request causing the exception
+     * @param response the response representing the exception
+     */
     public InternalServerErrorException(HttpRequest request, HttpResponse<String> response) {
         super(request, response);
     }

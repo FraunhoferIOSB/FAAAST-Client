@@ -19,12 +19,12 @@ import de.fraunhofer.iosb.ilt.faaast.service.dataformat.ApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
+import de.fraunhofer.iosb.ilt.faaast.service.util.EncodingHelper;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShellDescriptor;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -47,7 +47,7 @@ public class AASRegistryInterfaceTest {
     public void setup() throws IOException {
         server = new MockWebServer();
         server.start();
-        URI serviceUri = server.url("/example.com/api/v3.0").uri();
+        URI serviceUri = server.url("/example/api/v3.0").uri();
         assetAdministrationShellRegistryInterface = new AASRegistryInterface(serviceUri);
 
         serializer = new JsonApiSerializer();
@@ -78,7 +78,7 @@ public class AASRegistryInterfaceTest {
 
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals("/example.com/api/v3.0/shell-descriptors/", request.getPath());
+        assertEquals("/example/api/v3.0/shell-descriptors", request.getPath());
         assertEquals(requestShellDescriptors, responseShellDescriptors);
     }
 
@@ -90,7 +90,9 @@ public class AASRegistryInterfaceTest {
         requestShellDescriptor.setId(requestAasIdentifier);
 
         String serializedShellDescriptors = serializer.write(requestShellDescriptor);
-        server.enqueue(new MockResponse().setBody(serializedShellDescriptors));
+        server.enqueue(new MockResponse()
+                .setResponseCode(201)
+                .setBody(serializedShellDescriptors));
 
         AssetAdministrationShellDescriptor returnShellDescriptor = assetAdministrationShellRegistryInterface.post(requestShellDescriptor);
 
@@ -98,8 +100,7 @@ public class AASRegistryInterfaceTest {
 
         assertEquals("POST", request.getMethod());
         assertEquals(requestShellDescriptor, returnShellDescriptor);
-        assertEquals("/example.com/api/v3.0/shell-descriptors/" +
-                Base64.getUrlEncoder().encodeToString(requestAasIdentifier.getBytes()) + "/", request.getPath());
+        assertEquals("/example/api/v3.0/shell-descriptors/" + EncodingHelper.base64UrlEncode(requestAasIdentifier), request.getPath());
     }
 
 
@@ -118,8 +119,7 @@ public class AASRegistryInterfaceTest {
 
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals("/example.com/api/v3.0/shell-descriptors/" +
-                Base64.getUrlEncoder().encodeToString(requestAasIdentifier.getBytes()) + "/", request.getPath());
+        assertEquals("/example/api/v3.0/shell-descriptors/" + EncodingHelper.base64UrlEncode(requestAasIdentifier), request.getPath());
         assertEquals(requestShellDescriptor, responseShellDescriptor);
     }
 
@@ -131,7 +131,7 @@ public class AASRegistryInterfaceTest {
         requestShellDescriptor.setId(requestAasId);
 
         String serializedShellDescriptors = serializer.write(requestShellDescriptor);
-        server.enqueue(new MockResponse().setBody(serializedShellDescriptors));
+        server.enqueue(new MockResponse().setResponseCode(204));
 
         assetAdministrationShellRegistryInterface.put(requestAasId, requestShellDescriptor);
 
@@ -139,8 +139,7 @@ public class AASRegistryInterfaceTest {
 
         assertEquals("PUT", request.getMethod());
         assertEquals(serializedShellDescriptors, request.getBody().readUtf8());
-        assertEquals("/example.com/api/v3.0/shell-descriptors/" +
-                Base64.getUrlEncoder().encodeToString(requestAasId.getBytes()) + "/", request.getPath());
+        assertEquals("/example/api/v3.0/shell-descriptors/" + EncodingHelper.base64UrlEncode(requestAasId), request.getPath());
     }
 
 
@@ -150,16 +149,13 @@ public class AASRegistryInterfaceTest {
         String requestAasIdentifier = "DefaultId";
         requestShellDescriptor.setId(requestAasIdentifier);
 
-        String serializedShellDescriptors = serializer.write(requestShellDescriptor);
-        server.enqueue(new MockResponse().setBody(serializedShellDescriptors));
+        server.enqueue(new MockResponse().setResponseCode(204));
 
         assetAdministrationShellRegistryInterface.delete(requestAasIdentifier);
-
         RecordedRequest request = server.takeRequest();
 
         assertEquals("DELETE", request.getMethod());
         assertEquals(0, request.getBody().size());
-        assertEquals("/example.com/api/v3.0/shell-descriptors/" +
-                Base64.getUrlEncoder().encodeToString(requestAasIdentifier.getBytes()) + "/", request.getPath());
+        assertEquals("/example/api/v3.0/shell-descriptors/" + EncodingHelper.base64UrlEncode(requestAasIdentifier), request.getPath());
     }
 }

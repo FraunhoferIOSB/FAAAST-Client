@@ -28,7 +28,7 @@ public class SubmodelSearchCriteria extends de.fraunhofer.iosb.ilt.faaast.servic
     /**
      * Serializes the semanticId and idShort as filters in a query string for the use in a http request.
      * 
-     * @return The query string.
+     * @return The query string
      */
     @Override
     public String toQueryString() {
@@ -40,5 +40,18 @@ public class SubmodelSearchCriteria extends de.fraunhofer.iosb.ilt.faaast.servic
         return Stream.of(semanticIdString, idShortString)
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.joining("&"));
+    }
+
+    public static class Builder extends de.fraunhofer.iosb.ilt.faaast.service.persistence.SubmodelSearchCriteria.AbstractBuilder<SubmodelSearchCriteria, Builder> {
+        @Override
+        protected Builder getSelf() {
+            return this;
+        }
+
+
+        @Override
+        protected SubmodelSearchCriteria newBuildingInstance() {
+            return new SubmodelSearchCriteria();
+        }
     }
 }

@@ -30,31 +30,46 @@ import java.util.List;
  * </p>
  */
 public class DescriptionInterface extends BaseInterface {
+
+    private static final String API_PATH = "/description";
+
     /**
      * Creates a new Description Interface.
      *
-     * @param serviceUri Uri used to communicate with the FA³ST service.
+     * @param endpoint Uri used to communicate with the FA³ST service
      */
-    public DescriptionInterface(URI serviceUri) {
-        super(serviceUri, "/description");
+    public DescriptionInterface(URI endpoint) {
+        super(resolve(endpoint, API_PATH));
     }
 
 
     /**
      * Creates a new Description Interface.
      *
-     * @param serviceUri Uri used to communicate with the FA³ST service.
-     * @param httpClient custom http-client in case the user wants to set specific attributes.
+     * @param endpoint Uri used to communicate with the FA³ST Service
+     * @param user String to allow for basic authentication
+     * @param password String to allow for basic authentication
      */
-    public DescriptionInterface(URI serviceUri, HttpClient httpClient) {
-        super(serviceUri, "", httpClient);
+    public DescriptionInterface(URI endpoint, String user, String password) {
+        super(resolve(endpoint, API_PATH), user, password);
+    }
+
+
+    /**
+     * Creates a new Description Interface.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST service
+     * @param httpClient custom http-client in case the user wants to set specific attributes
+     */
+    public DescriptionInterface(URI endpoint, HttpClient httpClient) {
+        super(endpoint, httpClient);
     }
 
 
     /**
      * Retrieves the self-describing information of a network resource (ServiceDescription) as a List of Strings.
      *
-     * @return Requested self-describing information.
+     * @return Requested self-describing information
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -65,10 +80,10 @@ public class DescriptionInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<String> get() throws StatusCodeException, ConnectivityException {
-        return getList(basePath(), String.class);
+        return getList(String.class);
     }
 
 }

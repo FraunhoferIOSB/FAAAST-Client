@@ -37,45 +37,45 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
  */
 public class AASRepositoryInterface extends BaseInterface {
 
-    private static final String API_PATH = "/shells/";
+    private static final String API_PATH = "/shells";
 
     /**
      * Creates a new Asset Administration Shell Repository Interface.
      *
-     * @param serviceUri Uri used to communicate with the FA³ST service.
+     * @param endpoint Uri used to communicate with the FA³ST service
      */
-    public AASRepositoryInterface(URI serviceUri) {
-        super(serviceUri, API_PATH);
+    public AASRepositoryInterface(URI endpoint) {
+        super(resolve(endpoint, API_PATH));
     }
 
 
     /**
      * Creates a new Asset Administration Shell Repository Interface with basic authentication.
      *
-     * @param user String for basic authentication.
-     * @param password String for basic authentication.
-     * @param serviceUri Uri used to communicate with the FA³ST service.
+     * @param endpoint Uri used to communicate with the FA³ST service
+     * @param user String for basic authentication
+     * @param password String for basic authentication
      */
-    public AASRepositoryInterface(URI serviceUri, String user, String password) {
-        super(serviceUri, API_PATH, user, password);
+    public AASRepositoryInterface(URI endpoint, String user, String password) {
+        super(resolve(endpoint, API_PATH), user, password);
     }
 
 
     /**
      * Creates a new Asset Administration Shell Repository Interface using a custom HTTP client.
      *
-     * @param httpClient Allows user to specify custom http-client.
-     * @param serviceUri Uri used to communicate with the FA³ST service.
+     * @param endpoint Uri used to communicate with the FA³ST service
+     * @param httpClient Allows user to specify custom http-client
      */
-    public AASRepositoryInterface(URI serviceUri, HttpClient httpClient) {
-        super(serviceUri, API_PATH, httpClient);
+    public AASRepositoryInterface(URI endpoint, HttpClient httpClient) {
+        super(resolve(endpoint, API_PATH), httpClient);
     }
 
 
     /**
      * Retrieves all Asset Administration Shells.
      *
-     * @return A list of all Asset Administration Shells.
+     * @return A list of all Asset Administration Shells
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -86,10 +86,9 @@ public class AASRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public List<AssetAdministrationShell> getAll()
-            throws StatusCodeException, ConnectivityException {
+    public List<AssetAdministrationShell> getAll() throws StatusCodeException, ConnectivityException {
         return getAll(AASSearchCriteria.DEFAULT);
     }
 
@@ -97,8 +96,8 @@ public class AASRepositoryInterface extends BaseInterface {
     /**
      * Retrieves all Asset Administration Shells based on specific search criteria.
      *
-     * @param aasSearchCriteria Search criteria to filter Asset Administration Shells based on AssetType and AssetKind.
-     * @return A list of Asset Administration Shells that match the search criteria.
+     * @param aasSearchCriteria Search criteria to filter Asset Administration Shells based on AssetType and AssetKind
+     * @return A list of Asset Administration Shells that match the search criteria
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -109,19 +108,18 @@ public class AASRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public List<AssetAdministrationShell> getAll(AASSearchCriteria aasSearchCriteria)
-            throws StatusCodeException, ConnectivityException {
-        return getList(basePath(), aasSearchCriteria, Content.DEFAULT, QueryModifier.DEFAULT, AssetAdministrationShell.class);
+    public List<AssetAdministrationShell> getAll(AASSearchCriteria aasSearchCriteria) throws StatusCodeException, ConnectivityException {
+        return getList(null, aasSearchCriteria, Content.DEFAULT, QueryModifier.DEFAULT, AssetAdministrationShell.class);
     }
 
 
     /**
      * Retrieves a page of Asset Administration Shells.
      *
-     * @param pagingInfo Metadata for controlling the pagination of results.
-     * @return A page of Asset Administration Shells.
+     * @param pagingInfo Metadata for controlling the pagination of results
+     * @return A page of Asset Administration Shells
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -132,10 +130,9 @@ public class AASRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public Page<AssetAdministrationShell> get(PagingInfo pagingInfo)
-            throws StatusCodeException, ConnectivityException {
+    public Page<AssetAdministrationShell> get(PagingInfo pagingInfo) throws StatusCodeException, ConnectivityException {
         return get(pagingInfo, AASSearchCriteria.DEFAULT);
     }
 
@@ -143,9 +140,9 @@ public class AASRepositoryInterface extends BaseInterface {
     /**
      * Retrieves a page of Asset Administration Shells based on specific search criteria.
      *
-     * @param pagingInfo Metadata for controlling the pagination of results.
-     * @param aasSearchCriteria Search criteria to filter Asset Administration Shells based on AssetType and AssetKind.
-     * @return A page of Asset Administration Shells.
+     * @param pagingInfo Metadata for controlling the pagination of results
+     * @param aasSearchCriteria Search criteria to filter Asset Administration Shells based on AssetType and AssetKind
+     * @return A page of Asset Administration Shells
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -156,11 +153,10 @@ public class AASRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public Page<AssetAdministrationShell> get(PagingInfo pagingInfo, AASSearchCriteria aasSearchCriteria)
-            throws StatusCodeException, ConnectivityException {
-        return getPage(basePath(), Content.DEFAULT, QueryModifier.DEFAULT, pagingInfo, aasSearchCriteria, AssetAdministrationShell.class);
+    public Page<AssetAdministrationShell> get(PagingInfo pagingInfo, AASSearchCriteria aasSearchCriteria) throws StatusCodeException, ConnectivityException {
+        return getPage(Content.DEFAULT, QueryModifier.DEFAULT, pagingInfo, aasSearchCriteria, AssetAdministrationShell.class);
     }
 
 
@@ -168,8 +164,8 @@ public class AASRepositoryInterface extends BaseInterface {
      * Creates a new Asset Administration Shell.
      * The unique identifier of the Asset Administration Shell must be provided in the payload.
      *
-     * @param aas Asset Administration Shell object to be created.
-     * @return The created Asset Administration Shell.
+     * @param aas Asset Administration Shell object to be created
+     * @return The created Asset Administration Shell
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -181,18 +177,17 @@ public class AASRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public AssetAdministrationShell post(AssetAdministrationShell aas)
-            throws StatusCodeException, ConnectivityException {
-        return post(basePath(), aas, AssetAdministrationShell.class);
+    public AssetAdministrationShell post(AssetAdministrationShell aas) throws StatusCodeException, ConnectivityException {
+        return post(aas, AssetAdministrationShell.class);
     }
 
 
     /**
      * Retrieves references to all Asset Administration Shells.
      *
-     * @return A list of references to all Asset Administration Shells.
+     * @return A list of references to all Asset Administration Shells
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -203,10 +198,9 @@ public class AASRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public List<Reference> getAllAsReference()
-            throws StatusCodeException, ConnectivityException {
+    public List<Reference> getAllAsReference() throws StatusCodeException, ConnectivityException {
         return getAllAsReference(AASSearchCriteria.DEFAULT);
     }
 
@@ -215,8 +209,8 @@ public class AASRepositoryInterface extends BaseInterface {
      * Retrieves references to all Asset Administration Shells based on specific search criteria.
      *
      * @param aasSearchCriteria Search criteria to filter Asset Administration Shell references based on AssetType and
-     *            AssetKind.
-     * @return A list of references to Asset Administration Shells.
+     *            AssetKind
+     * @return A list of references to Asset Administration Shells
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -227,19 +221,18 @@ public class AASRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public List<Reference> getAllAsReference(AASSearchCriteria aasSearchCriteria)
-            throws StatusCodeException, ConnectivityException {
-        return getList(basePath(), aasSearchCriteria, Content.REFERENCE, QueryModifier.DEFAULT, Reference.class);
+    public List<Reference> getAllAsReference(AASSearchCriteria aasSearchCriteria) throws StatusCodeException, ConnectivityException {
+        return getList(null, aasSearchCriteria, Content.REFERENCE, QueryModifier.DEFAULT, Reference.class);
     }
 
 
     /**
      * Retrieves a page of references to Asset Administration Shells.
      *
-     * @param pagingInfo Metadata for controlling the pagination of results.
-     * @return A page of references to Asset Administration Shells.
+     * @param pagingInfo Metadata for controlling the pagination of results
+     * @return A page of references to Asset Administration Shells
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -250,10 +243,9 @@ public class AASRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public Page<Reference> getReference(PagingInfo pagingInfo)
-            throws StatusCodeException, ConnectivityException {
+    public Page<Reference> getReference(PagingInfo pagingInfo) throws StatusCodeException, ConnectivityException {
         return getReference(pagingInfo, AASSearchCriteria.DEFAULT);
     }
 
@@ -261,10 +253,10 @@ public class AASRepositoryInterface extends BaseInterface {
     /**
      * Retrieves a page of references to Asset Administration Shells based on specific search criteria.
      *
-     * @param pagingInfo Metadata for controlling the pagination of results.
+     * @param pagingInfo Metadata for controlling the pagination of results
      * @param aasSearchCriteria Search criteria to filter Asset Administration Shell references based on AssetType and
-     *            AssetKind.
-     * @return A page of references to Asset Administration Shells.
+     *            AssetKind
+     * @return A page of references to Asset Administration Shells
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -275,18 +267,17 @@ public class AASRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public Page<Reference> getReference(PagingInfo pagingInfo, AASSearchCriteria aasSearchCriteria)
-            throws StatusCodeException, ConnectivityException {
-        return getPage(basePath(), Content.REFERENCE, QueryModifier.DEFAULT, pagingInfo, aasSearchCriteria, Reference.class);
+    public Page<Reference> getReference(PagingInfo pagingInfo, AASSearchCriteria aasSearchCriteria) throws StatusCodeException, ConnectivityException {
+        return getPage(null, Content.REFERENCE, QueryModifier.DEFAULT, pagingInfo, aasSearchCriteria, Reference.class);
     }
 
 
     /**
      * Deletes an Asset Administration Shell.
      *
-     * @param aasIdentifier The unique identifier of the Asset Administration Shell to be deleted.
+     * @param aasIdentifier The unique identifier of the Asset Administration Shell to be deleted
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -297,7 +288,7 @@ public class AASRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     @Override
     public void delete(String aasIdentifier) throws StatusCodeException, ConnectivityException {
@@ -306,12 +297,12 @@ public class AASRepositoryInterface extends BaseInterface {
 
 
     /**
-     * Returns an AAS Interface for accessing the data of AAS elements.
+     * Returns an AAS Interface for accessing the data of AAS elements
      *
-     * @param aasIdentifier The Asset Administration Shell’s unique id.
-     * @return Requested Asset Administration Shell Interface.
+     * @param aasIdentifier The Asset Administration Shell’s unique id
+     * @return Requested Asset Administration Shell Interface
      */
     public AASInterface getAASInterface(String aasIdentifier) {
-        return new AASInterface(URI.create(idPath(aasIdentifier)), httpClient());
+        return new AASInterface(resolve(idPath(aasIdentifier)), httpClient);
     }
 }

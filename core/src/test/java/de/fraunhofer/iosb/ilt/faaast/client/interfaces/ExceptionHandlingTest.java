@@ -67,7 +67,6 @@ public class ExceptionHandlingTest {
         assertThrows(ConflictException.class, () -> {
             submodelRepositoryInterface.post(new DefaultSubmodel.Builder().id("id").build());
         });
-        // Nullpointer Exception if id is not set
     }
 
 

@@ -37,45 +37,45 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
  */
 public class SubmodelRepositoryInterface extends BaseInterface {
 
-    private static final String API_PATH = "/submodels/";
+    private static final String API_PATH = "/submodels";
 
     /**
      * Creates a new Submodel Repository Interface.
      *
-     * @param serviceUri Uri used to communicate with the FA³ST service.
+     * @param endpoint Uri used to communicate with the FA³ST service
      */
-    public SubmodelRepositoryInterface(URI serviceUri) {
-        super(serviceUri, API_PATH);
+    public SubmodelRepositoryInterface(URI endpoint) {
+        super(resolve(endpoint, API_PATH));
     }
 
 
     /**
      * Creates a new Submodel Repository Interface with basic authentication.
      *
-     * @param user String for basic authentication.
-     * @param password String for basic authentication.
-     * @param serviceUri uri used to communicate with the FA³ST service
+     * @param endpoint uri used to communicate with the FA³ST service
+     * @param user String for basic authentication
+     * @param password String for basic authentication
      */
-    public SubmodelRepositoryInterface(URI serviceUri, String user, String password) {
-        super(serviceUri, API_PATH, user, password);
+    public SubmodelRepositoryInterface(URI endpoint, String user, String password) {
+        super(resolve(endpoint, API_PATH), user, password);
     }
 
 
     /**
      * Creates a new Submodel Repository API.
      *
-     * @param httpClient Allows user to specify custom http-client.
-     * @param serviceUri uri used to communicate with the FA³ST service
+     * @param endpoint uri used to communicate with the FA³ST service
+     * @param httpClient Allows user to specify custom http-client
      */
-    public SubmodelRepositoryInterface(URI serviceUri, HttpClient httpClient) {
-        super(serviceUri, API_PATH, httpClient);
+    public SubmodelRepositoryInterface(URI endpoint, HttpClient httpClient) {
+        super(resolve(endpoint, API_PATH), httpClient);
     }
 
 
     /**
      * Retrieves all Submodels
      *
-     * @return A List of all Submodels.
+     * @return A List of all Submodels
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -86,7 +86,7 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<Submodel> getAll() throws StatusCodeException, ConnectivityException {
         return getAll(QueryModifier.DEFAULT, SubmodelSearchCriteria.DEFAULT);
@@ -96,8 +96,8 @@ public class SubmodelRepositoryInterface extends BaseInterface {
     /**
      * Retrieves all Submodels according to output modifier.
      *
-     * @param modifier The query modifier specifies the structural depth and resource serialization of the submodel.
-     * @return List of all Submodels.
+     * @param modifier The query modifier specifies the structural depth and resource serialization of the submodel
+     * @return List of all Submodels
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -108,7 +108,7 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<Submodel> getAll(QueryModifier modifier) throws StatusCodeException, ConnectivityException {
         return getAll(modifier, SubmodelSearchCriteria.DEFAULT);
@@ -118,8 +118,8 @@ public class SubmodelRepositoryInterface extends BaseInterface {
     /**
      * Retrieves all Submodels that match specific search criteria.
      *
-     * @param submodelSearchCriteria Search criteria to filter Submodels based on IdShort and semanticId.
-     * @return List of all submodels matching the search criteria.
+     * @param submodelSearchCriteria Search criteria to filter Submodels based on IdShort and semanticId
+     * @return List of all submodels matching the search criteria
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -130,7 +130,7 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<Submodel> getAll(SubmodelSearchCriteria submodelSearchCriteria) throws StatusCodeException, ConnectivityException {
         return getAll(QueryModifier.DEFAULT, submodelSearchCriteria);
@@ -140,8 +140,8 @@ public class SubmodelRepositoryInterface extends BaseInterface {
     /**
      * Retrieves all Submodels that match specific search criteria according to query modifiers.
      *
-     * @param modifier The query modifier specifies the structural depth and resource serialization of the submodel.
-     * @param submodelSearchCriteria Search criteria to filter Submodels based on IdShort and semanticId.
+     * @param modifier The query modifier specifies the structural depth and resource serialization of the submodel
+     * @param submodelSearchCriteria Search criteria to filter Submodels based on IdShort and semanticId
      * @return List of Submodels
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
@@ -153,18 +153,18 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<Submodel> getAll(QueryModifier modifier, SubmodelSearchCriteria submodelSearchCriteria) throws StatusCodeException, ConnectivityException {
-        return getList(basePath(), submodelSearchCriteria, Content.DEFAULT, modifier, Submodel.class);
+        return getList(submodelSearchCriteria, Content.DEFAULT, modifier, Submodel.class);
     }
 
 
     /**
      * Retrieves a page of Submodels.
      *
-     * @param pagingInfo Metadata for controlling the pagination of results.
-     * @return A page of submodels.
+     * @param pagingInfo Metadata for controlling the pagination of results
+     * @return A page of submodels
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -175,7 +175,7 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public Page<Submodel> get(PagingInfo pagingInfo) throws StatusCodeException, ConnectivityException {
         return get(pagingInfo, QueryModifier.DEFAULT, SubmodelSearchCriteria.DEFAULT);
@@ -185,9 +185,9 @@ public class SubmodelRepositoryInterface extends BaseInterface {
     /**
      * Retrieves a page of Submodels that match specific search criteria.
      *
-     * @param pagingInfo Metadata for controlling the pagination of results.
-     * @param submodelSearchCriteria Search criteria to filter Submodels based on IdShort and semanticId.
-     * @return A page of Submodels.
+     * @param pagingInfo Metadata for controlling the pagination of results
+     * @param submodelSearchCriteria Search criteria to filter Submodels based on IdShort and semanticId
+     * @return A page of Submodels
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -198,10 +198,9 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public Page<Submodel> get(PagingInfo pagingInfo, SubmodelSearchCriteria submodelSearchCriteria)
-            throws StatusCodeException, ConnectivityException {
+    public Page<Submodel> get(PagingInfo pagingInfo, SubmodelSearchCriteria submodelSearchCriteria) throws StatusCodeException, ConnectivityException {
         return get(pagingInfo, QueryModifier.DEFAULT, submodelSearchCriteria);
     }
 
@@ -209,9 +208,9 @@ public class SubmodelRepositoryInterface extends BaseInterface {
     /**
      * Retrieves a page of Submodels according to query modifier.
      *
-     * @param pagingInfo Metadata for controlling the pagination of results.
-     * @param modifier The query modifier specifies the structural depth and resource serialization of the submodel.
-     * @return A page of Submodels.
+     * @param pagingInfo Metadata for controlling the pagination of results
+     * @param modifier The query modifier specifies the structural depth and resource serialization of the submodel
+     * @return A page of Submodels
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -222,10 +221,9 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public Page<Submodel> get(PagingInfo pagingInfo, QueryModifier modifier)
-            throws StatusCodeException, ConnectivityException {
+    public Page<Submodel> get(PagingInfo pagingInfo, QueryModifier modifier) throws StatusCodeException, ConnectivityException {
         return get(pagingInfo, modifier, SubmodelSearchCriteria.DEFAULT);
     }
 
@@ -233,10 +231,10 @@ public class SubmodelRepositoryInterface extends BaseInterface {
     /**
      * Retrieves a page of Submodels matching specific search criteria according to query modifier.
      *
-     * @param pagingInfo Metadata for controlling the pagination of results.
-     * @param modifier The query modifier specifies the structural depth and resource serialization of the submodel.
-     * @param submodelSearchCriteria Search criteria to filter Submodels based on IdShort and semanticId.
-     * @return A page of Submodels.
+     * @param pagingInfo Metadata for controlling the pagination of results
+     * @param modifier The query modifier specifies the structural depth and resource serialization of the submodel
+     * @param submodelSearchCriteria Search criteria to filter Submodels based on IdShort and semanticId
+     * @return A page of Submodels
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -247,20 +245,19 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public Page<Submodel> get(PagingInfo pagingInfo, QueryModifier modifier, SubmodelSearchCriteria submodelSearchCriteria)
-            throws StatusCodeException, ConnectivityException {
-        return getPage(basePath(), Content.DEFAULT, modifier, pagingInfo, submodelSearchCriteria, Submodel.class);
+    public Page<Submodel> get(PagingInfo pagingInfo, QueryModifier modifier, SubmodelSearchCriteria submodelSearchCriteria) throws StatusCodeException, ConnectivityException {
+        return getPage(Content.DEFAULT, modifier, pagingInfo, submodelSearchCriteria, Submodel.class);
     }
 
 
     /**
      * Retrieves all Submodel metadata matching specific search criteria.
      *
-     * @param modifier The query modifier specifies the structural depth and resource serialization of the submodel.
-     * @param submodelSearchCriteria Search criteria to filter Submodels based on IdShort and semanticId.
-     * @return A List containing all submodels serialised as metadata.
+     * @param modifier The query modifier specifies the structural depth and resource serialization of the submodel
+     * @param submodelSearchCriteria Search criteria to filter Submodels based on IdShort and semanticId
+     * @return A List containing all submodels serialised as metadata
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -271,20 +268,20 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<Submodel> getAllMetadata(QueryModifier modifier, SubmodelSearchCriteria submodelSearchCriteria) throws StatusCodeException, ConnectivityException {
-        return getList(basePath(), submodelSearchCriteria, Content.METADATA, modifier, Submodel.class);
+        return getList(submodelSearchCriteria, Content.METADATA, modifier, Submodel.class);
     }
 
 
     /**
      * Retrieves a page of Submodel metadata matching specific search criteria.
      *
-     * @param pagingInfo Metadata for controlling the pagination of results.
-     * @param modifier The query modifier specifies the structural depth and resource serialization of the submodel.
-     * @param submodelSearchCriteria Search criteria to filter Submodels based on IdShort and semanticId.
-     * @return A page of Submodel metadata.
+     * @param pagingInfo Metadata for controlling the pagination of results
+     * @param modifier The query modifier specifies the structural depth and resource serialization of the submodel
+     * @param submodelSearchCriteria Search criteria to filter Submodels based on IdShort and semanticId
+     * @return A page of Submodel metadata
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -295,20 +292,20 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public Page<Submodel> getMetadata(PagingInfo pagingInfo, QueryModifier modifier, SubmodelSearchCriteria submodelSearchCriteria)
             throws StatusCodeException, ConnectivityException {
-        return getPage(basePath(), Content.METADATA, modifier, pagingInfo, submodelSearchCriteria, Submodel.class);
+        return getPage(Content.METADATA, modifier, pagingInfo, submodelSearchCriteria, Submodel.class);
     }
 
 
     /**
      * Retrieves a List containing all Submodels matching specific search criteria in value only serialisation.
      *
-     * @param modifier The query modifier specifies the structural depth and resource serialization of the submodel.
-     * @param submodelSearchCriteria Search criteria to filter Submodels based on IdShort and semanticId.
-     * @return A list of Submodels.
+     * @param modifier The query modifier specifies the structural depth and resource serialization of the submodel
+     * @param submodelSearchCriteria Search criteria to filter Submodels based on IdShort and semanticId
+     * @return A list of Submodels
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -319,20 +316,20 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<Submodel> getAllValues(QueryModifier modifier, SubmodelSearchCriteria submodelSearchCriteria) throws StatusCodeException, ConnectivityException {
-        return getList(basePath(), submodelSearchCriteria, Content.VALUE, modifier, Submodel.class);
+        return getList(submodelSearchCriteria, Content.VALUE, modifier, Submodel.class);
     }
 
 
     /**
      * Retrieves a page containing Submodels matching specific search criteria in value only serialisation.
      *
-     * @param pagingInfo Metadata for controlling the pagination of results.
-     * @param modifier The query modifier specifies the structural depth and resource serialization of the submodel.
-     * @param submodelSearchCriteria Search criteria to filter Submodels based on IdShort and semanticId.
-     * @return A page of Submodels in value only serialisation.
+     * @param pagingInfo Metadata for controlling the pagination of results
+     * @param modifier The query modifier specifies the structural depth and resource serialization of the submodel
+     * @param submodelSearchCriteria Search criteria to filter Submodels based on IdShort and semanticId
+     * @return A page of Submodels in value only serialisation
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -343,19 +340,18 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public Page<Submodel> getValue(PagingInfo pagingInfo, QueryModifier modifier, SubmodelSearchCriteria submodelSearchCriteria)
-            throws StatusCodeException, ConnectivityException {
-        return getPage(basePath(), Content.VALUE, modifier, pagingInfo, submodelSearchCriteria, Submodel.class);
+    public Page<Submodel> getValue(PagingInfo pagingInfo, QueryModifier modifier, SubmodelSearchCriteria submodelSearchCriteria) throws StatusCodeException, ConnectivityException {
+        return getPage(Content.VALUE, modifier, pagingInfo, submodelSearchCriteria, Submodel.class);
     }
 
 
     /**
      * Retrieves a list of references to Submodels matching specific search criteria.
      *
-     * @param submodelSearchCriteria Search criteria to filter Submodels based on IdShort and semanticId.
-     * @return A List of References.
+     * @param submodelSearchCriteria Search criteria to filter Submodels based on IdShort and semanticId
+     * @return A List of References
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -366,19 +362,19 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<Reference> getAllReferences(SubmodelSearchCriteria submodelSearchCriteria) throws StatusCodeException, ConnectivityException {
-        return getList(basePath(), submodelSearchCriteria, Content.REFERENCE, QueryModifier.MINIMAL, Reference.class);
+        return getList(submodelSearchCriteria, Content.REFERENCE, QueryModifier.MINIMAL, Reference.class);
     }
 
 
     /**
      * Retrieves a page of references to Submodels matching specific search criteria.
      *
-     * @param pagingInfo Metadata for controlling the pagination of results.
-     * @param submodelSearchCriteria Search criteria to filter Submodels based on IdShort and semanticId.
-     * @return A page of References.
+     * @param pagingInfo Metadata for controlling the pagination of results
+     * @param submodelSearchCriteria Search criteria to filter Submodels based on IdShort and semanticId
+     * @return A page of References
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -389,20 +385,19 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public Page<Reference> getReference(PagingInfo pagingInfo, SubmodelSearchCriteria submodelSearchCriteria)
-            throws StatusCodeException, ConnectivityException {
-        return getPage(basePath(), Content.REFERENCE, QueryModifier.MINIMAL, pagingInfo, submodelSearchCriteria, Reference.class);
+    public Page<Reference> getReference(PagingInfo pagingInfo, SubmodelSearchCriteria submodelSearchCriteria) throws StatusCodeException, ConnectivityException {
+        return getPage(Content.REFERENCE, QueryModifier.MINIMAL, pagingInfo, submodelSearchCriteria, Reference.class);
     }
 
 
     /**
      * Retrieves a list of paths to Submodels matching specific search criteria.
      *
-     * @param modifier The query modifier specifies the structural depth and resource serialization of the submodel.
-     * @param submodelSearchCriteria Search criteria to filter Submodels based on IdShort and semanticId.
-     * @return A list of paths.
+     * @param modifier The query modifier specifies the structural depth and resource serialization of the submodel
+     * @param submodelSearchCriteria Search criteria to filter Submodels based on IdShort and semanticId
+     * @return A list of paths
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -413,20 +408,20 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<Reference> getAllPaths(QueryModifier modifier, SubmodelSearchCriteria submodelSearchCriteria) throws StatusCodeException, ConnectivityException {
-        return getList(basePath(), submodelSearchCriteria, Content.PATH, modifier, Reference.class);
+        return getList(submodelSearchCriteria, Content.PATH, modifier, Reference.class);
     }
 
 
     /**
      * Retrieves a page of paths to Submodels matching specific search criteria.
      *
-     * @param pagingInfo Metadata for controlling the pagination of results.
-     * @param modifier The query modifier specifies the structural depth and resource serialization of the submodel.
-     * @param submodelSearchCriteria Search criteria to filter Submodels based on IdShort and semanticId.
-     * @return A page of paths.
+     * @param pagingInfo Metadata for controlling the pagination of results
+     * @param modifier The query modifier specifies the structural depth and resource serialization of the submodel
+     * @param submodelSearchCriteria Search criteria to filter Submodels based on IdShort and semanticId
+     * @return A page of paths
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -437,11 +432,11 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public Page<Reference> getSubmodelsPath(PagingInfo pagingInfo, QueryModifier modifier, SubmodelSearchCriteria submodelSearchCriteria)
             throws StatusCodeException, ConnectivityException {
-        return getPage(basePath(), Content.PATH, modifier, pagingInfo, submodelSearchCriteria, Reference.class);
+        return getPage(Content.PATH, modifier, pagingInfo, submodelSearchCriteria, Reference.class);
     }
 
 
@@ -449,7 +444,7 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      * Creates a new Submodel. The unique if of the new submodel must be set in the payload.
      *
      * @param submodel Submodel object
-     * @return The created Submodel.
+     * @return The created Submodel
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -460,17 +455,17 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     public Submodel post(Submodel submodel) throws StatusCodeException, ConnectivityException {
-        return post(basePath(), submodel, Submodel.class);
+        return post(submodel, Submodel.class);
     }
 
 
     /**
      * Deletes a Submodel.
      *
-     * @param submodelIdentifier The unique identifier of the Submodel to be deleted.
+     * @param submodelIdentifier The unique identifier of the Submodel to be deleted
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -481,7 +476,7 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
-     * @throws ConnectivityException if the connection to the server cannot be established.
+     * @throws ConnectivityException if the connection to the server cannot be established
      */
     @Override
     public void delete(String submodelIdentifier) throws StatusCodeException, ConnectivityException {
@@ -492,10 +487,10 @@ public class SubmodelRepositoryInterface extends BaseInterface {
     /**
      * Returns a Submodel Interface for use of Interface Methods.
      *
-     * @param submodelId The Submodels’ unique id.
-     * @return The requested Submodel Interface.
+     * @param submodelId The Submodels’ unique id
+     * @return The requested Submodel Interface
      */
     public SubmodelInterface getSubmodelInterface(String submodelId) {
-        return new SubmodelInterface(URI.create(idPath(submodelId)), httpClient());
+        return new SubmodelInterface(resolve(idPath(submodelId)), httpClient);
     }
 }

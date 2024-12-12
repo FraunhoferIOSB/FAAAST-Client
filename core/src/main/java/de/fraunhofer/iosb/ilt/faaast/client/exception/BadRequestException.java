@@ -23,6 +23,13 @@ import java.net.http.HttpResponse;
  * (e.g., malformed request syntax, size too large, invalid request message framing, or deceptive request routing).
  */
 public class BadRequestException extends StatusCodeException {
+
+    /**
+     * Constructs a new exception.
+     *
+     * @param request the request causing the exception
+     * @param response the response representing the exception
+     */
     public BadRequestException(HttpRequest request, HttpResponse<String> response) {
         super(request, response);
     }
