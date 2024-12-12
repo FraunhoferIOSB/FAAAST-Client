@@ -137,7 +137,7 @@ public class SubmodelRepositoryInterfaceTest {
 
 
     @Test
-    public void post() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
+    public void testPost() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         Submodel requestSubmodel = requestSubmodelList.get(0);
         String serializedSubmodel = serializer.write(requestSubmodel);
         server.enqueue(new MockResponse()
@@ -154,7 +154,7 @@ public class SubmodelRepositoryInterfaceTest {
 
 
     @Test
-    public void delete() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
+    public void testDelete() throws InterruptedException, ClientException {
         Submodel requestSubmodel = requestSubmodelList.get(0);
         String requestSubmodelIdentifier = requestSubmodel.getId();
         server.enqueue(new MockResponse().setResponseCode(204));

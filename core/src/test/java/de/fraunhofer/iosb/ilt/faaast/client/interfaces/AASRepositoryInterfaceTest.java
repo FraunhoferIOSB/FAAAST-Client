@@ -228,7 +228,7 @@ public class AASRepositoryInterfaceTest {
 
 
     @Test
-    public void delete() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
+    public void delete() throws InterruptedException, ClientException {
         AssetAdministrationShell requestAssetAdministrationShell = requestAssetAdministrationShellList.get(0);
         String requestAasIdentifier = requestAssetAdministrationShell.getId();
         server.enqueue(new MockResponse().setResponseCode(204));

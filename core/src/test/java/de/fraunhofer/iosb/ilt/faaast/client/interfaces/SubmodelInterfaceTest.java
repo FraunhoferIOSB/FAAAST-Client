@@ -268,7 +268,7 @@ public class SubmodelInterfaceTest {
 
 
     @Test
-    public void testDeleteElement() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
+    public void testDeleteElement() throws InterruptedException, ClientException {
         SubmodelElement requestSubmodelElement = requestSubmodel.getSubmodelElements().get(0);
         server.enqueue(new MockResponse().setResponseCode(204));
         IdShortPath idShort = new IdShortPath.Builder().idShort(

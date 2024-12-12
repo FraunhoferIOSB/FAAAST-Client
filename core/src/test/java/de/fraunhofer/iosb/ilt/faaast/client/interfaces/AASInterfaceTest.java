@@ -180,7 +180,7 @@ public class AASInterfaceTest {
 
 
     @Test
-    public void testDeleteThumbnail() throws InterruptedException, SerializationException, ClientException, UnsupportedModifierException {
+    public void testDeleteThumbnail() throws InterruptedException, ClientException {
         AssetAdministrationShell requestAas = new DefaultAssetAdministrationShell();
         Resource requestThumbnail = new DefaultResource();
         AssetInformation assetInformation = new DefaultAssetInformation();
@@ -233,7 +233,7 @@ public class AASInterfaceTest {
 
 
     @Test
-    public void testDeleteSubmodelReference() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
+    public void testDeleteSubmodelReference() throws InterruptedException, ClientException {
         server.enqueue(new MockResponse().setResponseCode(204));
         String requestSubmodelId = Base64.getUrlEncoder().encodeToString("submodelId".getBytes());
 

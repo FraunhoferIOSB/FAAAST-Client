@@ -125,7 +125,7 @@ public class ConceptDescriptionRepositoryInterfaceTest {
 
 
     @Test
-    public void testDelete() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
+    public void testDelete() throws InterruptedException, ClientException {
         ConceptDescription requestConceptDescription = new DefaultConceptDescription();
         String cdIdentifier = "cdIdentifier";
         requestConceptDescription.setId(cdIdentifier);

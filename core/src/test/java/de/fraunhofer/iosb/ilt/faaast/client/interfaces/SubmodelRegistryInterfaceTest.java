@@ -137,7 +137,7 @@ public class SubmodelRegistryInterfaceTest {
 
 
     @Test
-    public void testDeleteById() throws SerializationException, ClientException, InterruptedException, UnsupportedModifierException {
+    public void testDeleteById() throws ClientException, InterruptedException {
         SubmodelDescriptor requestSubmodelDescriptor = requestSubmodelDescriptors.get(0);
         String requestSubmodelIdentifier = requestSubmodelDescriptor.getId();
         server.enqueue(new MockResponse().setResponseCode(204));

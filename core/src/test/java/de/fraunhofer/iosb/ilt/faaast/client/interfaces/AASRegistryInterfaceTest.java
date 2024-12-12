@@ -144,7 +144,7 @@ public class AASRegistryInterfaceTest {
 
 
     @Test
-    public void testDelete() throws SerializationException, ClientException, InterruptedException, UnsupportedModifierException {
+    public void testDelete() throws ClientException, InterruptedException {
         AssetAdministrationShellDescriptor requestShellDescriptor = new DefaultAssetAdministrationShellDescriptor();
         String requestAasIdentifier = "DefaultId";
         requestShellDescriptor.setId(requestAasIdentifier);
