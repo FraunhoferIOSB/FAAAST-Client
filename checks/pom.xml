@@ -7,6 +7,7 @@
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
+    <groupId>de.fraunhofer.iosb.ilt.faaast.client</groupId>
     <artifactId>checks</artifactId>
     <name>checks</name>
     <description>Checkstyle Checks for the FA³ST Client.</description>
