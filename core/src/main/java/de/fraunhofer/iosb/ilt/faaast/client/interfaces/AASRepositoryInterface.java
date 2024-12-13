@@ -31,6 +31,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 /**
  * Interface for managing Asset Administration Shells. It further provides access to the data of these elements through
  * the AAS Interface. A repository can host multiple entities.
+ *
  * <p>
  * Communication is handled via HTTP requests to a specified service URI.
  * </p>
@@ -297,7 +298,7 @@ public class AASRepositoryInterface extends BaseInterface {
 
 
     /**
-     * Returns an AAS Interface for accessing the data of AAS elements
+     * Returns an AAS Interface for accessing the data of AAS elements.
      *
      * @param aasIdentifier The Asset Administration Shell’s unique id
      * @return Requested Asset Administration Shell Interface

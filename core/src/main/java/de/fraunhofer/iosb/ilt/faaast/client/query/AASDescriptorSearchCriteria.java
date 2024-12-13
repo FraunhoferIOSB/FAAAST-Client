@@ -57,11 +57,6 @@ public class AASDescriptorSearchCriteria implements SearchCriteria {
     }
 
 
-    /**
-     * Serializes the asset kind and asset type as filters in a query string for the use in a http request.
-     *
-     * @return The query string
-     */
     @Override
     public String toQueryString() {
         String assetKindString = assetKind == null ? ""

@@ -15,7 +15,7 @@
 package de.fraunhofer.iosb.ilt.faaast.client.exception;
 
 /**
- * Exception is thrown if sending the http request fails
+ * Exception is thrown if sending the http request fails.
  */
 public class ConnectivityException extends ClientException {
 

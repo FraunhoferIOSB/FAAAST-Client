@@ -26,6 +26,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
+/**
+ * Helper class for serializing content modifiers and query parameters to URL.
+ */
 public class QueryHelper {
     private QueryHelper() {
 
@@ -34,7 +37,7 @@ public class QueryHelper {
 
     /**
      * Creates a uri using the query various query modifiers.
-     * 
+     *
      * @param path the base path
      * @param content the content modifier specifies the server responds: normal, metadata, path, reference or value only
      * @param modifier The query modifier specifies the structural depth and resource serialization of the submodel
@@ -47,7 +50,7 @@ public class QueryHelper {
 
     /**
      * Creates a uri using various query modifiers, paging and search criteria.
-     * 
+     *
      * @param path The base path
      * @param content The content modifier specifies the server responds: normal, metadata, path, reference or value only
      * @param modifier The query modifier specifies the structural depth and resource serialization of the submodel

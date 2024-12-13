@@ -25,11 +25,6 @@ import java.util.stream.Stream;
 public class SubmodelSearchCriteria extends de.fraunhofer.iosb.ilt.faaast.service.persistence.SubmodelSearchCriteria implements SearchCriteria {
     public static SubmodelSearchCriteria DEFAULT = new SubmodelSearchCriteria();
 
-    /**
-     * Serializes the semanticId and idShort as filters in a query string for the use in a http request.
-     * 
-     * @return The query string
-     */
     @Override
     public String toQueryString() {
         String semanticIdString = getSemanticId() == null ? ""

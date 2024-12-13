@@ -33,6 +33,7 @@ import java.util.List;
  * This interface allows to register and unregister descriptors of administration shells.
  * The descriptors contain the information needed to access the AAS interface.
  * This required information includes the endpoint in the dedicated environment.
+ *
  * <p>
  * Communication is handled via HTTP requests to a specified service URI.
  * </p>

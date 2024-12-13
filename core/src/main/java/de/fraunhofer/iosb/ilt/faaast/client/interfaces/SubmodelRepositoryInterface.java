@@ -31,6 +31,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 /**
  * Interface for managing Submodels. It further provides access to the data of these elements through
  * the Submodel Interface. A repository can host multiple entities.
+ *
  * <p>
  * Communication is handled via HTTP requests to a specified service URI.
  * </p>
@@ -73,7 +74,7 @@ public class SubmodelRepositoryInterface extends BaseInterface {
 
 
     /**
-     * Retrieves all Submodels
+     * Retrieves all Submodels.
      *
      * @return A List of all Submodels
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:

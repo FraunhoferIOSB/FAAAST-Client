@@ -51,7 +51,7 @@ public enum HttpStatus {
 
     /**
      * Gets the HTTP status code.
-     * 
+     *
      * @return the HTTP status code
      */
     public int getCode() {

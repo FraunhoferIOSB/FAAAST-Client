@@ -30,6 +30,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 /**
  * Interface for managing Concept Descriptions. It further provides access to the data of these elements through
  * the AAS Interface. A repository can host multiple entities.
+ *
  * <p>
  * Communication is handled via HTTP requests to a specified service URI.
  * </p>
@@ -49,7 +50,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
 
 
     /**
-     * Creates a new Concept Description Interface
+     * Creates a new Concept Description Interface.
      *
      * @param endpoint Uri used to communicate with the FA³ST service
      * @param user String to enable basic authentication
@@ -137,7 +138,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
 
 
     /**
-     * Returns page of Concept Descriptions according to specific search criteria
+     * Returns page of Concept Descriptions according to specific search criteria.
      *
      * @param pagingInfo paging meta information
      * @param conceptDescriptionSearchCriteria specific search criteria
@@ -184,7 +185,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
 
 
     /**
-     * Returns a specific Concept Description
+     * Returns a specific Concept Description.
      *
      * @param cdIdentifier The Concept Description’s unique id
      * @return Requested Concept Description
@@ -206,7 +207,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
 
 
     /**
-     * Replaces an existing Concept Description
+     * Replaces an existing Concept Description.
      *
      * @param conceptDescription Concept Description object
      * @param cdIdentifier The Concept Description’s unique id
@@ -228,7 +229,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
 
 
     /**
-     * Deletes a Concept Description
+     * Deletes a Concept Description.
      *
      * @param cdIdentifier The Concept Description’s unique id
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:

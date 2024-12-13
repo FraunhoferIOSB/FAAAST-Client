@@ -28,11 +28,6 @@ public class ConceptDescriptionSearchCriteria extends de.fraunhofer.iosb.ilt.faa
 
     public static final ConceptDescriptionSearchCriteria DEFAULT = new ConceptDescriptionSearchCriteria();
 
-    /**
-     * Serializes isCaseOf, idShort and dataSpecification as filters in a query string for the use in a http request.
-     * 
-     * @return The query string
-     */
     @Override
     public String toQueryString() {
         String isCaseOfString = getIsCaseOf() == null ? ""
