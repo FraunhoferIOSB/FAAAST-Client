@@ -30,6 +30,7 @@ import java.util.List;
  * This interface allows to register and unregister descriptors of Submodels.
  * The descriptors contain the information needed to access the Submodel interface.
  * This required information includes the endpoint in the dedicated environment.
+ *
  * <p>
  * Communication is handled via HTTP requests to a specified service URI.
  * </p>

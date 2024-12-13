@@ -21,5 +21,10 @@ package de.fraunhofer.iosb.ilt.faaast.client.query;
 public interface SearchCriteria {
     public static final SearchCriteria DEFAULT = () -> "";
 
-    String toQueryString();
+    /**
+     * Serializes the search criteria to query string.
+     *
+     * @return the query string
+     */
+    public String toQueryString();
 }

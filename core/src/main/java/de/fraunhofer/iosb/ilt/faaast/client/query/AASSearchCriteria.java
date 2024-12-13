@@ -35,11 +35,6 @@ public class AASSearchCriteria extends AssetAdministrationShellSearchCriteria im
 
     public static final AASSearchCriteria DEFAULT = new AASSearchCriteria();
 
-    /**
-     * Serializes the asset kind and asset type as filters in a query string for the use in a http request.
-     * 
-     * @return The query string
-     */
     @Override
     public String toQueryString() {
         String assetIdsString;

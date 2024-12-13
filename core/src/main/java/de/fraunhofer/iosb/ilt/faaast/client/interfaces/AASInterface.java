@@ -33,6 +33,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
  * Interface for accessing the elements of an Asset Administration Shell (AAS) via a standardized API.
  * This interface allows operations such as retrieving, updating, and deleting various aspects of the AAS,
  * including its submodels, asset information, and thumbnails.
+ *
  * <p>
  * Communication is handled via HTTP requests to a specified service URI.
  * </p>

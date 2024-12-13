@@ -40,6 +40,7 @@ import javax.xml.datatype.Duration;
  * This interface allows operations such as retrieving, updating, and deleting various aspects of the Submodel,
  * including its Submodel Elements. Submodels and Submodel Elements can be deserialized in different ways:
  * as metadata, value, reference or path.
+ *
  * <p>
  * Communication is handled via HTTP requests to a specified service URI.
  * </p>
@@ -820,7 +821,7 @@ public class SubmodelInterface extends BaseInterface {
 
 
     /**
-     * Deletes the file of an existing submodel element at a specified path within the submodel element hierarchy
+     * Deletes the file of an existing submodel element at a specified path within the submodel element hierarchy.
      *
      * @param idShortPath The path to the Submodel Element
      * @throws StatusCodeException if the request fails

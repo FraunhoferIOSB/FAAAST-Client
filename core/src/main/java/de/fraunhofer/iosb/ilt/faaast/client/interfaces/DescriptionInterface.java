@@ -25,6 +25,7 @@ import java.util.List;
 /**
  * Interface for communicating the description of a server.
  * This includes the capabilities and supported features of the server.
+ *
  * <p>
  * Communication is handled via HTTP requests to a specified service URI.
  * </p>

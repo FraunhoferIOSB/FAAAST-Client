@@ -590,7 +590,7 @@ public abstract class BaseInterface {
 
     /**
      * Executes a HTTP PUT.
-     * 
+     *
      * @param entity the payload to send in the body
      * @throws ConnectivityException if connection to the server fails
      * @throws StatusCodeException if HTTP request returns invalid statsu code
@@ -750,6 +750,13 @@ public abstract class BaseInterface {
     }
 
 
+    /**
+     * Executes a HTTP DELETE.
+     *
+     * @param path the URL path relative to the current endpoint
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     */
     protected void delete(String path) throws ConnectivityException, StatusCodeException {
         delete(path, HttpStatus.NO_CONTENT);
     }
@@ -772,7 +779,7 @@ public abstract class BaseInterface {
 
     /**
      * Creates a URL path for an id in the form of "/{base64URL-encoded id}".
-     * 
+     *
      * @param id the id
      * @return the URL path with the encoded id
      */
@@ -783,7 +790,7 @@ public abstract class BaseInterface {
 
     /**
      * Resolves a path to the current {@code endpoint}.
-     * 
+     *
      * @param path the path to resolve
      * @return the resolved path relative to the current {@code endpoint}
      */
@@ -794,7 +801,7 @@ public abstract class BaseInterface {
 
     /**
      * Resolves a path to a given {@code baseUri}.
-     * 
+     *
      * @param baseUri the URI to resolve the path to
      * @param path the path to resolve
      * @return the resolved path relative to the current {@code baseUri}
