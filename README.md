@@ -17,17 +17,10 @@ Add the dependency:
 ```xml
 <dependency>
 	<groupId>de.fraunhofer.iosb.ilt.faaast.client</groupId>
-	<artifactId>faaast-client</artifactId>
+	<artifactId>core</artifactId>
 	<version>1.0.0</version>
 </dependency>
 
-```
-
-### with gradle
-
-Add the dependency:
-```gradle
-compile 'de.fraunhofer.iosb.ilt.faaast.client:faaast-client:1.0.0'
 ```
 
 ### Quick start
