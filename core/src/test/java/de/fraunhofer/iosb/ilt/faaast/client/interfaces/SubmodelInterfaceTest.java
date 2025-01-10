@@ -19,6 +19,8 @@ import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.model.IdShortPath;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.OutputModifier;
+import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
+import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingMetadata;
 import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.Datatype;
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.PropertyValue;
@@ -133,14 +135,17 @@ public class SubmodelInterfaceTest {
 
     @Test
     public void testGetAllElements() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
-        List<SubmodelElement> requestSubmodelElements = requestSubmodel.getSubmodelElements();
-        String serializedSubmodelElements = serializer.write(requestSubmodelElements);
+        Page<SubmodelElement> requestSubmodelElementPage = Page.<SubmodelElement> builder()
+                .result(new DefaultProperty())
+                .metadata(new PagingMetadata.Builder().build())
+                .build();
+        String serializedSubmodelElements = serializer.write(requestSubmodelElementPage);
         server.enqueue(new MockResponse().setBody(serializedSubmodelElements));
         List<SubmodelElement> responseSubmodelElements = submodelInterface.getAllElements();
         RecordedRequest request = server.takeRequest();
 
         assertEquals("GET", request.getMethod());
-        assertEquals(requestSubmodelElements, responseSubmodelElements);
+        assertEquals(requestSubmodelElementPage.getContent(), responseSubmodelElements);
         assertEquals("/api/v3.0/submodel/submodel-elements", request.getPath());
     }
 

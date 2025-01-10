@@ -18,10 +18,11 @@ import de.fraunhofer.iosb.ilt.faaast.client.exception.ClientException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.ApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
+import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
+import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingMetadata;
 import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import de.fraunhofer.iosb.ilt.faaast.service.util.EncodingHelper;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -52,9 +53,12 @@ public class ConceptDescriptionRepositoryInterfaceTest {
 
     @Test
     public void testGetAll() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
-        List<ConceptDescription> requestConceptDescriptions = new ArrayList<>();
-        requestConceptDescriptions.add(new DefaultConceptDescription());
-        String serializedConceptDescription = serializer.write(requestConceptDescriptions);
+        Page<ConceptDescription> requestConceptDescriptionPage = Page.<ConceptDescription> builder()
+                .result(new DefaultConceptDescription())
+                .metadata(new PagingMetadata.Builder().build())
+                .build();
+
+        String serializedConceptDescription = serializer.write(requestConceptDescriptionPage);
         server.enqueue(new MockResponse().setBody(serializedConceptDescription));
 
         List<ConceptDescription> responseServiceDescription = conceptDescriptionRepositoryInterface.getAll();
@@ -63,7 +67,7 @@ public class ConceptDescriptionRepositoryInterfaceTest {
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
         assertEquals("/api/v3.0/concept-descriptions", request.getPath());
-        assertEquals(requestConceptDescriptions, responseServiceDescription);
+        assertEquals(requestConceptDescriptionPage.getContent(), responseServiceDescription);
     }
 
 

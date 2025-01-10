@@ -19,9 +19,10 @@ import de.fraunhofer.iosb.ilt.faaast.service.dataformat.ApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
+import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
+import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingMetadata;
 import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -51,11 +52,13 @@ public class DescriptionInterfaceTest {
 
     @Test
     public void testGet() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
-        List<String> requestDescription = new ArrayList<>();
-        requestDescription.add("Description1");
-        requestDescription.add("Description2");
-        String serializedConceptDescription = serializer.write(requestDescription);
-        server.enqueue(new MockResponse().setBody(serializedConceptDescription));
+        Page<String> requestDescriptionPage = Page.<String> builder()
+                .result("Description1")
+                .metadata(new PagingMetadata.Builder().build())
+                .build();
+
+        String serializedDescription = serializer.write(requestDescriptionPage);
+        server.enqueue(new MockResponse().setBody(serializedDescription));
 
         List<String> responseDescription = descriptionInterface.get();
         RecordedRequest request = server.takeRequest();
@@ -63,6 +66,6 @@ public class DescriptionInterfaceTest {
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
         assertEquals("/api/v3.0/description", request.getPath());
-        assertEquals(requestDescription, responseDescription);
+        assertEquals(requestDescriptionPage.getContent(), responseDescription);
     }
 }

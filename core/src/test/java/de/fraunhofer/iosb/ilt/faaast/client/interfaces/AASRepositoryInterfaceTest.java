@@ -211,10 +211,12 @@ public class AASRepositoryInterfaceTest {
 
     @Test
     public void testGetAllAssetAdministrationShellsAsReference() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
-        List<Reference> requestAasReferenceList = new ArrayList<>();
-        requestAasReferenceList.add(new DefaultReference());
+        Page<Reference> requestAASReferencePage = Page.<Reference> builder()
+                .result(new DefaultReference())
+                .metadata(new PagingMetadata.Builder().build())
+                .build();
 
-        String serializedAasReferenceList = serializer.write(requestAasReferenceList);
+        String serializedAasReferenceList = serializer.write(requestAASReferencePage);
         server.enqueue(new MockResponse().setBody(serializedAasReferenceList));
 
         List<Reference> responseAasReferenceList = aasRepositoryInterface.getAllAsReference();
@@ -223,7 +225,7 @@ public class AASRepositoryInterfaceTest {
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
         assertEquals("/example/api/v3.0/shells/$reference", request.getPath());
-        assertEquals(responseAasReferenceList, requestAasReferenceList);
+        assertEquals(requestAASReferencePage.getContent(), responseAasReferenceList);
     }
 
 

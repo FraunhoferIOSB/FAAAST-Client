@@ -364,9 +364,9 @@ public abstract class BaseInterface {
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         try {
-            return new JsonApiDeserializer().readList(response.body(), responseType);
+            return deserializePage(response.body(), responseType).getContent();
         }
-        catch (DeserializationException e) {
+        catch (DeserializationException | JSONException e) {
             throw new InvalidPayloadException(e);
         }
     }

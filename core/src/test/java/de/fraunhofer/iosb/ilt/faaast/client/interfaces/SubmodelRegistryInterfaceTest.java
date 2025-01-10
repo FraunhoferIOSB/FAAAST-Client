@@ -18,6 +18,8 @@ import de.fraunhofer.iosb.ilt.faaast.client.exception.ClientException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.ApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
+import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
+import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingMetadata;
 import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import de.fraunhofer.iosb.ilt.faaast.service.util.EncodingHelper;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelDescriptor;
@@ -71,7 +73,11 @@ public class SubmodelRegistryInterfaceTest {
 
     @Test
     public void testGetAll() throws ClientException, SerializationException, InterruptedException, UnsupportedModifierException {
-        String serializedSubmodelDescriptors = serializer.write(requestSubmodelDescriptors);
+        Page<SubmodelDescriptor> requestSubmodelDescriptorPage = Page.<SubmodelDescriptor> builder()
+                .result(new DefaultSubmodelDescriptor())
+                .metadata(new PagingMetadata.Builder().build())
+                .build();
+        String serializedSubmodelDescriptors = serializer.write(requestSubmodelDescriptorPage);
         server.enqueue(new MockResponse().setBody(serializedSubmodelDescriptors));
 
         List<DefaultSubmodelDescriptor> responseSubmodelDescriptors = submodelRegistryInterface.getAll();
@@ -80,7 +86,7 @@ public class SubmodelRegistryInterfaceTest {
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
         assertEquals("/api/v3.0/submodel-descriptors", request.getPath());
-        assertEquals(requestSubmodelDescriptors, responseSubmodelDescriptors);
+        assertEquals(requestSubmodelDescriptorPage.getContent(), responseSubmodelDescriptors);
     }
 
 

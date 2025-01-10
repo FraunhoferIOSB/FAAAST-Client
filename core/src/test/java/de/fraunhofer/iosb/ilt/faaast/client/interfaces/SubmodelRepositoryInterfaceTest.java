@@ -20,6 +20,8 @@ import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.model.IdShortPath;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.OutputModifier;
+import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
+import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingMetadata;
 import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.Datatype;
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.PropertyValue;
@@ -104,7 +106,11 @@ public class SubmodelRepositoryInterfaceTest {
 
     @Test
     public void testGetAll() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
-        String serializedSubmodelList = serializer.write(requestSubmodelList);
+        Page<Submodel> requestSubmodelPage = Page.<Submodel> builder()
+                .result(new DefaultSubmodel())
+                .metadata(new PagingMetadata.Builder().build())
+                .build();
+        String serializedSubmodelList = serializer.write(requestSubmodelPage);
         server.enqueue(new MockResponse().setBody(serializedSubmodelList));
 
         List<Submodel> responseSubmodelList = submodelRepositoryInterface.getAll();
@@ -113,17 +119,18 @@ public class SubmodelRepositoryInterfaceTest {
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
         assertEquals("/api/v3.0/submodels", request.getPath());
-        assertEquals(requestSubmodelList, responseSubmodelList);
+        assertEquals(requestSubmodelPage.getContent(), responseSubmodelList);
     }
 
 
     @Test
     public void testGetAllReference() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
-        List<Reference> requestSubmodelReferences = new ArrayList<>();
-        requestSubmodelReferences.add(new DefaultReference());
-        requestSubmodelReferences.add(new DefaultReference());
+        Page<Reference> requestSubmodelReferencePage = Page.<Reference> builder()
+                .result(new DefaultReference())
+                .metadata(new PagingMetadata.Builder().build())
+                .build();
 
-        String serializedSubmodelReferencesList = serializer.write(requestSubmodelReferences);
+        String serializedSubmodelReferencesList = serializer.write(requestSubmodelReferencePage);
         server.enqueue(new MockResponse().setBody(serializedSubmodelReferencesList));
 
         List<Reference> responseSubmodelReferences = submodelRepositoryInterface.getAllReferences(SubmodelSearchCriteria.DEFAULT);
@@ -132,7 +139,7 @@ public class SubmodelRepositoryInterfaceTest {
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
         assertEquals("/api/v3.0/submodels/$reference?level=core", request.getPath());
-        assertEquals(requestSubmodelReferences, responseSubmodelReferences);
+        assertEquals(requestSubmodelReferencePage.getContent(), responseSubmodelReferences);
     }
 
 

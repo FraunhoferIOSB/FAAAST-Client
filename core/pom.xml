@@ -37,6 +37,11 @@
             <version>${faaast.service.version}</version>
         </dependency>
         <dependency>
+            <groupId>de.fraunhofer.iosb.ilt.faaast.service</groupId>
+            <artifactId>starter</artifactId>
+            <version>${faaast.service.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.digitaltwin.aas4j</groupId>
             <artifactId>aas4j-dataformat-core</artifactId>
             <version>${aas4j.version}</version>
