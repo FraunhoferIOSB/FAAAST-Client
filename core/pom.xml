@@ -7,7 +7,6 @@
         <version>1.1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <groupId>de.fraunhofer.iosb.ilt.faaast.client</groupId>
     <artifactId>core</artifactId>
     <name>core</name>
     <description>Main functionality of the FA³ST Client.</description>
@@ -34,11 +33,6 @@
         <dependency>
             <groupId>de.fraunhofer.iosb.ilt.faaast.service</groupId>
             <artifactId>model</artifactId>
-            <version>${faaast.service.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.fraunhofer.iosb.ilt.faaast.service</groupId>
-            <artifactId>starter</artifactId>
             <version>${faaast.service.version}</version>
         </dependency>
         <dependency>
