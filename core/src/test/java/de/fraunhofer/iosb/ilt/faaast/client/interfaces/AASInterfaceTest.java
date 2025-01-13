@@ -21,10 +21,10 @@ import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
+import de.fraunhofer.iosb.ilt.faaast.service.util.EncodingHelper;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
@@ -235,13 +235,26 @@ public class AASInterfaceTest {
     @Test
     public void testDeleteSubmodelReference() throws InterruptedException, ClientException {
         server.enqueue(new MockResponse().setResponseCode(204));
-        String requestSubmodelId = Base64.getUrlEncoder().encodeToString("submodelId".getBytes());
+        String requestSubmodelId = "submodelId";
 
         aasInterface.deleteSubmodelReference(requestSubmodelId);
         RecordedRequest request = server.takeRequest();
 
         assertEquals("DELETE", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals("/api/v3.0/aas/submodel-refs" + requestSubmodelId, request.getPath());
+        assertEquals("/api/v3.0/aas/submodel-refs/" + EncodingHelper.base64Encode(requestSubmodelId), request.getPath());
+    }
+
+    @Test
+    public void testDeleteSubmodel() throws InterruptedException, ClientException {
+        server.enqueue(new MockResponse().setResponseCode(204));
+        String requestSubmodelId = "submodelId";
+
+        aasInterface.deleteSubmodel(requestSubmodelId);
+        RecordedRequest request = server.takeRequest();
+
+        assertEquals("DELETE", request.getMethod());
+        assertEquals(0, request.getBodySize());
+        assertEquals("/api/v3.0/aas/submodels/" + EncodingHelper.base64Encode(requestSubmodelId), request.getPath());
     }
 }
