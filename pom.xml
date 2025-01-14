@@ -246,6 +246,9 @@
                                     <include>*.md</include>
                                     <include>.gitignore</include>
                                 </includes>
+                                <excludes>
+                                    <exclude>README.md</exclude>
+                                </excludes>
                                 <indent>
                                     <tabs>true</tabs>
                                     <spacesPerTab>4</spacesPerTab>

@@ -236,6 +236,10 @@ to instantiate an interface for connection with that server.
 <!--changelog-anchor-->
 <!--start:changelog-header-->
 ### 1.1.0-SNAPSHOT (current development version)<!--end:changelog-header-->
+
+- Serialization
+  - Fixed serialization of submodel ids in deleteSubmodel and deleteSubmodelReference in AASInterface
+
 ### 1.0.0
 
 First release!

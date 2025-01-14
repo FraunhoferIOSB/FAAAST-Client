@@ -245,6 +245,7 @@ public class AASInterfaceTest {
         assertEquals("/api/v3.0/aas/submodel-refs/" + EncodingHelper.base64Encode(requestSubmodelId), request.getPath());
     }
 
+
     @Test
     public void testDeleteSubmodel() throws InterruptedException, ClientException {
         server.enqueue(new MockResponse().setResponseCode(204));
