@@ -23,6 +23,13 @@ Add the dependency:
 </dependency>
 
 ```
+### with gradle
+
+Add the dependency:
+```gradle
+// https://mvnrepository.com/artifact/de.fraunhofer.iosb.ilt.faaast.client/core
+implementation group: 'de.fraunhofer.iosb.ilt.faaast.client', name: 'core', version: '1.0.0'
+```
 
 ### Quick start
 ```java
