@@ -235,6 +235,10 @@ to instantiate an interface for connection with that server.
 <!--changelog-anchor-->
 <!--start:changelog-header-->
 ### 1.1.0-SNAPSHOT (current development version)<!--end:changelog-header-->
+
+- Deserialization
+  - Fixed an error that occurred when trying to retrieve lists from a server.
+
 ### 1.0.0
 
 First release!
