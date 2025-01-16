@@ -27,7 +27,6 @@ Add the dependency:
 
 Add the dependency:
 ```gradle
-// https://mvnrepository.com/artifact/de.fraunhofer.iosb.ilt.faaast.client/core
 implementation 'de.fraunhofer.iosb.ilt.faaast.client:core:1.0.0'
 ```
 
