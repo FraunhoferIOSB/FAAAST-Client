@@ -15,22 +15,16 @@
 package de.fraunhofer.iosb.ilt.faaast.client.interfaces;
 
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
-import de.fraunhofer.iosb.ilt.faaast.client.exception.InvalidPayloadException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpMethod;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
 import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
-import de.fraunhofer.iosb.ilt.faaast.client.util.QueryHelper;
-import de.fraunhofer.iosb.ilt.faaast.service.dataformat.DeserializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.model.ServiceDescription;
-import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.List;
-import org.json.JSONException;
 
 
 /**
