@@ -54,8 +54,8 @@ function replaceVersion()
 	local startTag=$(startTag "$tag")
 	local endTag=$(endTag "$tag")
 	replaceValue "$file" "$TAG_VERSION" "$new_version"
-	sed -r -z 's/(<artifactId>faaast-client<\/artifactId>[\r\n]+\s*<version>)[^<]+(<\/version>)/\1'"${new_version}"'\2/g' -i "$file"
-	sed -r -z 's/(\x27de.fraunhofer.iosb.ilt.faaast.client:faaast-client:)[^\x27]*\x27/\1'"${new_version}"'\x27/g' -i "$file"
+	sed -r -z 's/(<artifactId>core<\/artifactId>[\r\n]+\s*<version>)[^<]+(<\/version>)/\1'"${new_version}"'\2/g' -i "$file"
+	sed -r -z 's/(\x27de.fraunhofer.iosb.ilt.faaast.client:core:)[^\x27]*\x27/\1'"${new_version}"'\x27/g' -i "$file"
 }
 
 
