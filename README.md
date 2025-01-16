@@ -1,10 +1,11 @@
-# FA³ST Client [![Maven Build](https://github.com/FraunhoferIOSB/FAAAST-Client/actions/workflows/maven-build.yml/badge.svg?branch=main)](https://github.com/FraunhoferIOSB/FAAST-Client/actions)[![Codacy Badge](https://app.codacy.com/project/badge/Grade/c6e2e44a488d498bab020cf1058c3445)](https://app.codacy.com/gh/FraunhoferIOSB/FAAAST-Client/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)<a href="https://sonarcloud.io/summary/new_code?id=FraunhoferIOSB_FAAAST-Client" ><img src="https://sonarcloud.io/images/project_badges/sonarcloud-white.svg" alt="SonarCloud badge" width="105"/></a>
+# FA³ST Client [![Maven Build](https://github.com/FraunhoferIOSB/FAAAST-Client/actions/workflows/maven-build.yml/badge.svg?branch=main)](https://github.com/FraunhoferIOSB/FAAST-Client/actions)[![Codacy Badge](https://app.codacy.com/project/badge/Grade/c6e2e44a488d498bab020cf1058c3445)](https://app.codacy.com/gh/FraunhoferIOSB/FAAAST-Client/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)[![javadoc](https://javadoc.io/badge2/de.fraunhofer.iosb.ilt.faaast.client/core/javadoc.svg)](https://javadoc.io/doc/de.fraunhofer.iosb.ilt.faaast.client/core)<a href="https://sonarcloud.io/summary/new_code?id=FraunhoferIOSB_FAAAST-Client" ><img src="https://sonarcloud.io/images/project_badges/sonarcloud-white.svg" alt="SonarCloud badge" width="105"/></a>
 
 ![FAAAST-Client Logo](misc/images/Fa3st-Client_negativ.png)
 
 The **F**raunhofer **A**dvanced **A**sset **A**dministration **S**hell **Tools** (**FA³ST**) Client is a Java-based client
 library for version 3.0.1 of the [AAS API](https://github.com/admin-shell-io/aas-specs-api/tree/v3.0.1) and
 aims to simplify development of AAS client applications. See also the [OpenAPI](https://app.swaggerhub.com/apis/Plattform_i40/Entire-API-Collection/V3.0.1) Documentation.
+For detailed documentation see [JavaDoc](https://javadoc.io/doc/de.fraunhofer.iosb.ilt.faaast.client/core/latest/index.html).
 
 ## Usage
 
@@ -21,6 +22,12 @@ Add the dependency:
 	<version>1.0.0</version>
 </dependency>
 
+```
+### with gradle
+
+Add the dependency:
+```gradle
+implementation 'de.fraunhofer.iosb.ilt.faaast.client:core:1.0.0'
 ```
 
 ### Quick start
@@ -236,7 +243,8 @@ to instantiate an interface for connection with that server.
 <!--start:changelog-header-->
 ### 1.1.0-SNAPSHOT (current development version)<!--end:changelog-header-->
 
-- Deserialization
+- De-/Serialization
+  - Fixed serialization of submodel ids in deleteSubmodel and deleteSubmodelReference in AASInterface
   - Fixed an error that occurred when trying to retrieve lists from a server.
 
 ### 1.0.0
