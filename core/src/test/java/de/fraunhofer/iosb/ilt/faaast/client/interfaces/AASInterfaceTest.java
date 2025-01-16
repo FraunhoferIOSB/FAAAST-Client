@@ -20,9 +20,10 @@ import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
+import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
+import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingMetadata;
 import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import de.fraunhofer.iosb.ilt.faaast.service.util.EncodingHelper;
 import okhttp3.mockwebserver.MockResponse;
@@ -201,9 +202,11 @@ public class AASInterfaceTest {
 
     @Test
     public void testGetAllSubmodelReferences() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
-        List<Reference> requestSubmodelReferenceList = new ArrayList<>();
-        requestSubmodelReferenceList.add(new DefaultReference());
-        server.enqueue(new MockResponse().setBody(serializer.write(requestSubmodelReferenceList)));
+        Page<Reference> requestSubmodelReferencePage = Page.<Reference> builder()
+                .result(new DefaultReference())
+                .metadata(new PagingMetadata.Builder().build())
+                .build();
+        server.enqueue(new MockResponse().setBody(serializer.write(requestSubmodelReferencePage)));
 
         List<Reference> responseList = aasInterface.getAllSubmodelReferences();
         RecordedRequest request = server.takeRequest();
@@ -212,7 +215,7 @@ public class AASInterfaceTest {
         assertEquals(0, request.getBodySize());
         assertEquals("/api/v3.0/aas/submodel-refs", request.getPath());
 
-        assertEquals(requestSubmodelReferenceList, responseList);
+        assertEquals(requestSubmodelReferencePage.getContent(), responseList);
     }
 
 

@@ -257,7 +257,7 @@ public class AASInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<Reference> getAllSubmodelReferences() throws StatusCodeException, ConnectivityException {
-        return getList(submodelRefPath(), Reference.class);
+        return getAll(submodelRefPath(), Reference.class);
     }
 
 

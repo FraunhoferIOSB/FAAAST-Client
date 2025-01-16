@@ -18,19 +18,18 @@ import de.fraunhofer.iosb.ilt.faaast.client.exception.ClientException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.ApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
+import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
+import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingMetadata;
 import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import de.fraunhofer.iosb.ilt.faaast.service.util.EncodingHelper;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShellDescriptor;
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,7 +40,6 @@ public class AASRegistryInterfaceTest {
     private static AASRegistryInterface assetAdministrationShellRegistryInterface;
     private static ApiSerializer serializer;
     private static MockWebServer server;
-    private static List<DefaultAssetAdministrationShellDescriptor> requestShellDescriptors;
 
     @Before
     public void setup() throws IOException {
@@ -51,25 +49,16 @@ public class AASRegistryInterfaceTest {
         assetAdministrationShellRegistryInterface = new AASRegistryInterface(serviceUri);
 
         serializer = new JsonApiSerializer();
-
-        requestShellDescriptors = new ArrayList<>();
-        requestShellDescriptors.add(getRequestShellDescriptor(AssetKind.INSTANCE));
-        requestShellDescriptors.add(getRequestShellDescriptor(AssetKind.TYPE));
-    }
-
-
-    @NotNull
-    static DefaultAssetAdministrationShellDescriptor getRequestShellDescriptor(AssetKind assetKind) {
-        DefaultAssetAdministrationShellDescriptor requestShellDescriptor = new DefaultAssetAdministrationShellDescriptor();
-        requestShellDescriptor.setAssetKind(assetKind);
-        requestShellDescriptor.setAssetType("defaultType");
-        return requestShellDescriptor;
     }
 
 
     @Test
     public void testGetAllAssetAdministrationShellDescriptors() throws ClientException, SerializationException, InterruptedException, UnsupportedModifierException {
-        String serializedShellDescriptors = serializer.write(requestShellDescriptors);
+        Page<AssetAdministrationShellDescriptor> requestShellDescriptorPage = Page.<AssetAdministrationShellDescriptor> builder()
+                .result(new DefaultAssetAdministrationShellDescriptor())
+                .metadata(new PagingMetadata.Builder().build())
+                .build();
+        String serializedShellDescriptors = serializer.write(requestShellDescriptorPage);
         server.enqueue(new MockResponse().setBody(serializedShellDescriptors));
 
         List<DefaultAssetAdministrationShellDescriptor> responseShellDescriptors = assetAdministrationShellRegistryInterface.getAll();
@@ -79,7 +68,7 @@ public class AASRegistryInterfaceTest {
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
         assertEquals("/example/api/v3.0/shell-descriptors", request.getPath());
-        assertEquals(requestShellDescriptors, responseShellDescriptors);
+        assertEquals(requestShellDescriptorPage.getContent(), responseShellDescriptors);
     }
 
 

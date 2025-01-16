@@ -314,7 +314,7 @@ public class SubmodelInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<SubmodelElement> getAllElements() throws StatusCodeException, ConnectivityException {
-        return getList(submodelElementsPath(), SubmodelElement.class);
+        return getAll(submodelElementsPath(), SubmodelElement.class);
     }
 
 
@@ -336,7 +336,7 @@ public class SubmodelInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<SubmodelElement> getAllElements(QueryModifier modifier) throws StatusCodeException, ConnectivityException {
-        return getList(submodelElementsPath(), modifier, SubmodelElement.class);
+        return getAll(submodelElementsPath(), modifier, SubmodelElement.class);
     }
 
 

@@ -44,7 +44,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
      *
      * @param endpoint Uri used to communicate with the FA³ST service
      */
-    protected ConceptDescriptionRepositoryInterface(URI endpoint) {
+    public ConceptDescriptionRepositoryInterface(URI endpoint) {
         super(resolve(endpoint, API_PATH));
     }
 
@@ -56,7 +56,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
      * @param user String to enable basic authentication
      * @param password String to enable basic authentication
      */
-    protected ConceptDescriptionRepositoryInterface(URI endpoint, String user, String password) {
+    public ConceptDescriptionRepositoryInterface(URI endpoint, String user, String password) {
         super(resolve(endpoint, API_PATH), user, password);
     }
 
@@ -67,7 +67,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
      * @param endpoint the endpoint
      * @param httpClient allows user to specify custom http-client
      */
-    protected ConceptDescriptionRepositoryInterface(URI endpoint, HttpClient httpClient) {
+    public ConceptDescriptionRepositoryInterface(URI endpoint, HttpClient httpClient) {
         super(resolve(endpoint, API_PATH), httpClient);
     }
 
@@ -111,7 +111,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<ConceptDescription> getAll(ConceptDescriptionSearchCriteria conceptDescriptionSearchCriteria) throws StatusCodeException, ConnectivityException {
-        return getList(conceptDescriptionSearchCriteria, Content.DEFAULT, QueryModifier.DEFAULT, ConceptDescription.class);
+        return getAll(conceptDescriptionSearchCriteria, Content.DEFAULT, QueryModifier.DEFAULT, ConceptDescription.class);
     }
 
 
