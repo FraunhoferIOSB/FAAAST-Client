@@ -18,11 +18,9 @@ import de.fraunhofer.iosb.ilt.faaast.client.exception.ClientException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.ApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
+import de.fraunhofer.iosb.ilt.faaast.service.model.ServiceDescription;
+import de.fraunhofer.iosb.ilt.faaast.service.model.ServiceSpecificationProfile;
 import java.io.IOException;
-import java.util.List;
-
-import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
-import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingMetadata;
 import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -52,20 +50,19 @@ public class DescriptionInterfaceTest {
 
     @Test
     public void testGet() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
-        Page<String> requestDescriptionPage = Page.<String> builder()
-                .result("Description1")
-                .metadata(new PagingMetadata.Builder().build())
+        ServiceDescription expected = ServiceDescription.builder()
+                .profile(ServiceSpecificationProfile.AAS_FULL)
+                .profile(ServiceSpecificationProfile.AAS_REPOSITORY_FULL)
                 .build();
 
-        String serializedDescription = serializer.write(requestDescriptionPage);
-        server.enqueue(new MockResponse().setBody(serializedDescription));
+        server.enqueue(new MockResponse().setBody(serializer.write(expected)));
 
-        List<String> responseDescription = descriptionInterface.get();
+        ServiceDescription actual = descriptionInterface.get();
         RecordedRequest request = server.takeRequest();
 
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
         assertEquals("/api/v3.0/description", request.getPath());
-        assertEquals(requestDescriptionPage.getContent(), responseDescription);
+        assertEquals(expected, actual);
     }
 }

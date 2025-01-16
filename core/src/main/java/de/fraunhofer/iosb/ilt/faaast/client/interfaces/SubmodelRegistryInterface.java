@@ -89,7 +89,7 @@ public class SubmodelRegistryInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<DefaultSubmodelDescriptor> getAll() throws StatusCodeException, ConnectivityException {
-        return getList(DefaultSubmodelDescriptor.class);
+        return getAll(DefaultSubmodelDescriptor.class);
     }
 
 

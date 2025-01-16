@@ -112,7 +112,7 @@ public class AASRepositoryInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<AssetAdministrationShell> getAll(AASSearchCriteria aasSearchCriteria) throws StatusCodeException, ConnectivityException {
-        return getList(null, aasSearchCriteria, Content.DEFAULT, QueryModifier.DEFAULT, AssetAdministrationShell.class);
+        return getAll(null, aasSearchCriteria, Content.DEFAULT, QueryModifier.DEFAULT, AssetAdministrationShell.class);
     }
 
 
@@ -225,7 +225,7 @@ public class AASRepositoryInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<Reference> getAllAsReference(AASSearchCriteria aasSearchCriteria) throws StatusCodeException, ConnectivityException {
-        return getList(null, aasSearchCriteria, Content.REFERENCE, QueryModifier.DEFAULT, Reference.class);
+        return getAll(null, aasSearchCriteria, Content.REFERENCE, QueryModifier.DEFAULT, Reference.class);
     }
 
 

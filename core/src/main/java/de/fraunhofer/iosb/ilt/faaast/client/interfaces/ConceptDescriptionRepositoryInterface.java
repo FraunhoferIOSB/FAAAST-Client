@@ -111,7 +111,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<ConceptDescription> getAll(ConceptDescriptionSearchCriteria conceptDescriptionSearchCriteria) throws StatusCodeException, ConnectivityException {
-        return getList(conceptDescriptionSearchCriteria, Content.DEFAULT, QueryModifier.DEFAULT, ConceptDescription.class);
+        return getAll(conceptDescriptionSearchCriteria, Content.DEFAULT, QueryModifier.DEFAULT, ConceptDescription.class);
     }
 
 
