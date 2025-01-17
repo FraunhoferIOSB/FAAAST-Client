@@ -34,6 +34,7 @@ import de.fraunhofer.iosb.ilt.faaast.service.dataformat.DeserializationException
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiDeserializer;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
+import de.fraunhofer.iosb.ilt.faaast.service.model.TypedInMemoryFile;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Content;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.OutputModifier;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.QueryModifier;
@@ -49,6 +50,7 @@ import java.net.PasswordAuthentication;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
+import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
@@ -275,6 +277,32 @@ public abstract class BaseInterface {
         catch (DeserializationException e) {
             throw new InvalidPayloadException(e);
         }
+    }
+
+
+    /**
+     * Executes a HTTP GET and parses the response body as {@code responseType} using valueOnly serialization.
+     *
+     * @param path the URL path relative to the current endpoint
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
+    protected TypedInMemoryFile getFile(String path) throws ConnectivityException, StatusCodeException {
+        HttpRequest request = HttpHelper.createGetFileRequest(resolve(QueryHelper.apply(path, Content.DEFAULT, QueryModifier.DEFAULT)));
+        HttpResponse<byte[]> response = HttpHelper.sendFileRequest(httpClient, request);
+        validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
+
+        String contentType = response.headers().firstValue("Content-Type").orElse("application/octet-stream");
+        return new TypedInMemoryFile.Builder().content(response.body()).path(extractFilename(response.headers())).contentType(contentType).build();
+    }
+
+
+    private String extractFilename(HttpHeaders headers) {
+        return headers
+                .firstValue("Content-Disposition")
+                .map(d -> d.replaceFirst("(?i)^.*filename=\"?([^\"]+)\"?.*$", "$1"))
+                .orElse("download");
     }
 
 
@@ -660,6 +688,21 @@ public abstract class BaseInterface {
 
 
     /**
+     * Executes an HTTP PUT for files.
+     *
+     * @param path the URL path relative to the current endpoint
+     * @param file the file
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     */
+    protected void putFile(String path, TypedInMemoryFile file) throws ConnectivityException, StatusCodeException {
+        HttpRequest request = HttpHelper.createPutFileRequest(resolve(QueryHelper.apply(path, Content.DEFAULT, QueryModifier.DEFAULT)), file);
+        HttpResponse<byte[]> response = HttpHelper.sendFileRequest(httpClient, request);
+        validateStatusCode(HttpMethod.PUT, response, HttpStatus.NO_CONTENT);
+    }
+
+
+    /**
      * Executes a HTTP PATCH.
      *
      * @param path the URL path relative to the current endpoint
@@ -692,7 +735,7 @@ public abstract class BaseInterface {
      * @param entity the payload to send in the body
      * @param modifier the query modifier
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid stats code
      */
     protected void patch(String path, Object entity, QueryModifier modifier) throws ConnectivityException, StatusCodeException {
         patch(path, entity, Content.DEFAULT, modifier);
@@ -892,7 +935,7 @@ public abstract class BaseInterface {
     }
 
 
-    private static void validateStatusCode(HttpMethod method, HttpResponse<String> response, HttpStatus expected) throws StatusCodeException {
+    private static void validateStatusCode(HttpMethod method, HttpResponse<?> response, HttpStatus expected) throws StatusCodeException {
         if (Objects.isNull(response)) {
             throw new IllegalArgumentException("response must be non-null");
         }

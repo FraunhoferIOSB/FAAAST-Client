@@ -28,7 +28,7 @@ public class BadRequestException extends StatusCodeException {
      *
      * @param response the response representing the exception
      */
-    public BadRequestException(HttpResponse<String> response) {
+    public BadRequestException(HttpResponse<?> response) {
         super(response);
     }
 }

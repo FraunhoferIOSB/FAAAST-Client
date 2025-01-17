@@ -27,7 +27,7 @@ public class InternalServerErrorException extends StatusCodeException {
      *
      * @param response the response representing the exception
      */
-    public InternalServerErrorException(HttpResponse<String> response) {
+    public InternalServerErrorException(HttpResponse<?> response) {
         super(response);
     }
 }

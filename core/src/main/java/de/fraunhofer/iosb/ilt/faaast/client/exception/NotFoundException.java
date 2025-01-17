@@ -28,7 +28,7 @@ public class NotFoundException extends StatusCodeException {
      *
      * @param response the response representing the exception
      */
-    public NotFoundException(HttpResponse<String> response) {
+    public NotFoundException(HttpResponse<?> response) {
         super(response);
     }
 }

@@ -30,7 +30,7 @@ public class ForbiddenException extends StatusCodeException {
      *
      * @param response the response representing the exception
      */
-    public ForbiddenException(HttpResponse<String> response) {
+    public ForbiddenException(HttpResponse<?> response) {
         super(response);
     }
 }
