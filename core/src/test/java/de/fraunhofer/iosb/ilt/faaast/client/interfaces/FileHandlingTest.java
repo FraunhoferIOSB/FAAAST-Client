@@ -14,7 +14,7 @@
  */
 package de.fraunhofer.iosb.ilt.faaast.client.interfaces;
 
-import de.fraunhofer.iosb.ilt.faaast.client.simpleAAS;
+import de.fraunhofer.iosb.ilt.faaast.client.SimpleAASTest;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ClientException;
 import de.fraunhofer.iosb.ilt.faaast.service.Service;
 import de.fraunhofer.iosb.ilt.faaast.service.assetconnection.AssetConnectionException;
@@ -54,7 +54,7 @@ public class FileHandlingTest {
 
     @Before
     public void setup() throws IOException, MessageBusException, EndpointException, PersistenceException, ConfigurationException, AssetConnectionException, URISyntaxException {
-        environment = simpleAAS.createEnvironment();
+        environment = SimpleAASTest.createEnvironment();
         service = new Service(ServiceConfig.builder()
                 .core(CoreConfig.builder()
                         .requestHandlerThreadPoolSize(2)

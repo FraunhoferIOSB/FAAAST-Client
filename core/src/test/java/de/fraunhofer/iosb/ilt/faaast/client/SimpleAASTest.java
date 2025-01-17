@@ -56,7 +56,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 
-public class simpleAAS {
+public class SimpleAASTest {
 
     private static final String DOCUMENT_DEF = "Feste und geordnete Menge von für die Verwendung durch Personen bestimmte Informationen, die verwaltet und als Einheit zwischen Benutzern und System ausgetauscht werden kann.";
     private static final String ISO15519_1_2010 = "[ISO15519-1:2010]";
@@ -612,7 +612,7 @@ public class simpleAAS {
 
     @Test
     public void testAasSimpleExtensionsInitialized() {
-        List<Extension> extensions = simpleAAS.createEnvironment().getAssetAdministrationShells().get(0).getExtensions();
+        List<Extension> extensions = SimpleAASTest.createEnvironment().getAssetAdministrationShells().get(0).getExtensions();
         Assert.assertNotNull(extensions);
     }
 
