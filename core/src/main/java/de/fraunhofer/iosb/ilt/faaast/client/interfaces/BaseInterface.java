@@ -951,7 +951,7 @@ public abstract class BaseInterface {
      * @param expected the expected HTTP status code
      * @throws StatusCodeException if the HTTP status code of the response is invlid/not supported
      */
-    protected static void validateStatusCode(HttpMethod method, HttpResponse<String> response, HttpStatus expected) throws StatusCodeException {
+    protected static void validateStatusCode(HttpMethod method, HttpResponse<?> response, HttpStatus expected) throws StatusCodeException {
         if (Objects.isNull(response)) {
             throw new IllegalArgumentException("response must be non-null");
         }
