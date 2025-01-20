@@ -78,7 +78,7 @@ public abstract class BaseInterface {
             HttpStatus.INTERNAL_SERVER_ERROR);
 
     protected final HttpClient httpClient;
-    private final URI endpoint;
+    protected final URI endpoint;
 
     /**
      * Creates a new instance.
@@ -316,8 +316,8 @@ public abstract class BaseInterface {
      * @throws StatusCodeException if HTTP request returns invalid statsu code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
-    protected <T> List<T> getList(Class<T> responseType) throws ConnectivityException, StatusCodeException {
-        return getList(null, QueryModifier.DEFAULT, responseType);
+    protected <T> List<T> getAll(Class<T> responseType) throws ConnectivityException, StatusCodeException {
+        return getAll(null, QueryModifier.DEFAULT, responseType);
     }
 
 
@@ -332,8 +332,8 @@ public abstract class BaseInterface {
      * @throws StatusCodeException if HTTP request returns invalid statsu code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
-    protected <T> List<T> getList(String path, Class<T> responseType) throws ConnectivityException, StatusCodeException {
-        return getList(path, QueryModifier.DEFAULT, responseType);
+    protected <T> List<T> getAll(String path, Class<T> responseType) throws ConnectivityException, StatusCodeException {
+        return getAll(path, QueryModifier.DEFAULT, responseType);
     }
 
 
@@ -349,8 +349,8 @@ public abstract class BaseInterface {
      * @throws StatusCodeException if HTTP request returns invalid statsu code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
-    protected <T> List<T> getList(String path, QueryModifier modifier, Class<T> responseType) throws ConnectivityException, StatusCodeException {
-        return getList(path, SearchCriteria.DEFAULT, Content.DEFAULT, modifier, responseType);
+    protected <T> List<T> getAll(String path, QueryModifier modifier, Class<T> responseType) throws ConnectivityException, StatusCodeException {
+        return getAll(path, SearchCriteria.DEFAULT, Content.DEFAULT, modifier, responseType);
     }
 
 
@@ -367,8 +367,8 @@ public abstract class BaseInterface {
      * @throws StatusCodeException if HTTP request returns invalid statsu code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
-    protected <T> List<T> getList(SearchCriteria searchCriteria, Content content, QueryModifier modifier, Class<T> responseType) throws ConnectivityException, StatusCodeException {
-        return getList(null, searchCriteria, content, modifier, responseType);
+    protected <T> List<T> getAll(SearchCriteria searchCriteria, Content content, QueryModifier modifier, Class<T> responseType) throws ConnectivityException, StatusCodeException {
+        return getAll(null, searchCriteria, content, modifier, responseType);
     }
 
 
@@ -386,15 +386,15 @@ public abstract class BaseInterface {
      * @throws StatusCodeException if HTTP request returns invalid statsu code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
-    protected <T> List<T> getList(String path, SearchCriteria searchCriteria, Content content, QueryModifier modifier, Class<T> responseType)
+    protected <T> List<T> getAll(String path, SearchCriteria searchCriteria, Content content, QueryModifier modifier, Class<T> responseType)
             throws ConnectivityException, StatusCodeException {
         HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, content, modifier, PagingInfo.ALL, searchCriteria)));
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         try {
-            return new JsonApiDeserializer().readList(response.body(), responseType);
+            return deserializePage(response.body(), responseType).getContent();
         }
-        catch (DeserializationException e) {
+        catch (DeserializationException | JSONException e) {
             throw new InvalidPayloadException(e);
         }
     }
@@ -891,7 +891,15 @@ public abstract class BaseInterface {
     }
 
 
-    private static <T> T parseBody(HttpResponse<String> response, Class<T> responseType) {
+    /**
+     * Parses body of HTTP response.
+     *
+     * @param <T> result type
+     * @param response the response
+     * @param responseType the type of the payload to parse
+     * @return parsed body of response
+     */
+    protected static <T> T parseBody(HttpResponse<String> response, Class<T> responseType) {
         try {
             return new JsonApiDeserializer().read(response.body(), responseType);
         }
@@ -935,7 +943,15 @@ public abstract class BaseInterface {
     }
 
 
-    private static void validateStatusCode(HttpMethod method, HttpResponse<?> response, HttpStatus expected) throws StatusCodeException {
+    /**
+     * Checks if a given response matches the expected HTTP status code.
+     *
+     * @param method the HTTP method
+     * @param response the response to check
+     * @param expected the expected HTTP status code
+     * @throws StatusCodeException if the HTTP status code of the response is invlid/not supported
+     */
+    protected static void validateStatusCode(HttpMethod method, HttpResponse<String> response, HttpStatus expected) throws StatusCodeException {
         if (Objects.isNull(response)) {
             throw new IllegalArgumentException("response must be non-null");
         }

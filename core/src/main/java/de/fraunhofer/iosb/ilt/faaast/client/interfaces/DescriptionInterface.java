@@ -16,10 +16,15 @@ package de.fraunhofer.iosb.ilt.faaast.client.interfaces;
 
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
+import de.fraunhofer.iosb.ilt.faaast.client.http.HttpMethod;
+import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
+import de.fraunhofer.iosb.ilt.faaast.service.model.ServiceDescription;
 
 import java.net.URI;
 import java.net.http.HttpClient;
-import java.util.List;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 
 /**
@@ -83,8 +88,11 @@ public class DescriptionInterface extends BaseInterface {
      *             </div>
      * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public List<String> get() throws StatusCodeException, ConnectivityException {
-        return getList(String.class);
+    public ServiceDescription get() throws StatusCodeException, ConnectivityException {
+        HttpRequest request = HttpHelper.createGetRequest(endpoint);
+        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
+        return parseBody(response, ServiceDescription.class);
     }
 
 }

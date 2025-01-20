@@ -92,7 +92,7 @@ public class AASRegistryInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<DefaultAssetAdministrationShellDescriptor> getAll() throws StatusCodeException, ConnectivityException {
-        return getList(DefaultAssetAdministrationShellDescriptor.class);
+        return getAll(DefaultAssetAdministrationShellDescriptor.class);
     }
 
 

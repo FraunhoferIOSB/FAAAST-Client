@@ -252,7 +252,7 @@ public class AASInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<Reference> getAllSubmodelReferences() throws StatusCodeException, ConnectivityException {
-        return getList(submodelRefPath(), Reference.class);
+        return getAll(submodelRefPath(), Reference.class);
     }
 
 
@@ -318,7 +318,7 @@ public class AASInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public void deleteSubmodelReference(String submodelId) throws StatusCodeException, ConnectivityException {
-        delete(submodelRefPath() + submodelId);
+        delete(submodelRefPath() + idPath(submodelId));
     }
 
 
@@ -339,7 +339,7 @@ public class AASInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public void deleteSubmodel(String submodelId) throws StatusCodeException, ConnectivityException {
-        delete(submodelPath() + submodelId);
+        delete(submodelPath() + idPath(submodelId));
     }
 
 

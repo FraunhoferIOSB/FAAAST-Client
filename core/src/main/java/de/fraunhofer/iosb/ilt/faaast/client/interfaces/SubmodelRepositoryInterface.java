@@ -157,7 +157,7 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<Submodel> getAll(QueryModifier modifier, SubmodelSearchCriteria submodelSearchCriteria) throws StatusCodeException, ConnectivityException {
-        return getList(submodelSearchCriteria, Content.DEFAULT, modifier, Submodel.class);
+        return getAll(submodelSearchCriteria, Content.DEFAULT, modifier, Submodel.class);
     }
 
 
@@ -272,7 +272,7 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<Submodel> getAllMetadata(QueryModifier modifier, SubmodelSearchCriteria submodelSearchCriteria) throws StatusCodeException, ConnectivityException {
-        return getList(submodelSearchCriteria, Content.METADATA, modifier, Submodel.class);
+        return getAll(submodelSearchCriteria, Content.METADATA, modifier, Submodel.class);
     }
 
 
@@ -320,7 +320,7 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<Submodel> getAllValues(QueryModifier modifier, SubmodelSearchCriteria submodelSearchCriteria) throws StatusCodeException, ConnectivityException {
-        return getList(submodelSearchCriteria, Content.VALUE, modifier, Submodel.class);
+        return getAll(submodelSearchCriteria, Content.VALUE, modifier, Submodel.class);
     }
 
 
@@ -366,7 +366,7 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<Reference> getAllReferences(SubmodelSearchCriteria submodelSearchCriteria) throws StatusCodeException, ConnectivityException {
-        return getList(submodelSearchCriteria, Content.REFERENCE, QueryModifier.MINIMAL, Reference.class);
+        return getAll(submodelSearchCriteria, Content.REFERENCE, QueryModifier.MINIMAL, Reference.class);
     }
 
 
@@ -412,7 +412,7 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<Reference> getAllPaths(QueryModifier modifier, SubmodelSearchCriteria submodelSearchCriteria) throws StatusCodeException, ConnectivityException {
-        return getList(submodelSearchCriteria, Content.PATH, modifier, Reference.class);
+        return getAll(submodelSearchCriteria, Content.PATH, modifier, Reference.class);
     }
 
 

@@ -77,9 +77,9 @@
         <maven.plugin.javadoc.version>3.11.2</maven.plugin.javadoc.version>
         <maven.plugin.license>2.5.0</maven.plugin.license>
         <maven.plugin.nexus-staging.version>1.7.0</maven.plugin.nexus-staging.version>
-        <maven.plugin.owasp.version>12.0.0</maven.plugin.owasp.version>
+        <maven.plugin.owasp.version>12.0.1</maven.plugin.owasp.version>
         <maven.plugin.source.version>3.3.1</maven.plugin.source.version>
-        <maven.plugin.spotless.version>2.44.1</maven.plugin.spotless.version>
+        <maven.plugin.spotless.version>2.44.2</maven.plugin.spotless.version>
         <maven.plugin.surefire.version>3.5.2</maven.plugin.surefire.version>
         <okhttp3.version>4.12.0</okhttp3.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -246,6 +246,9 @@
                                     <include>*.md</include>
                                     <include>.gitignore</include>
                                 </includes>
+                                <excludes>
+                                    <exclude>README.md</exclude>
+                                </excludes>
                                 <indent>
                                     <tabs>true</tabs>
                                     <spacesPerTab>4</spacesPerTab>

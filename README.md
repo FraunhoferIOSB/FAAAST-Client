@@ -23,6 +23,12 @@ Add the dependency:
 </dependency>
 
 ```
+### with gradle
+
+Add the dependency:
+```gradle
+implementation 'de.fraunhofer.iosb.ilt.faaast.client:core:1.0.0'
+```
 
 ### Quick start
 ```java
@@ -236,6 +242,11 @@ to instantiate an interface for connection with that server.
 <!--changelog-anchor-->
 <!--start:changelog-header-->
 ### 1.1.0-SNAPSHOT (current development version)<!--end:changelog-header-->
+
+- De-/Serialization
+  - Fixed serialization of submodel ids in deleteSubmodel and deleteSubmodelReference in AASInterface
+  - Fixed an error that occurred when trying to retrieve lists from a server.
+
 ### 1.0.0
 
 First release!
