@@ -187,8 +187,12 @@ public final class HttpHelper {
         try {
             return httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
         }
-        catch (IOException | InterruptedException e) {
+        catch (IOException e) {
             throw new ConnectivityException(e);
+        }
+        catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new ConnectivityException("Request interrupted", e);
         }
     }
 }
