@@ -18,6 +18,7 @@ import de.fraunhofer.iosb.ilt.faaast.client.exception.ClientException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.model.IdShortPath;
+import de.fraunhofer.iosb.ilt.faaast.service.model.TypedInMemoryFile;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.OutputModifier;
 import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.Datatype;
@@ -29,6 +30,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
@@ -41,7 +43,8 @@ import org.junit.Test;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
 
 
 public class SubmodelInterfaceTest {
@@ -49,7 +52,6 @@ public class SubmodelInterfaceTest {
     private static MockWebServer server;
     private static JsonApiSerializer serializer;
     private static Submodel requestSubmodel;
-    private static File requestFile;
 
     @Before
     public void setup() throws IOException {
@@ -60,10 +62,6 @@ public class SubmodelInterfaceTest {
         serializer = new JsonApiSerializer();
 
         instantiateSubmodel();
-
-        requestFile = new DefaultFile();
-        requestFile.setIdShort("idShort");
-
     }
 
 
@@ -283,47 +281,81 @@ public class SubmodelInterfaceTest {
 
 
     @Test
-    public void testGetFileByPath() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
-        String serializedFile = serializer.write(requestFile);
-        server.enqueue(new MockResponse().setBody(serializedFile));
-        IdShortPath idShort = new IdShortPath.Builder().idShort(
-                requestFile.getIdShort()).build();
-        File responseFile = submodelInterface.getAttachment(idShort);
+    public void testGetAttachment() throws InterruptedException, ClientException {
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .addHeader("Content-Type", "image/png")
+                .setBody("attachment-content"));
+
+        IdShortPath idShort = IdShortPath.parse("idShort");
+        TypedInMemoryFile responseAttachment = submodelInterface.getAttachment(idShort);
         RecordedRequest request = server.takeRequest();
 
         assertEquals("GET", request.getMethod());
-        assertEquals(requestFile, responseFile);
-        assertEquals(String.format("/api/v3.0/submodel/submodel-elements/%s/attachment", requestFile.getIdShort()), request.getPath());
+        assertEquals(0, request.getBodySize());
+        assertEquals(String.format("/api/v3.0/submodel/submodel-elements/%s/attachment", idShort), request.getPath());
+        assertEquals("image/png", responseAttachment.getContentType());
+        assertArrayEquals("attachment-content".getBytes(), responseAttachment.getContent());
     }
 
 
     @Test
-    public void testPutFileByPath() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
-        String serializedFile = serializer.write(requestFile);
+    public void testPutAttachment() throws InterruptedException, ClientException {
         server.enqueue(new MockResponse().setResponseCode(204));
-        IdShortPath idShort = new IdShortPath.Builder().idShort(
-                requestFile.getIdShort()).build();
-        submodelInterface.putAttachment(idShort, requestFile);
-        RecordedRequest request = server.takeRequest();
+        IdShortPath idShort = IdShortPath.parse("idShort");
 
-        assertEquals("PUT", request.getMethod());
-        assertEquals(serializedFile, request.getBody().readUtf8());
-        assertEquals(String.format("/api/v3.0/submodel/submodel-elements/%s/attachment", requestFile.getIdShort()), request.getPath());
+        byte[] expectedThumbnailContent = "attachment-content".getBytes();
+        TypedInMemoryFile requestAttachment = new TypedInMemoryFile.Builder()
+                .content(expectedThumbnailContent)
+                .path("TestFile.png")
+                .contentType("image/png")
+                .build();
+
+        submodelInterface.putAttachment(idShort, requestAttachment);
+
+        var recordedRequest = server.takeRequest();
+
+        assertEquals("PUT", recordedRequest.getMethod());
+        assertEquals(String.format("/api/v3.0/submodel/submodel-elements/%s/attachment", idShort), recordedRequest.getPath());
+
+        String contentTypeHeader = recordedRequest.getHeader("Content-Type");
+        assertNotNull(contentTypeHeader);
+        assertTrue(contentTypeHeader.startsWith("multipart/form-data"));
+
+        byte[] actualBinaryContent = extractBinaryContentFromMultipartBody(recordedRequest.getBody().readUtf8(), contentTypeHeader);
+        assertNotNull(actualBinaryContent);
+        assertArrayEquals(expectedThumbnailContent, actualBinaryContent);
+    }
+
+
+    private byte[] extractBinaryContentFromMultipartBody(String body, String contentTypeHeader) {
+        String boundary = contentTypeHeader.split("boundary=")[1];
+        String[] parts = body.split("--" + boundary);
+
+        for (String part: parts) {
+            if (part.contains("Content-Disposition: form-data; name=\"" + "file" + "\"")) {
+                int binaryStartIndex = part.indexOf("\r\n\r\n") + 4;
+                int binaryEndIndex = part.lastIndexOf("\r\n");
+                if (binaryStartIndex >= 0 && binaryEndIndex >= binaryStartIndex) {
+                    return part.substring(binaryStartIndex, binaryEndIndex).getBytes();
+                }
+            }
+        }
+        throw new AssertionError("Part with name \"" + "file" + "\" not found or invalid in multipart body.");
     }
 
 
     @Test
-    public void testDeleteFileByPath() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
-        String serializedFile = serializer.write(requestFile);
-        server.enqueue(new MockResponse().setBody(serializedFile));
-        IdShortPath idShort = new IdShortPath.Builder().idShort(
-                requestFile.getIdShort()).build();
+    public void testDeleteFileByPath() throws InterruptedException, ClientException {
+        server.enqueue(new MockResponse().setResponseCode(200));
+        IdShortPath idShort = IdShortPath.parse("idShort");
+
         submodelInterface.deleteAttachment(idShort);
         RecordedRequest request = server.takeRequest();
 
         assertEquals("DELETE", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals(String.format("/api/v3.0/submodel/submodel-elements/%s/attachment", requestFile.getIdShort()), request.getPath());
+        assertEquals(String.format("/api/v3.0/submodel/submodel-elements/%s/attachment", idShort), request.getPath());
     }
 
 
