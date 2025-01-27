@@ -29,7 +29,7 @@ public class MethodNotAllowedException extends StatusCodeException {
      *
      * @param response the response representing the exception
      */
-    public MethodNotAllowedException(HttpResponse<String> response) {
+    public MethodNotAllowedException(HttpResponse<?> response) {
         super(response);
     }
 }

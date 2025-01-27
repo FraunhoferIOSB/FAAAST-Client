@@ -30,7 +30,7 @@ public class UnauthorizedException extends StatusCodeException {
      *
      * @param response the response representing the exception
      */
-    public UnauthorizedException(HttpResponse<String> response) {
+    public UnauthorizedException(HttpResponse<?> response) {
         super(response);
     }
 }
