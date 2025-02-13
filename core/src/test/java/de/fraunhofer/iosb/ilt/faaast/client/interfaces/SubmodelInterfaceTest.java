@@ -22,6 +22,7 @@ import de.fraunhofer.iosb.ilt.faaast.service.model.TypedInMemoryFile;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.OutputModifier;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingMetadata;
+import de.fraunhofer.iosb.ilt.faaast.service.model.exception.InvalidRequestException;
 import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.Datatype;
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.PropertyValue;
@@ -36,8 +37,19 @@ import java.util.List;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
-import org.eclipse.digitaltwin.aas4j.v3.model.*;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.*;
+import okio.Buffer;
+
+import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationResult;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultEntity;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperation;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperationResult;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperationVariable;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,8 +57,13 @@ import org.junit.Test;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
-import static org.junit.Assert.*;
+import static org.apache.commons.fileupload.FileUploadBase.CONTENT_DISPOSITION;
+import static org.apache.commons.fileupload.FileUploadBase.CONTENT_TYPE;
+
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 
 
 public class SubmodelInterfaceTest {
@@ -286,11 +303,23 @@ public class SubmodelInterfaceTest {
 
 
     @Test
-    public void testGetAttachment() throws InterruptedException, ClientException {
-        server.enqueue(new MockResponse()
+    public void testGetAttachment() throws InterruptedException, ClientException, InvalidRequestException {
+        byte[] content = "attachment-content".getBytes();
+        TypedInMemoryFile requestAttachment = new TypedInMemoryFile.Builder()
+                .content(content)
+                .contentType("application/pdf")
+                .path("attachment.pdf")
+                .build();
+
+        Buffer buffer = new Buffer();
+        buffer.write(requestAttachment.getContent());
+        MockResponse response = new MockResponse()
                 .setResponseCode(200)
-                .addHeader("Content-Type", "image/png")
-                .setBody("attachment-content"));
+                .addHeader(CONTENT_TYPE, requestAttachment.getContentType())
+                .addHeader(CONTENT_DISPOSITION, "attachment; filename=\"attachment.pdf\"")
+                .setBody(buffer);
+
+        server.enqueue(response);
 
         IdShortPath idShort = IdShortPath.parse("idShort");
         TypedInMemoryFile responseAttachment = submodelInterface.getAttachment(idShort);
@@ -299,8 +328,7 @@ public class SubmodelInterfaceTest {
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
         assertEquals(String.format("/api/v3.0/submodel/submodel-elements/%s/attachment", idShort), request.getPath());
-        assertEquals("image/png", responseAttachment.getContentType());
-        assertArrayEquals("attachment-content".getBytes(), responseAttachment.getContent());
+        assertEquals(requestAttachment, responseAttachment);
     }
 
 

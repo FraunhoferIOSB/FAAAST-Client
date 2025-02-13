@@ -24,6 +24,8 @@ import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.util.List;
+
+import de.fraunhofer.iosb.ilt.faaast.service.model.exception.InvalidRequestException;
 import org.eclipse.digitaltwin.aas4j.v3.model.*;
 
 
@@ -191,7 +193,7 @@ public class AASInterface extends BaseInterface {
      *             </div>
      * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public TypedInMemoryFile getThumbnail() throws StatusCodeException, ConnectivityException {
+    public TypedInMemoryFile getThumbnail() throws StatusCodeException, ConnectivityException, InvalidRequestException {
         return getFile(thumbnailPath());
     }
 

@@ -26,6 +26,7 @@ import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.UnauthorizedException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.UnsupportedStatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.query.SearchCriteria;
+import de.fraunhofer.iosb.ilt.faaast.client.util.FileParser;
 import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpMethod;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
@@ -41,6 +42,7 @@ import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.QueryModifier;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingMetadata;
+import de.fraunhofer.iosb.ilt.faaast.service.model.exception.InvalidRequestException;
 import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.ElementValue;
 import de.fraunhofer.iosb.ilt.faaast.service.typing.TypeInfo;
@@ -50,7 +52,6 @@ import java.net.PasswordAuthentication;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
-import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
@@ -285,24 +286,14 @@ public abstract class BaseInterface {
      *
      * @param path the URL path relative to the current endpoint
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
-     * @throws InvalidPayloadException if deserializing the payload fails
+     * @throws StatusCodeException if HTTP request returns invalid status code
      */
     protected TypedInMemoryFile getFile(String path) throws ConnectivityException, StatusCodeException {
-        HttpRequest request = HttpHelper.createGetFileRequest(resolve(QueryHelper.apply(path, Content.DEFAULT, QueryModifier.DEFAULT)));
+        HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, Content.DEFAULT, QueryModifier.DEFAULT)));
         HttpResponse<byte[]> response = HttpHelper.sendFileRequest(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
 
-        String contentType = response.headers().firstValue("Content-Type").orElse("application/octet-stream");
-        return new TypedInMemoryFile.Builder().content(response.body()).path(extractFilename(response.headers())).contentType(contentType).build();
-    }
-
-
-    private String extractFilename(HttpHeaders headers) {
-        return headers
-                .firstValue("Content-Disposition")
-                .map(d -> d.replaceFirst("(?i)^.*filename=\"?([^\"]+)\"?.*$", "$1"))
-                .orElse("download");
+        return FileParser.parseBody(response);
     }
 
 
@@ -383,7 +374,7 @@ public abstract class BaseInterface {
      * @param responseType the result type
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> List<T> getAll(String path, SearchCriteria searchCriteria, Content content, QueryModifier modifier, Class<T> responseType)

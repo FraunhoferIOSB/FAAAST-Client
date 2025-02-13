@@ -18,7 +18,6 @@ import de.fraunhofer.iosb.ilt.faaast.client.http.HttpMethod;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.service.endpoint.http.util.HttpConstants;
 import de.fraunhofer.iosb.ilt.faaast.service.model.TypedInMemoryFile;
-import de.fraunhofer.iosb.ilt.faaast.service.model.serialization.DataFormat;
 import de.fraunhofer.iosb.ilt.faaast.service.util.LambdaExceptionHelper;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.entity.mime.StringBody;
@@ -53,21 +52,6 @@ public final class HttpHelper {
      */
     public static HttpRequest createGetRequest(URI uri) {
         return HttpRequest.newBuilder().uri(uri).GET().build();
-    }
-
-
-    /**
-     * Creates a GET request for files to the specified URI.
-     *
-     * @param uri the target URI to send the GET request to
-     * @return the HttpResponse containing the response body as a string
-     */
-    public static HttpRequest createGetFileRequest(URI uri) {
-        return HttpRequest.newBuilder()
-                .uri(uri)
-                .GET()
-                .header(HttpConstants.HEADER_ACCEPT, DataFormat.AASX.getContentType().toString())
-                .build();
     }
 
 
@@ -108,6 +92,7 @@ public final class HttpHelper {
      * @return the HttpResponse containing the response body as a string
      */
     public static HttpRequest createPutFileRequest(URI uri, TypedInMemoryFile file) {
+        String boundary = "----ClientBoundary7MA4YWxkTrZu0gW";
         HttpEntity httpEntity = MultipartEntityBuilder.create()
                 .addPart(
                         "fileName",
@@ -117,11 +102,11 @@ public final class HttpHelper {
                         file.getContent(),
                         ContentType.create(file.getContentType(), StandardCharsets.UTF_8),
                         file.getPath())
+                .setBoundary(boundary)
                 .build();
         return HttpRequest.newBuilder()
                 .uri(uri)
-                .header(HttpConstants.HEADER_ACCEPT, DataFormat.JSON.getContentType().toString())
-                .header(HttpConstants.HEADER_CONTENT_TYPE, httpEntity.getContentType())
+                .header(HttpConstants.HEADER_CONTENT_TYPE, "multipart/form-data; boundary=" + boundary)
                 .PUT(HttpRequest.BodyPublishers.ofInputStream(LambdaExceptionHelper.wrap(httpEntity::getContent)))
                 .build();
     }

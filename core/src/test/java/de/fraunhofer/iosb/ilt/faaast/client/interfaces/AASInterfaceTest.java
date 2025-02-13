@@ -25,17 +25,34 @@ import java.util.List;
 
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingMetadata;
+import de.fraunhofer.iosb.ilt.faaast.service.model.exception.InvalidRequestException;
 import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import de.fraunhofer.iosb.ilt.faaast.service.util.EncodingHelper;
+
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
-import org.eclipse.digitaltwin.aas4j.v3.model.*;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.*;
+import okio.Buffer;
+
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
+import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertArrayEquals;
 
-import static org.junit.Assert.*;
+import static org.apache.commons.fileupload.FileUploadBase.CONTENT_DISPOSITION;
+import static org.apache.commons.fileupload.FileUploadBase.CONTENT_TYPE;
 
 
 public class AASInterfaceTest {
@@ -139,11 +156,23 @@ public class AASInterfaceTest {
 
 
     @Test
-    public void testGetThumbnail() throws InterruptedException, ClientException {
-        server.enqueue(new MockResponse()
+    public void testGetThumbnail() throws InterruptedException, ClientException, InvalidRequestException {
+        byte[] content = "thumbnail-content".getBytes();
+        TypedInMemoryFile requestThumbnail = new TypedInMemoryFile.Builder()
+                .content(content)
+                .contentType("image/png")
+                .path("thumbnail.png")
+                .build();
+
+        Buffer buffer = new Buffer();
+        buffer.write(requestThumbnail.getContent());
+        MockResponse response = new MockResponse()
                 .setResponseCode(200)
-                .addHeader("Content-Type", "image/png")
-                .setBody("thumbnail-content"));
+                .addHeader(CONTENT_TYPE, requestThumbnail.getContentType())
+                .addHeader(CONTENT_DISPOSITION, "attachment; filename=\"thumbnail.png\"")
+                .setBody(buffer);
+
+        server.enqueue(response);
 
         TypedInMemoryFile responseThumbnail = aasInterface.getThumbnail();
         RecordedRequest request = server.takeRequest();
@@ -151,8 +180,7 @@ public class AASInterfaceTest {
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
         assertEquals("/api/v3.0/aas/asset-information/thumbnail", request.getPath());
-        assertEquals("image/png", responseThumbnail.getContentType());
-        assertArrayEquals("thumbnail-content".getBytes(), responseThumbnail.getContent());
+        assertEquals(requestThumbnail, responseThumbnail);
     }
 
 
