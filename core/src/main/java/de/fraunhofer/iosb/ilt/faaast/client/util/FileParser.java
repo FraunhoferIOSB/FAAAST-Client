@@ -17,6 +17,7 @@ package de.fraunhofer.iosb.ilt.faaast.client.util;
 import de.fraunhofer.iosb.ilt.faaast.service.model.TypedInMemoryFile;
 import de.fraunhofer.iosb.ilt.faaast.service.util.Ensure;
 import org.apache.commons.fileupload.ParameterParser;
+import org.apache.hc.core5.http.ContentType;
 
 import java.net.http.HttpResponse;
 import java.util.Map;
@@ -30,6 +31,9 @@ import static org.apache.commons.fileupload.FileUploadBase.CONTENT_TYPE;
  */
 public class FileParser {
 
+    private static final String DEFAULT_FILENAME = "unknown";
+    private static final String FILENAME_PARAMETER = "filename";
+
     /**
      * Parses HTTP response to TypedInMemoryFile.
      *
@@ -39,8 +43,8 @@ public class FileParser {
     public static TypedInMemoryFile parseBody(HttpResponse<byte[]> httpResponse) {
         Ensure.requireNonNull(httpResponse, "httpResponse must be non-null");
 
-        String contentTypeHeader = httpResponse.headers().firstValue(CONTENT_TYPE).orElse("application/octet-stream");
-        String contentDispositionHeader = httpResponse.headers().firstValue(CONTENT_DISPOSITION).orElse("unknown");
+        String contentTypeHeader = httpResponse.headers().firstValue(CONTENT_TYPE).orElse(ContentType.APPLICATION_OCTET_STREAM.getMimeType());
+        String contentDispositionHeader = httpResponse.headers().firstValue(CONTENT_DISPOSITION).orElse(DEFAULT_FILENAME);
         return new TypedInMemoryFile.Builder()
                 .content(httpResponse.body())
                 .contentType(contentTypeHeader)
@@ -52,6 +56,6 @@ public class FileParser {
         ParameterParser parser = new ParameterParser();
         Map<String, String> params = parser.parse(contentDispositionHeader, ';');
 
-        return params.getOrDefault("filename", "unknown");
+        return params.getOrDefault(FILENAME_PARAMETER, DEFAULT_FILENAME);
     }
 }

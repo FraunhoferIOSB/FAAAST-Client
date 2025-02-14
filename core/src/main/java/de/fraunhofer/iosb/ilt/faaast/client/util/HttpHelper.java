@@ -41,6 +41,10 @@ import java.nio.charset.StandardCharsets;
  */
 public final class HttpHelper {
 
+    private static final String BOUNDARY = "----ClientBoundary7MA4YWxkTrZu0gW";
+    private static final String FILE_PARAMETER = "file";
+    private static final String FILENAME_PARAMETER = "fileName";
+
     private HttpHelper() {}
 
 
@@ -92,21 +96,21 @@ public final class HttpHelper {
      * @return the HttpResponse containing the response body as a string
      */
     public static HttpRequest createPutFileRequest(URI uri, TypedInMemoryFile file) {
-        String boundary = "----ClientBoundary7MA4YWxkTrZu0gW";
         HttpEntity httpEntity = MultipartEntityBuilder.create()
-                .addPart(
-                        "fileName",
-                        new StringBody(file.getPath(),
-                                ContentType.create("text/plain", StandardCharsets.UTF_8)))
-                .addBinaryBody("file",
+                .addPart(FILENAME_PARAMETER,
+                        new StringBody(
+                                file.getPath(),
+                                ContentType.create(ContentType.TEXT_PLAIN.getMimeType(),
+                                        StandardCharsets.UTF_8)))
+                .addBinaryBody(FILE_PARAMETER,
                         file.getContent(),
                         ContentType.create(file.getContentType(), StandardCharsets.UTF_8),
                         file.getPath())
-                .setBoundary(boundary)
+                .setBoundary(BOUNDARY)
                 .build();
         return HttpRequest.newBuilder()
                 .uri(uri)
-                .header(HttpConstants.HEADER_CONTENT_TYPE, "multipart/form-data; boundary=" + boundary)
+                .header(HttpConstants.HEADER_CONTENT_TYPE, ContentType.MULTIPART_FORM_DATA.getMimeType() + "; boundary=" + BOUNDARY)
                 .PUT(HttpRequest.BodyPublishers.ofInputStream(LambdaExceptionHelper.wrap(httpEntity::getContent)))
                 .build();
     }

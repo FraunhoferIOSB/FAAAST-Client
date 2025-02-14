@@ -42,7 +42,6 @@ import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.QueryModifier;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingMetadata;
-import de.fraunhofer.iosb.ilt.faaast.service.model.exception.InvalidRequestException;
 import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.ElementValue;
 import de.fraunhofer.iosb.ilt.faaast.service.typing.TypeInfo;
@@ -128,7 +127,7 @@ public abstract class BaseInterface {
      * @param responseType the result type
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> T get(Class<T> responseType) throws ConnectivityException, StatusCodeException {
@@ -144,7 +143,7 @@ public abstract class BaseInterface {
      * @param responseType the result type
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> T get(String path, Class<T> responseType) throws ConnectivityException, StatusCodeException {
@@ -160,7 +159,7 @@ public abstract class BaseInterface {
      * @param responseType the result type
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> T get(Content content, Class<T> responseType) throws ConnectivityException, StatusCodeException {
@@ -177,7 +176,7 @@ public abstract class BaseInterface {
      * @param responseType the result type
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> T get(String path, Content content, Class<T> responseType) throws ConnectivityException, StatusCodeException {
@@ -193,7 +192,7 @@ public abstract class BaseInterface {
      * @param responseType the result type
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> T get(QueryModifier modifier, Class<T> responseType) throws ConnectivityException, StatusCodeException {
@@ -210,7 +209,7 @@ public abstract class BaseInterface {
      * @param responseType the result type
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> T get(String path, QueryModifier modifier, Class<T> responseType) throws ConnectivityException, StatusCodeException {
@@ -227,7 +226,7 @@ public abstract class BaseInterface {
      * @param responseType the result type
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> T get(QueryModifier modifier, Content content, Class<T> responseType) throws ConnectivityException, StatusCodeException {
@@ -245,7 +244,7 @@ public abstract class BaseInterface {
      * @param responseType the result type
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> T get(String path, QueryModifier modifier, Content content, Class<T> responseType) throws ConnectivityException, StatusCodeException {
@@ -265,7 +264,7 @@ public abstract class BaseInterface {
      * @param typeInfo the type information about the AAS element to be returned
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T extends ElementValue> T getValue(String path, QueryModifier modifier, TypeInfo<?> typeInfo) throws ConnectivityException, StatusCodeException {
@@ -304,7 +303,7 @@ public abstract class BaseInterface {
      * @param responseType the result type
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> List<T> getAll(Class<T> responseType) throws ConnectivityException, StatusCodeException {
@@ -320,7 +319,7 @@ public abstract class BaseInterface {
      * @param responseType the result type
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> List<T> getAll(String path, Class<T> responseType) throws ConnectivityException, StatusCodeException {
@@ -337,7 +336,7 @@ public abstract class BaseInterface {
      * @param responseType the result type
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> List<T> getAll(String path, QueryModifier modifier, Class<T> responseType) throws ConnectivityException, StatusCodeException {
@@ -355,7 +354,7 @@ public abstract class BaseInterface {
      * @param responseType the result type
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> List<T> getAll(SearchCriteria searchCriteria, Content content, QueryModifier modifier, Class<T> responseType) throws ConnectivityException, StatusCodeException {
@@ -399,7 +398,7 @@ public abstract class BaseInterface {
      * @param responseType the result type
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> Page<T> getPage(PagingInfo pagingInfo, Class<T> responseType) throws ConnectivityException, StatusCodeException {
@@ -416,7 +415,7 @@ public abstract class BaseInterface {
      * @param responseType the result type
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> Page<T> getPage(String path, PagingInfo pagingInfo, Class<T> responseType) throws ConnectivityException, StatusCodeException {
@@ -434,7 +433,7 @@ public abstract class BaseInterface {
      * @param responseType the result type
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> Page<T> getPage(String path, QueryModifier modifier, PagingInfo pagingInfo, Class<T> responseType) throws ConnectivityException, StatusCodeException {
@@ -453,7 +452,7 @@ public abstract class BaseInterface {
      * @param responseType the result type
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> Page<T> getPage(String path, Content content, QueryModifier modifier, PagingInfo pagingInfo, Class<T> responseType)
@@ -473,7 +472,7 @@ public abstract class BaseInterface {
      * @param responseType the result type
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> Page<T> getPage(Content content, QueryModifier modifier, PagingInfo pagingInfo, SearchCriteria searchCriteria, Class<T> responseType)
@@ -494,7 +493,7 @@ public abstract class BaseInterface {
      * @param responseType the result type
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> Page<T> getPage(String path, Content content, QueryModifier modifier, PagingInfo pagingInfo, SearchCriteria searchCriteria, Class<T> responseType)
@@ -519,7 +518,7 @@ public abstract class BaseInterface {
      * @param responseType the result type
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> T post(Object entity, Class<T> responseType) throws ConnectivityException, StatusCodeException {
@@ -536,7 +535,7 @@ public abstract class BaseInterface {
      * @param responseType the result type
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> T post(String path, Object entity, Class<T> responseType) throws ConnectivityException, StatusCodeException {
@@ -554,7 +553,7 @@ public abstract class BaseInterface {
      * @param responseType the result type
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> T post(String path, Object entity, HttpStatus expectedStatusCode, Class<T> responseType) throws ConnectivityException, StatusCodeException {
@@ -573,7 +572,7 @@ public abstract class BaseInterface {
      * @param responseType the result type
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> T post(String path, Object entity, QueryModifier modifier, Content content, Class<T> responseType) throws ConnectivityException, StatusCodeException {
@@ -593,7 +592,7 @@ public abstract class BaseInterface {
      * @param responseType the result type
      * @return the parsed HTTP response
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> T post(String path, Object entity, QueryModifier modifier, Content content, HttpStatus expectedStatusCode, Class<T> responseType)
@@ -612,7 +611,7 @@ public abstract class BaseInterface {
      *
      * @param entity the payload to send in the body
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      */
     protected void put(Object entity) throws ConnectivityException, StatusCodeException {
         put(null, entity, QueryModifier.DEFAULT);
@@ -625,7 +624,7 @@ public abstract class BaseInterface {
      * @param path the URL path relative to the current endpoint
      * @param entity the payload to send in the body
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      */
     protected void put(String path, Object entity) throws ConnectivityException, StatusCodeException {
         put(path, entity, QueryModifier.DEFAULT);
@@ -638,7 +637,7 @@ public abstract class BaseInterface {
      * @param entity the payload to send in the body
      * @param modifier the query modifier
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      */
     protected void put(Object entity, QueryModifier modifier) throws ConnectivityException, StatusCodeException {
         put(null, entity, Content.DEFAULT, modifier);
@@ -652,7 +651,7 @@ public abstract class BaseInterface {
      * @param entity the payload to send in the body
      * @param modifier the query modifier
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      */
     protected void put(String path, Object entity, QueryModifier modifier) throws ConnectivityException, StatusCodeException {
         put(path, entity, Content.DEFAULT, modifier);
@@ -667,7 +666,7 @@ public abstract class BaseInterface {
      * @param content the content modifier
      * @param modifier the query modifier
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      */
     protected void put(String path, Object entity, Content content, QueryModifier modifier) throws ConnectivityException, StatusCodeException {
         HttpRequest request = HttpHelper.createPutRequest(
@@ -684,7 +683,7 @@ public abstract class BaseInterface {
      * @param path the URL path relative to the current endpoint
      * @param file the file
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      */
     protected void putFile(String path, TypedInMemoryFile file) throws ConnectivityException, StatusCodeException {
         HttpRequest request = HttpHelper.createPutFileRequest(resolve(QueryHelper.apply(path, Content.DEFAULT, QueryModifier.DEFAULT)), file);
@@ -699,7 +698,7 @@ public abstract class BaseInterface {
      * @param path the URL path relative to the current endpoint
      * @param entity the payload to send in the body
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      */
     protected void patch(String path, Object entity) throws ConnectivityException, StatusCodeException {
         patch(path, entity, QueryModifier.DEFAULT);
@@ -712,7 +711,7 @@ public abstract class BaseInterface {
      * @param entity the payload to send in the body
      * @param modifier the query modifier
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      */
     protected void patch(Object entity, QueryModifier modifier) throws ConnectivityException, StatusCodeException {
         patch(null, entity, Content.DEFAULT, modifier);
@@ -740,7 +739,7 @@ public abstract class BaseInterface {
      * @param content the content modifier
      * @param modifier the query modifier
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      */
     protected void patch(Object entity, Content content, QueryModifier modifier) throws ConnectivityException, StatusCodeException {
         patch(null, entity, content, modifier);
@@ -755,7 +754,7 @@ public abstract class BaseInterface {
      * @param content the content modifier
      * @param modifier the query modifier
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      */
     protected void patch(String path, Object entity, Content content, QueryModifier modifier) throws ConnectivityException, StatusCodeException {
         HttpRequest request = HttpHelper.createPatchRequest(
@@ -773,7 +772,7 @@ public abstract class BaseInterface {
      * @param entity the payload to send in the body
      * @param modifier the query modifier
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      */
     protected void patchValue(String path, Object entity, QueryModifier modifier) throws ConnectivityException, StatusCodeException {
         HttpRequest request = HttpHelper.createPatchRequest(
@@ -789,7 +788,7 @@ public abstract class BaseInterface {
      *
      * @param path the URL path relative to the current endpoint
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      */
     protected void delete(String path) throws ConnectivityException, StatusCodeException {
         delete(path, HttpStatus.NO_CONTENT);
@@ -802,7 +801,7 @@ public abstract class BaseInterface {
      * @param path the URL path relative to the current endpoint
      * @param expectedStatus the expected HTTP status code
      * @throws ConnectivityException if connection to the server fails
-     * @throws StatusCodeException if HTTP request returns invalid statsu code
+     * @throws StatusCodeException if HTTP request returns invalid status code
      */
     protected void delete(String path, HttpStatus expectedStatus) throws ConnectivityException, StatusCodeException {
         HttpRequest request = HttpHelper.createDeleteRequest(resolve(path));
