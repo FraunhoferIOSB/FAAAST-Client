@@ -28,8 +28,8 @@ public class UnsupportedStatusCodeException extends RuntimeException {
      *
      * @param response the response representing the exception
      */
-    public UnsupportedStatusCodeException(HttpResponse<String> response) {
-        this(response.uri(), response.statusCode(), response.body());
+    public UnsupportedStatusCodeException(HttpResponse<?> response) {
+        this(response.uri(), response.statusCode(), (response.body() instanceof String) ? (String) response.body() : null);
     }
 
 
@@ -41,6 +41,6 @@ public class UnsupportedStatusCodeException extends RuntimeException {
      * @param body the body of the response
      */
     public UnsupportedStatusCodeException(URI uri, int statusCode, String body) {
-        super(String.format("Received HTTP status code %d (uri: %s uri, response body: %s)", statusCode, uri, body));
+        super(String.format("Received HTTP status code %d (uri: %s uri, response body: %s)", statusCode, uri, body != null ? body : "not available"));
     }
 }

@@ -18,23 +18,41 @@ import de.fraunhofer.iosb.ilt.faaast.client.exception.ClientException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.ApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
+import de.fraunhofer.iosb.ilt.faaast.service.model.TypedInMemoryFile;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingMetadata;
+import de.fraunhofer.iosb.ilt.faaast.service.model.exception.InvalidRequestException;
 import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import de.fraunhofer.iosb.ilt.faaast.service.util.EncodingHelper;
+
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
-import org.eclipse.digitaltwin.aas4j.v3.model.*;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.*;
+import okio.Buffer;
+
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.ReferenceTypes;
+import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultResource;
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertArrayEquals;
+
+import static org.apache.commons.fileupload.FileUploadBase.CONTENT_DISPOSITION;
+import static org.apache.commons.fileupload.FileUploadBase.CONTENT_TYPE;
 
 
 public class AASInterfaceTest {
@@ -138,17 +156,25 @@ public class AASInterfaceTest {
 
 
     @Test
-    public void testGetThumbnail() throws InterruptedException, SerializationException, ClientException, UnsupportedModifierException {
-        AssetAdministrationShell requestAas = new DefaultAssetAdministrationShell();
-        Resource requestThumbnail = new DefaultResource();
-        AssetInformation assetInformation = new DefaultAssetInformation();
-        assetInformation.setDefaultThumbnail(requestThumbnail);
-        requestAas.setAssetInformation(assetInformation);
+    public void testGetThumbnail() throws InterruptedException, ClientException, InvalidRequestException {
+        byte[] content = "thumbnail-content".getBytes();
+        TypedInMemoryFile requestThumbnail = new TypedInMemoryFile.Builder()
+                .content(content)
+                .contentType("image/png")
+                .path("thumbnail.png")
+                .build();
 
-        server.enqueue(new MockResponse().setBody(serializer.write(requestThumbnail)));
+        Buffer buffer = new Buffer();
+        buffer.write(requestThumbnail.getContent());
+        MockResponse response = new MockResponse()
+                .setResponseCode(200)
+                .addHeader(CONTENT_TYPE, requestThumbnail.getContentType())
+                .addHeader(CONTENT_DISPOSITION, "attachment; filename=\"thumbnail.png\"")
+                .setBody(buffer);
 
-        Resource responseThumbnail = aasInterface.getThumbnail();
+        server.enqueue(response);
 
+        TypedInMemoryFile responseThumbnail = aasInterface.getThumbnail();
         RecordedRequest request = server.takeRequest();
 
         assertEquals("GET", request.getMethod());
@@ -159,24 +185,47 @@ public class AASInterfaceTest {
 
 
     @Test
-    public void testPutThumbnail() throws InterruptedException, SerializationException, ClientException, UnsupportedModifierException {
-        AssetAdministrationShell requestAas = new DefaultAssetAdministrationShell.Builder().build();
-        Resource requestThumbnail = new DefaultResource();
-        AssetInformation assetInformation = new DefaultAssetInformation();
-        assetInformation.setDefaultThumbnail(requestThumbnail);
-        requestAas.setAssetInformation(assetInformation);
-
+    public void testPutThumbnail() throws InterruptedException, ClientException {
         server.enqueue(new MockResponse().setResponseCode(204));
+
+        byte[] expectedThumbnailContent = "thumbnail-content".getBytes();
+        TypedInMemoryFile requestThumbnail = new TypedInMemoryFile.Builder()
+                .content(expectedThumbnailContent)
+                .path("TestFile.png")
+                .contentType("image/png")
+                .build();
 
         aasInterface.putThumbnail(requestThumbnail);
 
-        RecordedRequest request = server.takeRequest();
+        var recordedRequest = server.takeRequest();
 
-        String serializedThumbnail = serializer.write(requestThumbnail);
+        assertEquals("PUT", recordedRequest.getMethod());
+        assertEquals("/api/v3.0/aas/asset-information/thumbnail", recordedRequest.getPath());
 
-        assertEquals("PUT", request.getMethod());
-        assertEquals(serializedThumbnail, request.getBody().readUtf8());
-        assertEquals("/api/v3.0/aas/asset-information/thumbnail", request.getPath());
+        String contentTypeHeader = recordedRequest.getHeader("Content-Type");
+        assertNotNull(contentTypeHeader);
+        assertTrue(contentTypeHeader.startsWith("multipart/form-data"));
+
+        byte[] actualBinaryContent = extractBinaryContentFromMultipartBody(recordedRequest.getBody().readUtf8(), contentTypeHeader);
+        assertNotNull(actualBinaryContent);
+        assertArrayEquals(expectedThumbnailContent, actualBinaryContent);
+    }
+
+
+    private byte[] extractBinaryContentFromMultipartBody(String body, String contentTypeHeader) {
+        String boundary = contentTypeHeader.split("boundary=")[1];
+        String[] parts = body.split("--" + boundary);
+
+        for (String part: parts) {
+            if (part.contains("Content-Disposition: form-data; name=\"" + "file" + "\"")) {
+                int binaryStartIndex = part.indexOf("\r\n\r\n") + 4;
+                int binaryEndIndex = part.lastIndexOf("\r\n");
+                if (binaryStartIndex >= 0 && binaryEndIndex >= binaryStartIndex) {
+                    return part.substring(binaryStartIndex, binaryEndIndex).getBytes();
+                }
+            }
+        }
+        throw new AssertionError("Part with name \"" + "file" + "\" not found or invalid in multipart body.");
     }
 
 
