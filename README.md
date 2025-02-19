@@ -39,11 +39,11 @@ AssetAdministrationShell aas = aasRepository.getAASInterface("globalUniqueId").g
 // Add a specific asset id to the asset information.
 List<SpecificAssetId> specificAssetIds = new ArrayList<>();
 specificAssetIds.add(new DefaultSpecificAssetId.Builder().name("specificAssetId").value("serialNumber").build());
-AssetInformation updatedAssetInformation = requestAas.getAssetInformation();
+AssetInformation updatedAssetInformation = aas.getAssetInformation();
 updatedAssetInformation.setSpecificAssetIds(specificAssetIds);
-requestAas.setAssetInformation(updatedAssetInformation);
+aas.setAssetInformation(updatedAssetInformation);
 // Update the AAS on the server.
-aasRepository.getAASInterface("globalUniqueId").patch(aas);
+aasRepository.getAASInterface("globalUniqueId").put(aas);
 ```
 
 
