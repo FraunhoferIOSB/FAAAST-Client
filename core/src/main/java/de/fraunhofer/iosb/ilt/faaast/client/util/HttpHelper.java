@@ -104,11 +104,7 @@ public final class HttpHelper {
      */
     public static HttpRequest createPutFileRequest(URI uri, TypedInMemoryFile file) {
         HttpEntity httpEntity = MultipartEntityBuilder.create()
-                .addPart(FILENAME_PARAMETER,
-                        new StringBody(
-                                file.getPath(),
-                                ContentType.create(ContentType.TEXT_PLAIN.getMimeType(),
-                                        StandardCharsets.UTF_8)))
+                .addTextBody(FILENAME_PARAMETER, file.getPath())
                 .addBinaryBody(FILE_PARAMETER,
                         file.getContent(),
                         ContentType.create(file.getContentType(), StandardCharsets.UTF_8),
