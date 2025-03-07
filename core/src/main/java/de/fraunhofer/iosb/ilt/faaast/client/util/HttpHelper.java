@@ -17,8 +17,11 @@ package de.fraunhofer.iosb.ilt.faaast.client.util;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpMethod;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.service.endpoint.http.util.HttpConstants;
+import de.fraunhofer.iosb.ilt.faaast.service.model.InMemoryFile;
 import de.fraunhofer.iosb.ilt.faaast.service.model.TypedInMemoryFile;
+import de.fraunhofer.iosb.ilt.faaast.service.util.Ensure;
 import de.fraunhofer.iosb.ilt.faaast.service.util.LambdaExceptionHelper;
+import org.apache.commons.fileupload.ParameterParser;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.entity.mime.StringBody;
 import org.apache.hc.core5.http.ContentType;
@@ -30,6 +33,9 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
+
+import static org.apache.commons.fileupload.FileUploadBase.CONTENT_DISPOSITION;
 
 
 /**
@@ -44,6 +50,7 @@ public final class HttpHelper {
     private static final String BOUNDARY = "----ClientBoundary7MA4YWxkTrZu0gW";
     private static final String FILE_PARAMETER = "file";
     private static final String FILENAME_PARAMETER = "fileName";
+    private static final String DEFAULT_FILENAME = "unknown";
 
     private HttpHelper() {}
 
@@ -183,5 +190,28 @@ public final class HttpHelper {
             Thread.currentThread().interrupt();
             throw new ConnectivityException("Request interrupted", e);
         }
+    }
+
+
+    /**
+     * Parses HTTP response to TypedInMemoryFile.
+     *
+     * @param httpResponse HTTP response
+     * @return deserialized payload
+     */
+    public static InMemoryFile parseBody(HttpResponse<byte[]> httpResponse) {
+        Ensure.requireNonNull(httpResponse, "httpResponse must be non-null");
+        String contentDispositionHeader = httpResponse.headers().firstValue(CONTENT_DISPOSITION).orElse(DEFAULT_FILENAME);
+        return new InMemoryFile.Builder()
+                .content(httpResponse.body())
+                .path(extractName(contentDispositionHeader)).build();
+    }
+
+
+    private static String extractName(String contentDispositionHeader) {
+        ParameterParser parser = new ParameterParser();
+        Map<String, String> params = parser.parse(contentDispositionHeader, ';');
+
+        return params.getOrDefault(FILENAME_PARAMETER, DEFAULT_FILENAME);
     }
 }

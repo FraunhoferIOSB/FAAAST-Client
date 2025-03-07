@@ -18,6 +18,7 @@ import de.fraunhofer.iosb.ilt.faaast.client.exception.ClientException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.ApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
+import de.fraunhofer.iosb.ilt.faaast.service.model.InMemoryFile;
 import de.fraunhofer.iosb.ilt.faaast.service.model.TypedInMemoryFile;
 import java.io.IOException;
 import java.net.URI;
@@ -158,9 +159,8 @@ public class AASInterfaceTest {
     @Test
     public void testGetThumbnail() throws InterruptedException, ClientException, InvalidRequestException {
         byte[] content = "thumbnail-content".getBytes();
-        TypedInMemoryFile requestThumbnail = new TypedInMemoryFile.Builder()
+        InMemoryFile requestThumbnail = new InMemoryFile.Builder()
                 .content(content)
-                .contentType("image/png")
                 .path("thumbnail.png")
                 .build();
 
@@ -168,13 +168,13 @@ public class AASInterfaceTest {
         buffer.write(requestThumbnail.getContent());
         MockResponse response = new MockResponse()
                 .setResponseCode(200)
-                .addHeader(CONTENT_TYPE, requestThumbnail.getContentType())
-                .addHeader(CONTENT_DISPOSITION, "attachment; filename=\"thumbnail.png\"")
+                .addHeader(CONTENT_TYPE, "image/png")
+                .addHeader(CONTENT_DISPOSITION, "attachment; fileName=\"thumbnail.png\"")
                 .setBody(buffer);
 
         server.enqueue(response);
 
-        TypedInMemoryFile responseThumbnail = aasInterface.getThumbnail();
+        InMemoryFile responseThumbnail = aasInterface.getThumbnail();
         RecordedRequest request = server.takeRequest();
 
         assertEquals("GET", request.getMethod());

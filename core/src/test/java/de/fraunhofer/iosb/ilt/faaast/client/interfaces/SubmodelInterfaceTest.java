@@ -18,6 +18,7 @@ import de.fraunhofer.iosb.ilt.faaast.client.exception.ClientException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.model.IdShortPath;
+import de.fraunhofer.iosb.ilt.faaast.service.model.InMemoryFile;
 import de.fraunhofer.iosb.ilt.faaast.service.model.TypedInMemoryFile;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.OutputModifier;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
@@ -305,9 +306,8 @@ public class SubmodelInterfaceTest {
     @Test
     public void testGetAttachment() throws InterruptedException, ClientException, InvalidRequestException {
         byte[] content = "attachment-content".getBytes();
-        TypedInMemoryFile requestAttachment = new TypedInMemoryFile.Builder()
+        InMemoryFile requestAttachment = new InMemoryFile.Builder()
                 .content(content)
-                .contentType("application/pdf")
                 .path("attachment.pdf")
                 .build();
 
@@ -315,14 +315,14 @@ public class SubmodelInterfaceTest {
         buffer.write(requestAttachment.getContent());
         MockResponse response = new MockResponse()
                 .setResponseCode(200)
-                .addHeader(CONTENT_TYPE, requestAttachment.getContentType())
-                .addHeader(CONTENT_DISPOSITION, "attachment; filename=\"attachment.pdf\"")
+                .addHeader(CONTENT_TYPE, "application/pdf")
+                .addHeader(CONTENT_DISPOSITION, "attachment; fileName=\"attachment.pdf\"")
                 .setBody(buffer);
 
         server.enqueue(response);
 
         IdShortPath idShort = IdShortPath.parse("idShort");
-        TypedInMemoryFile responseAttachment = submodelInterface.getAttachment(idShort);
+        InMemoryFile responseAttachment = submodelInterface.getAttachment(idShort);
         RecordedRequest request = server.takeRequest();
 
         assertEquals("GET", request.getMethod());

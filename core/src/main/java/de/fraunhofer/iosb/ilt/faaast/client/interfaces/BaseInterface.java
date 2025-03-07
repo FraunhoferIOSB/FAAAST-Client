@@ -26,7 +26,6 @@ import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.UnauthorizedException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.UnsupportedStatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.query.SearchCriteria;
-import de.fraunhofer.iosb.ilt.faaast.client.util.FileParser;
 import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpMethod;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
@@ -35,6 +34,7 @@ import de.fraunhofer.iosb.ilt.faaast.service.dataformat.DeserializationException
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiDeserializer;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
+import de.fraunhofer.iosb.ilt.faaast.service.model.InMemoryFile;
 import de.fraunhofer.iosb.ilt.faaast.service.model.TypedInMemoryFile;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Content;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.OutputModifier;
@@ -287,12 +287,12 @@ public abstract class BaseInterface {
      * @throws ConnectivityException if connection to the server fails
      * @throws StatusCodeException if HTTP request returns invalid status code
      */
-    protected TypedInMemoryFile getFile(String path) throws ConnectivityException, StatusCodeException {
+    protected InMemoryFile getFile(String path) throws ConnectivityException, StatusCodeException {
         HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, Content.DEFAULT, QueryModifier.DEFAULT)));
         HttpResponse<byte[]> response = HttpHelper.sendFileRequest(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
 
-        return FileParser.parseBody(response);
+        return HttpHelper.parseBody(response);
     }
 
 

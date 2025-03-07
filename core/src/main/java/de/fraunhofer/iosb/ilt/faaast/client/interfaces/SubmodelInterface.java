@@ -19,6 +19,7 @@ import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
 import de.fraunhofer.iosb.ilt.faaast.service.model.IdShortPath;
+import de.fraunhofer.iosb.ilt.faaast.service.model.InMemoryFile;
 import de.fraunhofer.iosb.ilt.faaast.service.model.TypedInMemoryFile;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Content;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Level;
@@ -796,7 +797,7 @@ public class SubmodelInterface extends BaseInterface {
      *             </div>
      * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public TypedInMemoryFile getAttachment(IdShortPath idShortPath) throws StatusCodeException, ConnectivityException, InvalidRequestException {
+    public InMemoryFile getAttachment(IdShortPath idShortPath) throws StatusCodeException, ConnectivityException, InvalidRequestException {
         return getFile(attachmentPath(idShortPath));
     }
 
