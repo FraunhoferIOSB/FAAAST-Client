@@ -1,0 +1,11 @@
+------ClientBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="fileName"
+Content-Type: text/plain; charset=UTF-8
+
+TestFile.png
+------ClientBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="TestFile.png"
+Content-Type: image/png; charset=UTF-8
+
+thumbnail-content
+------ClientBoundary7MA4YWxkTrZu0gW--

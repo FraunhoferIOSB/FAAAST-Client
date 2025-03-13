@@ -32,6 +32,10 @@ import de.fraunhofer.iosb.ilt.faaast.service.util.EncodingHelper;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +65,6 @@ import javax.xml.datatype.DatatypeFactory;
 import static org.apache.commons.fileupload.FileUploadBase.CONTENT_DISPOSITION;
 import static org.apache.commons.fileupload.FileUploadBase.CONTENT_TYPE;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
@@ -333,7 +336,7 @@ public class SubmodelInterfaceTest {
 
 
     @Test
-    public void testPutAttachment() throws InterruptedException, ClientException {
+    public void testPutAttachment() throws InterruptedException, ClientException, IOException {
         server.enqueue(new MockResponse().setResponseCode(204));
         IdShortPath idShort = IdShortPath.parse("idShort");
 
@@ -355,26 +358,11 @@ public class SubmodelInterfaceTest {
         assertNotNull(contentTypeHeader);
         assertTrue(contentTypeHeader.startsWith("multipart/form-data"));
 
-        byte[] actualBinaryContent = extractBinaryContentFromMultipartBody(recordedRequest.getBody().readUtf8(), contentTypeHeader);
-        assertNotNull(actualBinaryContent);
-        assertArrayEquals(expectedThumbnailContent, actualBinaryContent);
-    }
+        Path expectedPayloadPath = Paths.get("src/test/resources/expectedMultiPartPayloadAttachment.txt");
+        String expectedPayload = Files.readString(expectedPayloadPath, StandardCharsets.UTF_8);
 
-
-    private byte[] extractBinaryContentFromMultipartBody(String body, String contentTypeHeader) {
-        String boundary = contentTypeHeader.split("boundary=")[1];
-        String[] parts = body.split("--" + boundary);
-
-        for (String part: parts) {
-            if (part.contains("Content-Disposition: form-data; name=\"" + "file" + "\"")) {
-                int binaryStartIndex = part.indexOf("\r\n\r\n") + 4;
-                int binaryEndIndex = part.lastIndexOf("\r\n");
-                if (binaryStartIndex >= 0 && binaryEndIndex >= binaryStartIndex) {
-                    return part.substring(binaryStartIndex, binaryEndIndex).getBytes();
-                }
-            }
-        }
-        throw new AssertionError("Part with name \"" + "file" + "\" not found or invalid in multipart body.");
+        String actualRequestBody = recordedRequest.getBody().readUtf8();
+        assertEquals(expectedPayload, actualRequestBody);
     }
 
 
