@@ -20,9 +20,17 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 
-
+/**
+ * Custom Factory for trusting self signed certs.
+ */
 public class HttpFactory {
-
+    /**
+     * Creates the http client with trust.
+     *
+     * @return the http client
+     * @throws NoSuchAlgorithmException when SSL algorithm is wrong
+     * @throws KeyManagementException when key issues arise
+     */
     public static HttpClient createHttpClient() throws NoSuchAlgorithmException, KeyManagementException {
         SSLContext sslContext = SSLContext.getInstance("TLS");
         sslContext.init(null, new TrustManager[] {
