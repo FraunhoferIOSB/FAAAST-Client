@@ -129,9 +129,7 @@ public abstract class BaseInterface {
      * @param trustSelfSign Allows user to specify if self signed certs are accepted
      */
     protected BaseInterface(URI endpoint, boolean trustSelfSign) throws NoSuchAlgorithmException, KeyManagementException {
-        if(trustSelfSign) {
-            this(endpoint, HttpFactory.createHttpClient();
-        }
+        this(endpoint, HttpFactory.createHttpClient());
     }
 
 
