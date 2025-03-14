@@ -19,17 +19,21 @@ import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
 import de.fraunhofer.iosb.ilt.faaast.service.model.IdShortPath;
+import de.fraunhofer.iosb.ilt.faaast.service.model.InMemoryFile;
+import de.fraunhofer.iosb.ilt.faaast.service.model.TypedInMemoryFile;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Content;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Level;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.QueryModifier;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
+import de.fraunhofer.iosb.ilt.faaast.service.model.exception.InvalidRequestException;
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.ElementValue;
 import de.fraunhofer.iosb.ilt.faaast.service.typing.ElementValueTypeInfo;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.util.List;
+
 import org.eclipse.digitaltwin.aas4j.v3.model.*;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperationRequest;
 import javax.xml.datatype.Duration;
@@ -785,16 +789,16 @@ public class SubmodelInterface extends BaseInterface {
      *             <div>
      *             <ul>
      *             <li>400: BadRequestException</li>
-     *             <li>401: UnauthorizedException</li>
      *             <li>403: ForbiddenException</li>
      *             <li>404: NotFoundException</li>
+     *             <li>405: MethodNotAllowedException</li>
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
      * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public File getAttachment(IdShortPath idShortPath) throws StatusCodeException, ConnectivityException {
-        return get(attachmentPath(idShortPath), File.class);
+    public InMemoryFile getAttachment(IdShortPath idShortPath) throws StatusCodeException, ConnectivityException, InvalidRequestException {
+        return getFile(attachmentPath(idShortPath));
     }
 
 
@@ -807,16 +811,16 @@ public class SubmodelInterface extends BaseInterface {
      *             <div>
      *             <ul>
      *             <li>400: BadRequestException</li>
-     *             <li>401: UnauthorizedException</li>
      *             <li>403: ForbiddenException</li>
      *             <li>404: NotFoundException</li>
+     *             <li>405: MethodNotAllowedException</li>
      *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
      * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public void putAttachment(IdShortPath idShortPath, File attachment) throws StatusCodeException, ConnectivityException {
-        put(attachmentPath(idShortPath), attachment);
+    public void putAttachment(IdShortPath idShortPath, TypedInMemoryFile attachment) throws StatusCodeException, ConnectivityException {
+        putFile(attachmentPath(idShortPath), attachment);
     }
 
 
