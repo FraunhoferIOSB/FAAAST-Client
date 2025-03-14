@@ -80,7 +80,7 @@ public abstract class BaseInterface {
 
     protected final HttpClient httpClient;
     protected final URI endpoint;
-    protected final boolean trustSelfSign;
+    protected final boolean trustSelfSign = false;
 
     /**
      * Creates a new instance.
