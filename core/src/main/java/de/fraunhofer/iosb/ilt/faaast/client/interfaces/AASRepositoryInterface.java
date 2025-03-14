@@ -23,6 +23,8 @@ import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
@@ -59,6 +61,18 @@ public class AASRepositoryInterface extends BaseInterface {
      */
     public AASRepositoryInterface(URI endpoint, String user, String password) {
         super(resolve(endpoint, API_PATH), user, password);
+    }
+
+
+    /**
+     * Creates a new Asset Administration Shell Repository Interface while trusting self-signed certs.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST service
+     * @param user String for basic authentication
+     * @param password String for basic authentication
+     */
+    public AASRepositoryInterface(URI endpoint, boolean trustSelfSign) throws NoSuchAlgorithmException, KeyManagementException {
+        super(resolve(endpoint, API_PATH), trustSelfSign);
     }
 
 

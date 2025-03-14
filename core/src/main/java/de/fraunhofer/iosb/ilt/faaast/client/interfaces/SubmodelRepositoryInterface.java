@@ -23,6 +23,8 @@ import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -47,6 +49,16 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      */
     public SubmodelRepositoryInterface(URI endpoint) {
         super(resolve(endpoint, API_PATH));
+    }
+
+
+    /**
+     * Creates a new Submodel Repository Interface trusting self signed certs.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST service
+     */
+    public SubmodelRepositoryInterface(URI endpoint, boolean trustSelfSign) throws NoSuchAlgorithmException, KeyManagementException {
+        super(resolve(endpoint, API_PATH), trustSelfSign);
     }
 
 

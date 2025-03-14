@@ -26,6 +26,7 @@ import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.UnauthorizedException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.UnsupportedStatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.query.SearchCriteria;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpFactory;
 import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpMethod;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
@@ -51,6 +52,8 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -77,6 +80,7 @@ public abstract class BaseInterface {
 
     protected final HttpClient httpClient;
     protected final URI endpoint;
+    protected final boolean trustSelfSign;
 
     /**
      * Creates a new instance.
@@ -115,6 +119,19 @@ public abstract class BaseInterface {
     protected BaseInterface(URI endpoint, HttpClient httpClient) {
         this.endpoint = sanitizeEndpoint(endpoint);
         this.httpClient = httpClient;
+    }
+
+
+    /**
+     * Creates a new instance.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST service
+     * @param trustSelfSign Allows user to specify if self signed certs are accepted
+     */
+    protected BaseInterface(URI endpoint, boolean trustSelfSign) throws NoSuchAlgorithmException, KeyManagementException {
+        if(trustSelfSign) {
+            this(endpoint, HttpFactory.createHttpClient();
+        }
     }
 
 
