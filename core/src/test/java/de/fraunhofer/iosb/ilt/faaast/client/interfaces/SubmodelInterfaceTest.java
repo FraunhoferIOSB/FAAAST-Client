@@ -363,8 +363,8 @@ public class SubmodelInterfaceTest {
         String actualRequestBody = recordedRequest.getBody().readUtf8();
 
         // Remove trailing linebreaks to assure consistency across platforms.
-        expectedPayload = expectedPayload.replaceAll("[\\r\\n]*$", "");
-        actualRequestBody = actualRequestBody.replaceAll("[\\r\\n]*$", "");
+        expectedPayload = expectedPayload.replaceAll("[\\r\\n]+$", "");
+        actualRequestBody = actualRequestBody.replaceAll("[\\r\\n]+$", "");
         assertEquals(expectedPayload, actualRequestBody);
     }
 
