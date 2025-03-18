@@ -210,7 +210,7 @@ public class AASInterfaceTest {
         assertTrue(contentTypeHeader.startsWith("multipart/form-data"));
 
         Path expectedPayloadPath = Paths.get("src/test/resources/expectedMultiPartPayloadThumbnail.txt");
-        String expectedPayload = Files.readString(expectedPayloadPath, StandardCharsets.UTF_8);
+        String expectedPayload = new String(Files.readAllBytes(expectedPayloadPath), StandardCharsets.UTF_8);
 
         String actualRequestBody = recordedRequest.getBody().readUtf8();
         assertEquals(expectedPayload, actualRequestBody);
