@@ -60,8 +60,10 @@
     </distributionManagement>
     <properties>
         <aas4j.version>1.0.4</aas4j.version>
-        <checkstyle.version>10.21.4</checkstyle.version>
-        <faaast.service.version>1.2.0</faaast.service.version>
+        <checkstyle.version>10.21.2</checkstyle.version>
+        <faaast.service.version>1.3.0-SNAPSHOT</faaast.service.version>
+        <httpcomponents.client.version>5.4.1</httpcomponents.client.version>
+        <httpcomponents.core.version>5.3.2</httpcomponents.core.version>
         <junit.version>4.13.2</junit.version>
         <logback.version>1.5.8</logback.version>
         <maven.compiler.source>17</maven.compiler.source>

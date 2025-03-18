@@ -28,7 +28,7 @@ public class ConflictException extends StatusCodeException {
      *
      * @param response the response representing the exception
      */
-    public ConflictException(HttpResponse<String> response) {
+    public ConflictException(HttpResponse<?> response) {
         super(response);
     }
 }
