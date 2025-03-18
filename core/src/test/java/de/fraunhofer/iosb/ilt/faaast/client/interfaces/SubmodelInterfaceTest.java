@@ -359,9 +359,12 @@ public class SubmodelInterfaceTest {
         assertTrue(contentTypeHeader.startsWith("multipart/form-data"));
 
         Path expectedPayloadPath = Paths.get("src/test/resources/expectedMultiPartPayloadAttachment.txt");
-        String expectedPayload = Files.readString(expectedPayloadPath, StandardCharsets.UTF_8).trim();
+        String expectedPayload = Files.readString(expectedPayloadPath, StandardCharsets.UTF_8);
+        String actualRequestBody = recordedRequest.getBody().readUtf8();
 
-        String actualRequestBody = recordedRequest.getBody().readUtf8().trim();
+        // Remove trailing linebreaks to assure consistency across platforms.
+        expectedPayload = expectedPayload.replaceAll("[\\r\\n]*$", "");
+        actualRequestBody = actualRequestBody.replaceAll("[\\r\\n]*$", "");
         assertEquals(expectedPayload, actualRequestBody);
     }
 
