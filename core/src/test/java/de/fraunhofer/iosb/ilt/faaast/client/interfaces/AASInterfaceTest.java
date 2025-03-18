@@ -216,13 +216,13 @@ public class AASInterfaceTest {
         // Remove trailing linebreaks to assure consistency across platforms.
         if (expectedPayload.endsWith("\n")) {
             expectedPayload = expectedPayload.substring(0, expectedPayload.length() - 1);
+            System.out.println(expectedPayload.replace("\r\n", "<RN>").replace("\r", "<R>").replace("\n", "<N>"));
             System.out.println("Expected Length: " + expectedPayload.length());
         }
         if (actualRequestBody.endsWith("\n")) {
             actualRequestBody = actualRequestBody.substring(0, actualRequestBody.length() - 1);
             System.out.println("Expected Length: " + actualRequestBody.length());
-            actualRequestBody.replace("\r\n", "<RN>").replace("\r", "<R>").replace("\n", "<N>");
-            System.out.println(actualRequestBody);
+            System.out.println(actualRequestBody.replace("\r\n", "<RN>").replace("\r", "<R>").replace("\n", "<N>"));
         }
         assertEquals(expectedPayload, actualRequestBody);
     }
