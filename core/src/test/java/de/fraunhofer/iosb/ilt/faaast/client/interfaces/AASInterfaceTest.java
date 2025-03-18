@@ -214,8 +214,12 @@ public class AASInterfaceTest {
         String actualRequestBody = recordedRequest.getBody().readUtf8();
 
         // Remove trailing linebreaks to assure consistency across platforms.
-        expectedPayload = expectedPayload.replaceAll("[\\r\\n]+$", "");
-        actualRequestBody = actualRequestBody.replaceAll("[\\r\\n]+$", "");
+        if (expectedPayload.endsWith("\n")) {
+            expectedPayload = expectedPayload.substring(0, expectedPayload.length() - 1);
+        }
+        if (actualRequestBody.endsWith("\n")) {
+            actualRequestBody = actualRequestBody.substring(0, actualRequestBody.length() - 1);
+        }
         assertEquals(expectedPayload, actualRequestBody);
     }
 
