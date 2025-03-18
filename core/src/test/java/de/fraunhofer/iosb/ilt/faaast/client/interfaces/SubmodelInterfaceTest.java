@@ -362,16 +362,9 @@ public class SubmodelInterfaceTest {
         String expectedPayload = Files.readString(expectedPayloadPath, StandardCharsets.UTF_8);
         String actualRequestBody = recordedRequest.getBody().readUtf8();
 
-        // Remove trailing linebreaks to assure consistency across platforms.
-        if (expectedPayload.endsWith("\n")) {
-            expectedPayload = expectedPayload.substring(0, expectedPayload.length() - 1);
-            System.out.println("Expected Length: " + expectedPayload.length());
-        }
-        if (actualRequestBody.endsWith("\n")) {
-            actualRequestBody = actualRequestBody.substring(0, actualRequestBody.length() - 1);
-            System.out.println("Actual Length: " + actualRequestBody.length());
-            System.out.println(actualRequestBody);
-        }
+        // Remove  linebreaks to assure consistency across platforms.
+        expectedPayload = expectedPayload.replaceAll("[\\r\\n]", "");
+        actualRequestBody = actualRequestBody.replaceAll("[\\r\\n]", "");
         assertEquals(expectedPayload, actualRequestBody);
     }
 
