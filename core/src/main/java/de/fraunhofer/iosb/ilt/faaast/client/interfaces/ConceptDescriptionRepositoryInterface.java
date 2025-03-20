@@ -16,7 +16,6 @@ package de.fraunhofer.iosb.ilt.faaast.client.interfaces;
 
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
-import static de.fraunhofer.iosb.ilt.faaast.client.interfaces.BaseInterface.resolve;
 import de.fraunhofer.iosb.ilt.faaast.client.query.ConceptDescriptionSearchCriteria;
 import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Content;
