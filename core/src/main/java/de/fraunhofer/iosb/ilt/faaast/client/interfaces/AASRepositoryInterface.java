@@ -17,6 +17,7 @@ package de.fraunhofer.iosb.ilt.faaast.client.interfaces;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.query.AASSearchCriteria;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Content;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.QueryModifier;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
@@ -41,6 +42,17 @@ public class AASRepositoryInterface extends BaseInterface {
     private static final String API_PATH = "/shells";
 
     /**
+     * Creates a new Asset Administration Shell Repository Interface using a custom HTTP client.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST service
+     * @param httpClient Allows user to specify custom http-client
+     */
+    public AASRepositoryInterface(URI endpoint, HttpClient httpClient) {
+        super(resolve(endpoint, API_PATH), httpClient);
+    }
+
+
+    /**
      * Creates a new Asset Administration Shell Repository Interface.
      *
      * @param endpoint Uri used to communicate with the FA³ST service
@@ -63,13 +75,13 @@ public class AASRepositoryInterface extends BaseInterface {
 
 
     /**
-     * Creates a new Asset Administration Shell Repository Interface using a custom HTTP client.
+     * Creates a new Asset Administration Shell Repository Interface.
      *
      * @param endpoint Uri used to communicate with the FA³ST service
-     * @param httpClient Allows user to specify custom http-client
+     * @param trustAllCertificates Allows user to specify if all certificates (including self-signed) are trusted
      */
-    public AASRepositoryInterface(URI endpoint, HttpClient httpClient) {
-        super(resolve(endpoint, API_PATH), httpClient);
+    public AASRepositoryInterface(URI endpoint, boolean trustAllCertificates) {
+        super(resolve(endpoint, API_PATH), trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
     }
 
 

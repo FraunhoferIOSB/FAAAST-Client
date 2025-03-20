@@ -16,6 +16,7 @@ package de.fraunhofer.iosb.ilt.faaast.client.interfaces;
 
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelDescriptor;
@@ -43,6 +44,17 @@ public class SubmodelRegistryInterface extends BaseInterface {
      * Creates a new Submodel Registry Interface.
      *
      * @param endpoint Uri used to communicate with the FA³ST Service
+     * @param httpClient Allows the user to specify a custom httpClient
+     */
+    public SubmodelRegistryInterface(URI endpoint, HttpClient httpClient) {
+        super(resolve(endpoint, API_PATH), httpClient);
+    }
+
+
+    /**
+     * Creates a new Submodel Registry Interface.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST Service
      */
     public SubmodelRegistryInterface(URI endpoint) {
         super(resolve(endpoint, API_PATH));
@@ -64,11 +76,11 @@ public class SubmodelRegistryInterface extends BaseInterface {
     /**
      * Creates a new Submodel Registry Interface.
      *
-     * @param endpoint Uri used to communicate with the FA³ST Service
-     * @param httpClient Allows the user to specify a custom httpClient
+     * @param endpoint Uri used to communicate with the FA³ST service
+     * @param trustAllCertificates Allows user to specify if all certificates (including self-signed) are trusted
      */
-    public SubmodelRegistryInterface(URI endpoint, HttpClient httpClient) {
-        super(resolve(endpoint, API_PATH), httpClient);
+    public SubmodelRegistryInterface(URI endpoint, boolean trustAllCertificates) {
+        super(resolve(endpoint, API_PATH), trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
     }
 
 

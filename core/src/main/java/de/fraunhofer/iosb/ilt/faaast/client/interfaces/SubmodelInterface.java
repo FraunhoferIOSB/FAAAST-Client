@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.model.IdShortPath;
 import de.fraunhofer.iosb.ilt.faaast.service.model.InMemoryFile;
 import de.fraunhofer.iosb.ilt.faaast.service.model.TypedInMemoryFile;
@@ -29,14 +30,16 @@ import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
 import de.fraunhofer.iosb.ilt.faaast.service.model.exception.InvalidRequestException;
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.ElementValue;
 import de.fraunhofer.iosb.ilt.faaast.service.typing.ElementValueTypeInfo;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.util.List;
-
-import org.eclipse.digitaltwin.aas4j.v3.model.*;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperationRequest;
 import javax.xml.datatype.Duration;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationResult;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
+import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 
 
 /**
@@ -50,6 +53,17 @@ import javax.xml.datatype.Duration;
  * </p>
  */
 public class SubmodelInterface extends BaseInterface {
+
+    /**
+     * Creates a new Submodel API.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST service
+     * @param httpClient the httpClient to use
+     */
+    public SubmodelInterface(URI endpoint, HttpClient httpClient) {
+        super(endpoint, httpClient);
+    }
+
 
     /**
      * Creates a new Submodel API.
@@ -77,10 +91,10 @@ public class SubmodelInterface extends BaseInterface {
      * Creates a new Submodel API.
      *
      * @param endpoint Uri used to communicate with the FA³ST service
-     * @param httpClient the httpClient to use
+     * @param trustAllCertificates Allows user to specify if all certificates (including self-signed) are trusted
      */
-    public SubmodelInterface(URI endpoint, HttpClient httpClient) {
-        super(endpoint, httpClient);
+    public SubmodelInterface(URI endpoint, boolean trustAllCertificates) {
+        super(endpoint, trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
     }
 
 

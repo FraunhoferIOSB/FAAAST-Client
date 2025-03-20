@@ -43,6 +43,17 @@ public class DescriptionInterface extends BaseInterface {
      * Creates a new Description Interface.
      *
      * @param endpoint Uri used to communicate with the FA³ST service
+     * @param httpClient custom http-client in case the user wants to set specific attributes
+     */
+    public DescriptionInterface(URI endpoint, HttpClient httpClient) {
+        super(endpoint, httpClient);
+    }
+
+
+    /**
+     * Creates a new Description Interface.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST service
      */
     public DescriptionInterface(URI endpoint) {
         super(resolve(endpoint, API_PATH));
@@ -65,10 +76,10 @@ public class DescriptionInterface extends BaseInterface {
      * Creates a new Description Interface.
      *
      * @param endpoint Uri used to communicate with the FA³ST service
-     * @param httpClient custom http-client in case the user wants to set specific attributes
+     * @param trustAllCertificates Allows user to specify if all certificates (including self-signed) are trusted
      */
-    public DescriptionInterface(URI endpoint, HttpClient httpClient) {
-        super(endpoint, httpClient);
+    public DescriptionInterface(URI endpoint, boolean trustAllCertificates) {
+        super(resolve(endpoint, API_PATH), trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
     }
 
 

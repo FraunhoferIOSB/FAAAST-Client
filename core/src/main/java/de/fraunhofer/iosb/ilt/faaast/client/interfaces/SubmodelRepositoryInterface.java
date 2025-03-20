@@ -17,6 +17,7 @@ package de.fraunhofer.iosb.ilt.faaast.client.interfaces;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.query.SubmodelSearchCriteria;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Content;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.QueryModifier;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
@@ -41,6 +42,17 @@ public class SubmodelRepositoryInterface extends BaseInterface {
     private static final String API_PATH = "/submodels";
 
     /**
+     * Creates a new Submodel Repository API.
+     *
+     * @param endpoint uri used to communicate with the FA³ST service
+     * @param httpClient Allows user to specify custom http-client
+     */
+    public SubmodelRepositoryInterface(URI endpoint, HttpClient httpClient) {
+        super(resolve(endpoint, API_PATH), httpClient);
+    }
+
+
+    /**
      * Creates a new Submodel Repository Interface.
      *
      * @param endpoint Uri used to communicate with the FA³ST service
@@ -63,13 +75,13 @@ public class SubmodelRepositoryInterface extends BaseInterface {
 
 
     /**
-     * Creates a new Submodel Repository API.
+     * Creates a new Submodel Repository Interface.
      *
-     * @param endpoint uri used to communicate with the FA³ST service
-     * @param httpClient Allows user to specify custom http-client
+     * @param endpoint Uri used to communicate with the FA³ST service
+     * @param trustAllCertificates Allows user to specify if all certificates (including self-signed) are trusted
      */
-    public SubmodelRepositoryInterface(URI endpoint, HttpClient httpClient) {
-        super(resolve(endpoint, API_PATH), httpClient);
+    public SubmodelRepositoryInterface(URI endpoint, boolean trustAllCertificates) {
+        super(resolve(endpoint, API_PATH), trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
     }
 
 

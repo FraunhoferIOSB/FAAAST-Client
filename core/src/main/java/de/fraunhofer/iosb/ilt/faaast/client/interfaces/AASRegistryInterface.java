@@ -17,6 +17,7 @@ package de.fraunhofer.iosb.ilt.faaast.client.interfaces;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.query.AASDescriptorSearchCriteria;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Content;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.QueryModifier;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
@@ -46,6 +47,17 @@ public class AASRegistryInterface extends BaseInterface {
      * Creates a new Asset Administration Shell Registry Interface.
      *
      * @param endpoint Uri used to communicate with the FA³ST Service
+     * @param httpClient Allows the user to specify a custom httpClient
+     */
+    public AASRegistryInterface(URI endpoint, HttpClient httpClient) {
+        super(resolve(endpoint, API_PATH), httpClient);
+    }
+
+
+    /**
+     * Creates a new Asset Administration Shell Registry Interface.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST Service
      */
     public AASRegistryInterface(URI endpoint) {
         super(resolve(endpoint, API_PATH));
@@ -65,13 +77,13 @@ public class AASRegistryInterface extends BaseInterface {
 
 
     /**
-     * Creates a new Asset Administration Shell Registry Interface.
+     * Creates a new Asset Administration Shell Interface.
      *
-     * @param endpoint Uri used to communicate with the FA³ST Service
-     * @param httpClient Allows the user to specify a custom httpClient
+     * @param endpoint Uri used to communicate with the FA³ST service
+     * @param trustAllCertificates Allows user to specify if all certificates (including self-signed) are trusted
      */
-    public AASRegistryInterface(URI endpoint, HttpClient httpClient) {
-        super(resolve(endpoint, API_PATH), httpClient);
+    public AASRegistryInterface(URI endpoint, boolean trustAllCertificates) {
+        super(resolve(endpoint, API_PATH), trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
     }
 
 
