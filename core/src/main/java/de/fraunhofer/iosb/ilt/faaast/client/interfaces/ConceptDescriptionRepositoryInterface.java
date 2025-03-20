@@ -16,7 +16,9 @@ package de.fraunhofer.iosb.ilt.faaast.client.interfaces;
 
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
+import static de.fraunhofer.iosb.ilt.faaast.client.interfaces.BaseInterface.resolve;
 import de.fraunhofer.iosb.ilt.faaast.client.query.ConceptDescriptionSearchCriteria;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Content;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.QueryModifier;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
@@ -38,6 +40,17 @@ import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 public class ConceptDescriptionRepositoryInterface extends BaseInterface {
 
     private static final String API_PATH = "/concept-descriptions";
+
+    /**
+     * Creates a new Concept Description Interface.
+     *
+     * @param endpoint the endpoint
+     * @param httpClient allows user to specify custom http-client
+     */
+    public ConceptDescriptionRepositoryInterface(URI endpoint, HttpClient httpClient) {
+        super(resolve(endpoint, API_PATH), httpClient);
+    }
+
 
     /**
      * Creates a new Concept Description Interface.
@@ -64,11 +77,11 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
     /**
      * Creates a new Concept Description Interface.
      *
-     * @param endpoint the endpoint
-     * @param httpClient allows user to specify custom http-client
+     * @param endpoint Uri used to communicate with the FA³ST service
+     * @param trustAllCertificates Allows user to specify if all certificates (including self-signed) are trusted
      */
-    public ConceptDescriptionRepositoryInterface(URI endpoint, HttpClient httpClient) {
-        super(resolve(endpoint, API_PATH), httpClient);
+    public ConceptDescriptionRepositoryInterface(URI endpoint, boolean trustAllCertificates) {
+        super(resolve(endpoint, API_PATH), trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
     }
 
 

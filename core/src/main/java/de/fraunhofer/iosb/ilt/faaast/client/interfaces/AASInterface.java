@@ -17,6 +17,7 @@ package de.fraunhofer.iosb.ilt.faaast.client.interfaces;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Content;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
@@ -44,6 +45,17 @@ public class AASInterface extends BaseInterface {
      * Creates a new Asset Administration Shell Interface.
      *
      * @param endpoint Uri used to communicate with the FA³ST service
+     * @param httpClient Allows user to specify custom http-client
+     */
+    public AASInterface(URI endpoint, HttpClient httpClient) {
+        super(endpoint, httpClient);
+    }
+
+
+    /**
+     * Creates a new Asset Administration Shell Interface.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST service
      */
     public AASInterface(URI endpoint) {
         super(endpoint);
@@ -66,10 +78,10 @@ public class AASInterface extends BaseInterface {
      * Creates a new Asset Administration Shell Interface.
      *
      * @param endpoint Uri used to communicate with the FA³ST service
-     * @param httpClient Allows user to specify custom http-client
+     * @param trustAllCertificates Allows user to specify if all certificates (including self-signed) are trusted
      */
-    public AASInterface(URI endpoint, HttpClient httpClient) {
-        super(endpoint, httpClient);
+    public AASInterface(URI endpoint, boolean trustAllCertificates) {
+        super(endpoint, trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
     }
 
 

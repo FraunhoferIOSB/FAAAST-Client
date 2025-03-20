@@ -26,7 +26,6 @@ import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.UnauthorizedException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.UnsupportedStatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.query.SearchCriteria;
-import de.fraunhofer.iosb.ilt.faaast.client.util.HttpFactory;
 import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpMethod;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
@@ -45,15 +44,11 @@ import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifier
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.ElementValue;
 import de.fraunhofer.iosb.ilt.faaast.service.typing.TypeInfo;
 import de.fraunhofer.iosb.ilt.faaast.service.util.EncodingHelper;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -80,7 +75,18 @@ public abstract class BaseInterface {
 
     protected final HttpClient httpClient;
     protected final URI endpoint;
-    protected final boolean trustSelfSign = false;
+
+    /**
+     * Creates a new instance.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST service
+     * @param httpClient Allows user to specify custom http-client
+     */
+    protected BaseInterface(URI endpoint, HttpClient httpClient) {
+        this.endpoint = sanitizeEndpoint(endpoint);
+        this.httpClient = httpClient;
+    }
+
 
     /**
      * Creates a new instance.
@@ -100,13 +106,7 @@ public abstract class BaseInterface {
      * @param password String to allow for basic authentication
      */
     protected BaseInterface(URI endpoint, String user, String password) {
-        this(endpoint, HttpClient.newBuilder()
-                .authenticator(new Authenticator() {
-                    @Override
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(user, password.toCharArray());
-                    }
-                }).build());
+        this(endpoint, HttpHelper.newUsernamePasswordClient(user, password));
     }
 
 
@@ -114,22 +114,10 @@ public abstract class BaseInterface {
      * Creates a new instance.
      *
      * @param endpoint Uri used to communicate with the FA³ST service
-     * @param httpClient Allows user to specify custom http-client
+     * @param trustAllCertificates Allows user to specify if all certificates (including self-signed) are trusted
      */
-    protected BaseInterface(URI endpoint, HttpClient httpClient) {
-        this.endpoint = sanitizeEndpoint(endpoint);
-        this.httpClient = httpClient;
-    }
-
-
-    /**
-     * Creates a new instance.
-     *
-     * @param endpoint Uri used to communicate with the FA³ST service
-     * @param trustSelfSign Allows user to specify if self signed certs are accepted
-     */
-    protected BaseInterface(URI endpoint, boolean trustSelfSign) throws NoSuchAlgorithmException, KeyManagementException {
-        this(endpoint, HttpFactory.createHttpClient());
+    protected BaseInterface(URI endpoint, boolean trustAllCertificates) {
+        this(endpoint, trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
     }
 
 

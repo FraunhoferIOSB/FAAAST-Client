@@ -18,6 +18,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
+import static de.fraunhofer.iosb.ilt.faaast.client.interfaces.BaseInterface.resolve;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.model.IdShortPath;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Content;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Level;
@@ -51,6 +53,17 @@ public class SubmodelInterface extends BaseInterface {
      * Creates a new Submodel API.
      *
      * @param endpoint Uri used to communicate with the FA³ST service
+     * @param httpClient the httpClient to use
+     */
+    public SubmodelInterface(URI endpoint, HttpClient httpClient) {
+        super(endpoint, httpClient);
+    }
+
+
+    /**
+     * Creates a new Submodel API.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST service
      */
     public SubmodelInterface(URI endpoint) {
         super(endpoint);
@@ -73,10 +86,10 @@ public class SubmodelInterface extends BaseInterface {
      * Creates a new Submodel API.
      *
      * @param endpoint Uri used to communicate with the FA³ST service
-     * @param httpClient the httpClient to use
+     * @param trustAllCertificates Allows user to specify if all certificates (including self-signed) are trusted
      */
-    public SubmodelInterface(URI endpoint, HttpClient httpClient) {
-        super(endpoint, httpClient);
+    public SubmodelInterface(URI endpoint, boolean trustAllCertificates) {
+        super(endpoint, trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
     }
 
 

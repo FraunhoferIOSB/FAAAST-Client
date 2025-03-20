@@ -17,14 +17,13 @@ package de.fraunhofer.iosb.ilt.faaast.client.interfaces;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.query.AASSearchCriteria;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Content;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.QueryModifier;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
 import java.net.URI;
 import java.net.http.HttpClient;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
@@ -41,6 +40,17 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 public class AASRepositoryInterface extends BaseInterface {
 
     private static final String API_PATH = "/shells";
+
+    /**
+     * Creates a new Asset Administration Shell Repository Interface using a custom HTTP client.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST service
+     * @param httpClient Allows user to specify custom http-client
+     */
+    public AASRepositoryInterface(URI endpoint, HttpClient httpClient) {
+        super(resolve(endpoint, API_PATH), httpClient);
+    }
+
 
     /**
      * Creates a new Asset Administration Shell Repository Interface.
@@ -65,25 +75,13 @@ public class AASRepositoryInterface extends BaseInterface {
 
 
     /**
-     * Creates a new Asset Administration Shell Repository Interface while trusting self-signed certs.
+     * Creates a new Asset Administration Shell Repository Interface.
      *
      * @param endpoint Uri used to communicate with the FA³ST service
-     * @param user String for basic authentication
-     * @param password String for basic authentication
+     * @param trustAllCertificates Allows user to specify if all certificates (including self-signed) are trusted
      */
-    public AASRepositoryInterface(URI endpoint, boolean trustSelfSign) throws NoSuchAlgorithmException, KeyManagementException {
-        super(resolve(endpoint, API_PATH), trustSelfSign);
-    }
-
-
-    /**
-     * Creates a new Asset Administration Shell Repository Interface using a custom HTTP client.
-     *
-     * @param endpoint Uri used to communicate with the FA³ST service
-     * @param httpClient Allows user to specify custom http-client
-     */
-    public AASRepositoryInterface(URI endpoint, HttpClient httpClient) {
-        super(resolve(endpoint, API_PATH), httpClient);
+    public AASRepositoryInterface(URI endpoint, boolean trustAllCertificates) {
+        super(resolve(endpoint, API_PATH), trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
     }
 
 

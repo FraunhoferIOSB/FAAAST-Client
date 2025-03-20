@@ -18,10 +18,21 @@ import de.fraunhofer.iosb.ilt.faaast.client.http.HttpMethod;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 
 import java.io.IOException;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.security.GeneralSecurityException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 
 /**
@@ -34,6 +45,68 @@ import java.net.http.HttpResponse;
 public final class HttpHelper {
 
     private HttpHelper() {}
+
+
+    /**
+     * Creates a new default HTTP client.
+     *
+     * @return the new HTTP client
+     */
+    public static HttpClient newDefaultClient() {
+        return HttpClient.newHttpClient();
+    }
+
+
+    /**
+     * Creates a new HTTP client with basic username/password authentication.
+     *
+     * @param username the username
+     * @param password the password
+     * @return the new HTTP client
+     */
+    public static HttpClient newUsernamePasswordClient(String username, String password) {
+        return HttpClient.newBuilder()
+                .authenticator(new Authenticator() {
+                    @Override
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(username, password.toCharArray());
+                    }
+                }).build();
+    }
+
+
+    /**
+     * Creates a new HTTP client that trusts all certificates (including self-signed ones).
+     *
+     * @return the new HTTP client
+     */
+    public static HttpClient newTrustAllCertificatesClient() {
+        try {
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, new TrustManager[] {
+                    new X509TrustManager() {
+                        @Override
+                        public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+
+
+                        @Override
+                        public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+
+
+                        @Override
+                        public X509Certificate[] getAcceptedIssuers() {
+                            return new X509Certificate[0];
+                        }
+                    }
+            }, new java.security.SecureRandom());
+            return HttpClient.newBuilder()
+                    .sslContext(sslContext)
+                    .build();
+        }
+        catch (GeneralSecurityException e) {
+            throw new RuntimeException("failed to create HTTP client that trusts all certificates", e);
+        }
+    }
 
 
     /**
