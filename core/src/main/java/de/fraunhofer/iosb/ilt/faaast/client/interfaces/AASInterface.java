@@ -17,6 +17,8 @@ package de.fraunhofer.iosb.ilt.faaast.client.interfaces;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
+import de.fraunhofer.iosb.ilt.faaast.service.model.InMemoryFile;
+import de.fraunhofer.iosb.ilt.faaast.service.model.TypedInMemoryFile;
 import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Content;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
@@ -24,10 +26,9 @@ import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.util.List;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
-import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
-import org.eclipse.digitaltwin.aas4j.v3.model.Resource;
+
+import de.fraunhofer.iosb.ilt.faaast.service.model.exception.InvalidRequestException;
+import org.eclipse.digitaltwin.aas4j.v3.model.*;
 
 
 /**
@@ -193,12 +194,11 @@ public class AASInterface extends BaseInterface {
     /**
      * Retrieves the thumbnail image associated with the Asset Administration Shell.
      *
-     * @return The requested thumbnail as a Resource object
+     * @return The requested thumbnail as a TypedInMemoryFile object
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
      *             <li>400: BadRequestException</li>
-     *             <li>401: UnauthorizedException</li>
      *             <li>403: ForbiddenException</li>
      *             <li>404: NotFoundException</li>
      *             <li>500: InternalServerErrorException</li>
@@ -206,8 +206,8 @@ public class AASInterface extends BaseInterface {
      *             </div>
      * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public Resource getThumbnail() throws StatusCodeException, ConnectivityException {
-        return get(thumbnailPath(), Resource.class);
+    public InMemoryFile getThumbnail() throws StatusCodeException, ConnectivityException, InvalidRequestException {
+        return getFile(thumbnailPath());
     }
 
 
@@ -219,7 +219,6 @@ public class AASInterface extends BaseInterface {
      *             <div>
      *             <ul>
      *             <li>400: BadRequestException</li>
-     *             <li>401: UnauthorizedException</li>
      *             <li>403: ForbiddenException</li>
      *             <li>404: NotFoundException</li>
      *             <li>500: InternalServerErrorException</li>
@@ -227,8 +226,8 @@ public class AASInterface extends BaseInterface {
      *             </div>
      * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public void putThumbnail(Resource file) throws StatusCodeException, ConnectivityException {
-        put(thumbnailPath(), file);
+    public void putThumbnail(TypedInMemoryFile file) throws StatusCodeException, ConnectivityException {
+        putFile(thumbnailPath(), file);
     }
 
 
@@ -239,7 +238,6 @@ public class AASInterface extends BaseInterface {
      *             <div>
      *             <ul>
      *             <li>400: BadRequestException</li>
-     *             <li>401: UnauthorizedException</li>
      *             <li>403: ForbiddenException</li>
      *             <li>404: NotFoundException</li>
      *             <li>500: InternalServerErrorException</li>

@@ -246,6 +246,7 @@ to instantiate an interface for connection with that server.
 - De-/Serialization
   - Fixed serialization of submodel ids in deleteSubmodel and deleteSubmodelReference in AASInterface
   - Fixed an error that occurred when trying to retrieve lists from a server.
+  - Fixed file handling 
 
 ### 1.0.0
 

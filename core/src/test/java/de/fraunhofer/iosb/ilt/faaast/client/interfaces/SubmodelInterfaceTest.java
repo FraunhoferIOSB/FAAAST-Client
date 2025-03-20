@@ -18,9 +18,12 @@ import de.fraunhofer.iosb.ilt.faaast.client.exception.ClientException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.model.IdShortPath;
+import de.fraunhofer.iosb.ilt.faaast.service.model.InMemoryFile;
+import de.fraunhofer.iosb.ilt.faaast.service.model.TypedInMemoryFile;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.OutputModifier;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingMetadata;
+import de.fraunhofer.iosb.ilt.faaast.service.model.exception.InvalidRequestException;
 import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.Datatype;
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.PropertyValue;
@@ -29,13 +32,29 @@ import de.fraunhofer.iosb.ilt.faaast.service.util.EncodingHelper;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
-import org.eclipse.digitaltwin.aas4j.v3.model.*;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.*;
+import okio.Buffer;
+
+import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationResult;
+import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
+import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultEntity;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperation;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperationResult;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperationVariable;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,6 +62,11 @@ import org.junit.Test;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
+import static org.apache.commons.fileupload.FileUploadBase.CONTENT_DISPOSITION;
+import static org.apache.commons.fileupload.FileUploadBase.CONTENT_TYPE;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 
 
@@ -51,7 +75,6 @@ public class SubmodelInterfaceTest {
     private static MockWebServer server;
     private static JsonApiSerializer serializer;
     private static Submodel requestSubmodel;
-    private static File requestFile;
 
     @Before
     public void setup() throws IOException {
@@ -62,10 +85,6 @@ public class SubmodelInterfaceTest {
         serializer = new JsonApiSerializer();
 
         instantiateSubmodel();
-
-        requestFile = new DefaultFile();
-        requestFile.setIdShort("idShort");
-
     }
 
 
@@ -288,47 +307,79 @@ public class SubmodelInterfaceTest {
 
 
     @Test
-    public void testGetFileByPath() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
-        String serializedFile = serializer.write(requestFile);
-        server.enqueue(new MockResponse().setBody(serializedFile));
-        IdShortPath idShort = new IdShortPath.Builder().idShort(
-                requestFile.getIdShort()).build();
-        File responseFile = submodelInterface.getAttachment(idShort);
+    public void testGetAttachment() throws InterruptedException, ClientException, InvalidRequestException {
+        byte[] content = "attachment-content".getBytes();
+        InMemoryFile requestAttachment = new InMemoryFile.Builder()
+                .content(content)
+                .path("attachment.pdf")
+                .build();
+
+        Buffer buffer = new Buffer();
+        buffer.write(requestAttachment.getContent());
+        MockResponse response = new MockResponse()
+                .setResponseCode(200)
+                .addHeader(CONTENT_TYPE, "application/pdf")
+                .addHeader(CONTENT_DISPOSITION, "attachment; fileName=\"attachment.pdf\"")
+                .setBody(buffer);
+
+        server.enqueue(response);
+
+        IdShortPath idShort = IdShortPath.parse("idShort");
+        InMemoryFile responseAttachment = submodelInterface.getAttachment(idShort);
         RecordedRequest request = server.takeRequest();
 
         assertEquals("GET", request.getMethod());
-        assertEquals(requestFile, responseFile);
-        assertEquals(String.format("/api/v3.0/submodel/submodel-elements/%s/attachment", requestFile.getIdShort()), request.getPath());
+        assertEquals(0, request.getBodySize());
+        assertEquals(String.format("/api/v3.0/submodel/submodel-elements/%s/attachment", idShort), request.getPath());
+        assertEquals(requestAttachment, responseAttachment);
     }
 
 
     @Test
-    public void testPutFileByPath() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
-        String serializedFile = serializer.write(requestFile);
+    public void testPutAttachment() throws InterruptedException, ClientException, IOException {
         server.enqueue(new MockResponse().setResponseCode(204));
-        IdShortPath idShort = new IdShortPath.Builder().idShort(
-                requestFile.getIdShort()).build();
-        submodelInterface.putAttachment(idShort, requestFile);
-        RecordedRequest request = server.takeRequest();
+        IdShortPath idShort = IdShortPath.parse("idShort");
 
-        assertEquals("PUT", request.getMethod());
-        assertEquals(serializedFile, request.getBody().readUtf8());
-        assertEquals(String.format("/api/v3.0/submodel/submodel-elements/%s/attachment", requestFile.getIdShort()), request.getPath());
+        byte[] expectedThumbnailContent = "attachment-content".getBytes();
+        TypedInMemoryFile requestAttachment = new TypedInMemoryFile.Builder()
+                .content(expectedThumbnailContent)
+                .path("TestFile.png")
+                .contentType("image/png")
+                .build();
+
+        submodelInterface.putAttachment(idShort, requestAttachment);
+
+        var recordedRequest = server.takeRequest();
+
+        assertEquals("PUT", recordedRequest.getMethod());
+        assertEquals(String.format("/api/v3.0/submodel/submodel-elements/%s/attachment", idShort), recordedRequest.getPath());
+
+        String contentTypeHeader = recordedRequest.getHeader("Content-Type");
+        assertNotNull(contentTypeHeader);
+        assertTrue(contentTypeHeader.startsWith("multipart/form-data"));
+
+        Path expectedPayloadPath = Paths.get("src/test/resources/expectedMultiPartPayloadAttachment.txt");
+        String expectedPayload = Files.readString(expectedPayloadPath, StandardCharsets.UTF_8);
+        String actualRequestBody = recordedRequest.getBody().readUtf8();
+
+        // Remove  linebreaks to assure consistency across platforms.
+        expectedPayload = expectedPayload.replaceAll("[\\r\\n]", "");
+        actualRequestBody = actualRequestBody.replaceAll("[\\r\\n]", "");
+        assertEquals(expectedPayload, actualRequestBody);
     }
 
 
     @Test
-    public void testDeleteFileByPath() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
-        String serializedFile = serializer.write(requestFile);
-        server.enqueue(new MockResponse().setBody(serializedFile));
-        IdShortPath idShort = new IdShortPath.Builder().idShort(
-                requestFile.getIdShort()).build();
+    public void testDeleteFileByPath() throws InterruptedException, ClientException {
+        server.enqueue(new MockResponse().setResponseCode(200));
+        IdShortPath idShort = IdShortPath.parse("idShort");
+
         submodelInterface.deleteAttachment(idShort);
         RecordedRequest request = server.takeRequest();
 
         assertEquals("DELETE", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals(String.format("/api/v3.0/submodel/submodel-elements/%s/attachment", requestFile.getIdShort()), request.getPath());
+        assertEquals(String.format("/api/v3.0/submodel/submodel-elements/%s/attachment", idShort), request.getPath());
     }
 
 

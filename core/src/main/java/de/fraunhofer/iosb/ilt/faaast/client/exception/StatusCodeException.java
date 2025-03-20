@@ -32,8 +32,8 @@ public abstract class StatusCodeException extends ClientException {
      *
      * @param response the response representing the exception
      */
-    protected StatusCodeException(HttpResponse<String> response) {
-        this(response.uri(), response.statusCode(), response.body());
+    protected StatusCodeException(HttpResponse<?> response) {
+        this(response.uri(), response.statusCode(), (response.body() instanceof String) ? (String) response.body() : null);
     }
 
 
@@ -45,7 +45,7 @@ public abstract class StatusCodeException extends ClientException {
      * @param body the body of the response
      */
     protected StatusCodeException(URI uri, int statusCode, String body) {
-        super(String.format("Received HTTP status code %d (uri: %s uri, response body: %s)", statusCode, uri, body));
+        super(String.format("Received HTTP status code %d (uri: %s uri, response body: %s)", statusCode, uri, body != null ? body : "not available"));
         this.uri = uri;
         this.statusCode = statusCode;
         this.body = body;
