@@ -60,7 +60,7 @@
     </distributionManagement>
     <properties>
         <aas4j.version>1.0.4</aas4j.version>
-        <checkstyle.version>10.21.4</checkstyle.version>
+        <checkstyle.version>10.22.0</checkstyle.version>
         <faaast.service.version>1.3.0-SNAPSHOT</faaast.service.version>
         <httpcomponents.client.version>5.4.3</httpcomponents.client.version>
         <httpcomponents.core.version>5.3.4</httpcomponents.core.version>
