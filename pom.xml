@@ -150,6 +150,12 @@
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
                             <version>${checkstyle.version}</version>
+                            <exclusions>
+                                <exclusion>
+                                    <groupId>commons-beanutils</groupId>
+                                    <artifactId>commons-beanutils</artifactId>
+                                </exclusion>
+                            </exclusions>
                         </dependency>
                     </dependencies>
                     <executions>
