@@ -15,6 +15,7 @@
 package de.fraunhofer.iosb.ilt.faaast.client.util;
 
 import static org.apache.commons.fileupload.FileUploadBase.CONTENT_DISPOSITION;
+
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpMethod;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.service.endpoint.http.util.HttpConstants;
@@ -147,6 +148,7 @@ public final class HttpHelper {
         return HttpRequest.newBuilder()
                 .uri(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(body))
+                .header(HttpConstants.HEADER_CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
                 .build();
     }
 
@@ -162,6 +164,7 @@ public final class HttpHelper {
         return HttpRequest.newBuilder()
                 .uri(uri)
                 .PUT(HttpRequest.BodyPublishers.ofString(body))
+                .header(HttpConstants.HEADER_CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
                 .build();
     }
 
@@ -200,6 +203,7 @@ public final class HttpHelper {
         return HttpRequest.newBuilder()
                 .uri(uri)
                 .method(HttpMethod.PATCH.name(), HttpRequest.BodyPublishers.ofString(body))
+                .header(HttpConstants.HEADER_CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
                 .build();
     }
 
