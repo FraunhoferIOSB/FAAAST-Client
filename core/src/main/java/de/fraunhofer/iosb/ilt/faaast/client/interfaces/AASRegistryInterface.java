@@ -173,7 +173,7 @@ public class AASRegistryInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public DefaultAssetAdministrationShellDescriptor post(DefaultAssetAdministrationShellDescriptor shellDescriptor) throws StatusCodeException, ConnectivityException {
-        return post(idPath(shellDescriptor.getId()), shellDescriptor, DefaultAssetAdministrationShellDescriptor.class);
+        return post(shellDescriptor, DefaultAssetAdministrationShellDescriptor.class);
     }
 
 

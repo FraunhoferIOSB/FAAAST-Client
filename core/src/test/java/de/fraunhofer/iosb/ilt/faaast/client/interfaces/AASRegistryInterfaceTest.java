@@ -89,7 +89,7 @@ public class AASRegistryInterfaceTest {
 
         assertEquals("POST", request.getMethod());
         assertEquals(requestShellDescriptor, returnShellDescriptor);
-        assertEquals("/example/api/v3.0/shell-descriptors/" + EncodingHelper.base64UrlEncode(requestAasIdentifier), request.getPath());
+        assertEquals("/example/api/v3.0/shell-descriptors", request.getPath());
     }
 
 
