@@ -259,6 +259,27 @@ public abstract class BaseInterface {
 
 
     /**
+     * Executes a HTTP GET and parses the response body as {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param path the URL path relative to the current endpoint
+     * @param searchCriteria the search criteria
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid status code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
+    protected <T> T get(String path, SearchCriteria searchCriteria, Class<T> responseType) throws ConnectivityException, StatusCodeException {
+        HttpRequest request = HttpHelper
+                .createGetRequest(resolve(QueryHelper.apply(path, Content.DEFAULT, QueryModifier.DEFAULT, new PagingInfo.Builder().build(), searchCriteria)));
+        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
+        return parseBody(response, responseType);
+    }
+
+
+    /**
      * Executes a HTTP GET and parses the response body as {@code responseType} using valueOnly serialization.
      *
      * @param <T> the result type

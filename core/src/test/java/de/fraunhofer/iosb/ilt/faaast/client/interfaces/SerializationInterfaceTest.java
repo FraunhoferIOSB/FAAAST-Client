@@ -18,51 +18,71 @@ import de.fraunhofer.iosb.ilt.faaast.client.exception.ClientException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.ApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
-import de.fraunhofer.iosb.ilt.faaast.service.model.ServiceDescription;
-import de.fraunhofer.iosb.ilt.faaast.service.model.ServiceSpecificationProfile;
+import de.fraunhofer.iosb.ilt.faaast.service.model.InMemoryFile;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.Environment;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultEnvironment;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
 
-public class DescriptionInterfaceTest {
+public class SerializationInterfaceTest {
 
-    private static DescriptionInterface descriptionInterface;
+    private static SerializationInterface serializationInterface;
     private static ApiSerializer serializer;
     private static MockWebServer server;
+    private static List<String> aasIds;
+    private static List<String> submodelIds;
 
     @Before
     public void setup() throws IOException {
         server = new MockWebServer();
         server.start();
-        descriptionInterface = new DescriptionInterface(
+        serializationInterface = new SerializationInterface(
                 server.url("api/v3.0").uri());
         serializer = new JsonApiSerializer();
+        aasIds = new ArrayList<>();
+        submodelIds = new ArrayList<>();
     }
 
 
     @Test
-    public void testGet() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
-        ServiceDescription expected = ServiceDescription.builder()
-                .profile(ServiceSpecificationProfile.AAS_FULL)
-                .profile(ServiceSpecificationProfile.AAS_REPOSITORY_FULL)
-                .build();
-
+    public void testGetAASX() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
+        InMemoryFile expected = new InMemoryFile();
         server.enqueue(new MockResponse().setBody(serializer.write(expected)));
 
-        ServiceDescription actual = descriptionInterface.get();
+        InMemoryFile actual = serializationInterface.getAASXPackage(aasIds, submodelIds);
         RecordedRequest request = server.takeRequest();
 
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals("/api/v3.0/description", request.getPath());
+        assertEquals("/api/v3.0/serialization", request.getPath());
+        assertEquals(expected, actual);
+    }
+
+
+    @Test
+    public void testGetEnvironment() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
+        Environment expected = new DefaultEnvironment();
+
+        server.enqueue(new MockResponse().setBody(serializer.write(expected)));
+
+        Environment actual = serializationInterface.getEnvironment(aasIds, submodelIds);
+        RecordedRequest request = server.takeRequest();
+
+        assertEquals("GET", request.getMethod());
+        assertEquals(0, request.getBodySize());
+        assertEquals("/api/v3.0/serialization", request.getPath());
         assertEquals(expected, actual);
     }
 }

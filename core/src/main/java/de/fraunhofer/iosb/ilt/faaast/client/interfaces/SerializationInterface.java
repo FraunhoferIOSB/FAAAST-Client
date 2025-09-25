@@ -16,77 +16,70 @@ package de.fraunhofer.iosb.ilt.faaast.client.interfaces;
 
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
-import de.fraunhofer.iosb.ilt.faaast.client.http.HttpMethod;
-import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
+import de.fraunhofer.iosb.ilt.faaast.client.query.SerializationSearchCriteria;
 import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
-import de.fraunhofer.iosb.ilt.faaast.service.model.ServiceDescription;
+import de.fraunhofer.iosb.ilt.faaast.service.model.InMemoryFile;
+import org.eclipse.digitaltwin.aas4j.v3.model.Environment;
 
 import java.net.URI;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.util.List;
 
 
 /**
- * Interface for communicating the description of a server.
- * This includes the capabilities and supported features of the server.
- *
- * <p>
- * Communication is handled via HTTP requests to a specified service URI.
- * </p>
+ * Provides functionality for requesting aas and submodels from the server in serialized form.
  */
-public class DescriptionInterface extends BaseInterface {
-
-    private static final String API_PATH = "/description";
+public class SerializationInterface extends BaseInterface {
+    private static final String API_PATH = "/serialization";
 
     /**
-     * Creates a new Description Interface.
+     * Creates a new Serialization Interface.
      *
      * @param endpoint Uri used to communicate with the FA³ST service
      * @param httpClient custom http-client in case the user wants to set specific attributes
      */
-    public DescriptionInterface(URI endpoint, HttpClient httpClient) {
+    public SerializationInterface(URI endpoint, HttpClient httpClient) {
         super(endpoint, httpClient);
     }
 
 
     /**
-     * Creates a new Description Interface.
+     * Creates a new Serialization Interface.
      *
      * @param endpoint Uri used to communicate with the FA³ST service
      */
-    public DescriptionInterface(URI endpoint) {
+    public SerializationInterface(URI endpoint) {
         super(resolve(endpoint, API_PATH));
     }
 
 
     /**
-     * Creates a new Description Interface.
+     * Creates a new Serialization Interface.
      *
      * @param endpoint Uri used to communicate with the FA³ST Service
      * @param user String to allow for basic authentication
      * @param password String to allow for basic authentication
      */
-    public DescriptionInterface(URI endpoint, String user, String password) {
+    public SerializationInterface(URI endpoint, String user, String password) {
         super(resolve(endpoint, API_PATH), user, password);
     }
 
 
     /**
-     * Creates a new Description Interface.
+     * Creates a new Serialization Interface.
      *
      * @param endpoint Uri used to communicate with the FA³ST service
      * @param trustAllCertificates Allows user to specify if all certificates (including self-signed) are trusted
      */
-    public DescriptionInterface(URI endpoint, boolean trustAllCertificates) {
+    public SerializationInterface(URI endpoint, boolean trustAllCertificates) {
         super(resolve(endpoint, API_PATH), trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
     }
 
 
     /**
-     * Retrieves the self-describing information of a network resource (ServiceDescription) as a List of Strings.
+     * Returns an appropriate serialization based on the AASX format.
      *
-     * @return Requested self-describing information
+     * @return Requested serialization based on SerializationFormat
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
@@ -99,11 +92,28 @@ public class DescriptionInterface extends BaseInterface {
      *             </div>
      * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public ServiceDescription get() throws StatusCodeException, ConnectivityException {
-        HttpRequest request = HttpHelper.createGetRequest(endpoint);
-        HttpResponse<String> response = HttpHelper.send(httpClient, request);
-        validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
-        return parseBody(response, ServiceDescription.class);
+    public InMemoryFile getAASXPackage(List<String> aasIds, List<String> submodelIds) throws StatusCodeException, ConnectivityException {
+        return get(null, new SerializationSearchCriteria(aasIds, submodelIds), InMemoryFile.class);
     }
 
+
+    /**
+     * Returns an environment serialization based on Json or xml format.
+     *
+     * @return Requested serialization based on SerializationFormat
+     * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
+     *             <div>
+     *             <ul>
+     *             <li>400: BadRequestException</li>
+     *             <li>401: UnauthorizedException</li>
+     *             <li>403: ForbiddenException</li>
+     *             <li>404: NotFoundException</li>
+     *             <li>500: InternalServerErrorException</li>
+     *             </ul>
+     *             </div>
+     * @throws ConnectivityException if the connection to the server cannot be established
+     */
+    public Environment getEnvironment(List<String> aasIds, List<String> submodelIds) throws StatusCodeException, ConnectivityException {
+        return get(null, new SerializationSearchCriteria(aasIds, submodelIds), Environment.class);
+    }
 }
