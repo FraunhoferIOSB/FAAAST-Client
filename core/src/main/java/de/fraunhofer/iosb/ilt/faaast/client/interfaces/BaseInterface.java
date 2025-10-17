@@ -916,7 +916,7 @@ public abstract class BaseInterface {
     }
 
 
-    private static String serializeEntity(Object entity) {
+    protected static String serializeEntity(Object entity) {
         try {
             return new JsonApiSerializer().write(entity, OutputModifier.DEFAULT);
         }
@@ -926,7 +926,7 @@ public abstract class BaseInterface {
     }
 
 
-    private static <T> Page<T> deserializePage(String responseBody, Class<T> responseType) throws DeserializationException, JSONException {
+    protected static <T> Page<T> deserializePage(String responseBody, Class<T> responseType) throws DeserializationException, JSONException {
         JSONArray result = new JSONObject(responseBody).getJSONArray("result");
         JSONObject metadata = new JSONObject(responseBody).getJSONObject("paging_metadata");
         return new Page.Builder<T>()

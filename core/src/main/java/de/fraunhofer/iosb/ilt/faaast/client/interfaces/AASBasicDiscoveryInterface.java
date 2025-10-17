@@ -15,13 +15,25 @@
 package de.fraunhofer.iosb.ilt.faaast.client.interfaces;
 
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
+import de.fraunhofer.iosb.ilt.faaast.client.exception.InvalidPayloadException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
+import de.fraunhofer.iosb.ilt.faaast.client.http.HttpMethod;
+import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
+import de.fraunhofer.iosb.ilt.faaast.client.query.AASSearchCriteria;
 import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
+import de.fraunhofer.iosb.ilt.faaast.client.util.QueryHelper;
+import de.fraunhofer.iosb.ilt.faaast.service.dataformat.DeserializationException;
+import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Content;
+import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.QueryModifier;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
+import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
 import de.fraunhofer.iosb.ilt.faaast.service.model.asset.AssetIdentification;
+import org.json.JSONException;
 
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.List;
 
 
@@ -35,7 +47,9 @@ import java.util.List;
  */
 public class AASBasicDiscoveryInterface extends BaseInterface {
 
-    private static final String API_PATH = "/lookup";
+    private static final String LOOKUP_PATH = "/lookup";
+    private static final String SHELLS_PATH = "/shells";
+    private static final String SHELLS_BY_ASSETLINK_PATH = "/shellsByAssetLink";
 
     /**
      * Creates a new Discovery Interface.
@@ -54,7 +68,7 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      * @param endpoint Uri used to communicate with the FA³ST service
      */
     public AASBasicDiscoveryInterface(URI endpoint) {
-        super(resolve(endpoint, API_PATH));
+        super(resolve(endpoint, LOOKUP_PATH));
     }
 
 
@@ -66,7 +80,7 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      * @param password String to allow for basic authentication
      */
     public AASBasicDiscoveryInterface(URI endpoint, String user, String password) {
-        super(resolve(endpoint, API_PATH), user, password);
+        super(resolve(endpoint, LOOKUP_PATH), user, password);
     }
 
 
@@ -77,7 +91,7 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      * @param trustAllCertificates Allows user to specify if all certificates (including self-signed) are trusted
      */
     public AASBasicDiscoveryInterface(URI endpoint, boolean trustAllCertificates) {
-        super(resolve(endpoint, API_PATH), trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
+        super(resolve(endpoint, LOOKUP_PATH), trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
     }
 
 
@@ -91,16 +105,23 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      *             <div>
      *             <ul>
      *             <li>400: BadRequestException</li>
-     *             <li>401: UnauthorizedException</li>
-     *             <li>403: ForbiddenException</li>
-     *             <li>404: NotFoundException</li>
-     *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
      * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public Page<String> getByAssetLink(List<AssetIdentification> assetLinks) throws StatusCodeException, ConnectivityException {
-        return post(assetLinks, Page.class); // todo: implement this
+    public Page<String> getByAssetLink(List<AssetIdentification> assetLinks, PagingInfo pagingInfo) throws StatusCodeException, ConnectivityException {
+        HttpRequest request = HttpHelper.createPostRequest(
+                resolve(QueryHelper.apply(
+                        SHELLS_BY_ASSETLINK_PATH, Content.DEFAULT, QueryModifier.DEFAULT, pagingInfo, AASSearchCriteria.DEFAULT)),
+                serializeEntity(assetLinks));
+        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        validateStatusCode(HttpMethod.POST, response, HttpStatus.OK);
+        try {
+            return deserializePage(response.body(), String.class);
+        }
+        catch (DeserializationException | JSONException e) {
+            throw new InvalidPayloadException(e);
+        }
     }
 
 
@@ -123,7 +144,7 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<AssetIdentification> getByAasId(String aasIdentifier) throws StatusCodeException, ConnectivityException {
-        return getAll(idPath(aasIdentifier), AssetIdentification.class);
+        return getAll(SHELLS_PATH + idPath(aasIdentifier), AssetIdentification.class);
     }
 
 
@@ -137,16 +158,23 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      *             <div>
      *             <ul>
      *             <li>400: BadRequestException</li>
-     *             <li>401: UnauthorizedException</li>
-     *             <li>403: ForbiddenException</li>
      *             <li>404: NotFoundException</li>
-     *             <li>500: InternalServerErrorException</li>
+     *             <li>409: ConflictException</li>
      *             </ul>
      *             </div>
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<AssetIdentification> createAssetLinks(List<AssetIdentification> assetLinks, String aasIdentifier) throws StatusCodeException, ConnectivityException {
-        return post(assetLinks, List.class); // todo: implement this
+        HttpRequest request = HttpHelper.createPostRequest(resolve(QueryHelper.apply(SHELLS_PATH + idPath(aasIdentifier), Content.DEFAULT, QueryModifier.DEFAULT)),
+                serializeEntity(assetLinks));
+        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        validateStatusCode(HttpMethod.POST, response, HttpStatus.OK);
+        try {
+            return deserializePage(response.body(), AssetIdentification.class).getContent();
+        }
+        catch (DeserializationException | JSONException e) {
+            throw new InvalidPayloadException(e);
+        }
     }
 
 
@@ -158,17 +186,13 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
-     *             <li>400: BadRequestException</li>
-     *             <li>401: UnauthorizedException</li>
-     *             <li>403: ForbiddenException</li>
      *             <li>404: NotFoundException</li>
-     *             <li>500: InternalServerErrorException</li>
      *             </ul>
      *             </div>
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public void deleteAssetLinks(String aasIdentifier) throws StatusCodeException, ConnectivityException {
-        delete(idPath(aasIdentifier));
+        delete(SHELLS_PATH + idPath(aasIdentifier));
     }
 
 }
