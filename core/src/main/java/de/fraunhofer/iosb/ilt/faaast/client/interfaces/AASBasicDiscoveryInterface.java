@@ -109,7 +109,7 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      *             </div>
      * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public Page<String> getByAssetLink(List<AssetIdentification> assetLinks, PagingInfo pagingInfo) throws StatusCodeException, ConnectivityException {
+    public Page<String> lookupByAssetLink(List<AssetIdentification> assetLinks, PagingInfo pagingInfo) throws StatusCodeException, ConnectivityException {
         HttpRequest request = HttpHelper.createPostRequest(
                 resolve(QueryHelper.apply(
                         SHELLS_BY_ASSETLINK_PATH, Content.DEFAULT, QueryModifier.DEFAULT, pagingInfo, AASSearchCriteria.DEFAULT)),
@@ -143,7 +143,7 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      *             </div>
      * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public List<AssetIdentification> getByAasId(String aasIdentifier) throws StatusCodeException, ConnectivityException {
+    public List<AssetIdentification> lookupByAasId(String aasIdentifier) throws StatusCodeException, ConnectivityException {
         return getAll(SHELLS_PATH + idPath(aasIdentifier), AssetIdentification.class);
     }
 
