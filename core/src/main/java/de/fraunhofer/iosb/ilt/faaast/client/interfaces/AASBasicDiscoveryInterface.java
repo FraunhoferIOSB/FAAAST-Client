@@ -28,12 +28,15 @@ import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.QueryModifier;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
 import de.fraunhofer.iosb.ilt.faaast.service.model.asset.AssetIdentification;
+import de.fraunhofer.iosb.ilt.faaast.service.model.asset.SpecificAssetIdentification;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.json.JSONException;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -107,8 +110,13 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      *             </div>
      * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public Page<String> lookupByAssetLink(List<AssetIdentification> assetLinks, PagingInfo pagingInfo) throws StatusCodeException, ConnectivityException {
-        AASSearchCriteria assetIds = new AASSearchCriteria.Builder().assetIds(assetLinks).build();
+    public Page<String> lookupByAssetLink(List<SpecificAssetId> assetLinks, PagingInfo pagingInfo) throws StatusCodeException, ConnectivityException {
+        List<AssetIdentification> assetIdentificationList = new ArrayList<>();
+        assetLinks.forEach(assetLink -> {
+            assetIdentificationList.add(new SpecificAssetIdentification.Builder().value(assetLink.getValue()).key(assetLink.getName()).build());
+        });
+
+        AASSearchCriteria assetIds = new AASSearchCriteria.Builder().assetIds(assetIdentificationList).build(); // todo: implement in SearchCriteria with this class
         HttpRequest request = HttpHelper.createGetRequest(
                 resolve(QueryHelper.apply(
                         null, Content.DEFAULT, QueryModifier.DEFAULT, pagingInfo, assetIds)));
@@ -141,8 +149,8 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      *             </div>
      * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public List<AssetIdentification> lookupByAasId(String aasIdentifier) throws StatusCodeException, ConnectivityException {
-        return getAll(idPath(aasIdentifier), AssetIdentification.class);
+    public List<SpecificAssetId> lookupByAasId(String aasIdentifier) throws StatusCodeException, ConnectivityException {
+        return getAllList(idPath(aasIdentifier), SpecificAssetId.class);
     }
 
 
@@ -162,17 +170,12 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      *             </div>
      * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public List<AssetIdentification> createAssetLinks(List<AssetIdentification> assetLinks, String aasIdentifier) throws StatusCodeException, ConnectivityException {
+    public List<SpecificAssetId> createAssetLinks(List<SpecificAssetId> assetLinks, String aasIdentifier) throws StatusCodeException, ConnectivityException {
         HttpRequest request = HttpHelper.createPostRequest(resolve(QueryHelper.apply(idPath(aasIdentifier), Content.DEFAULT, QueryModifier.DEFAULT)),
                 serializeEntity(assetLinks));
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.POST, response, HttpStatus.OK);
-        try {
-            return deserializePage(response.body(), AssetIdentification.class).getContent();
-        }
-        catch (DeserializationException | JSONException e) {
-            throw new InvalidPayloadException(e);
-        }
+        return getAllList(response.body(), SpecificAssetId.class);
     }
 
 

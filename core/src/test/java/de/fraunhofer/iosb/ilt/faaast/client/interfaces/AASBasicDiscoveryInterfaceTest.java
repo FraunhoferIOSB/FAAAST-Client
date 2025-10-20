@@ -21,12 +21,12 @@ import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingMetadata;
-import de.fraunhofer.iosb.ilt.faaast.service.model.asset.AssetIdentification;
-import de.fraunhofer.iosb.ilt.faaast.service.model.asset.GlobalAssetIdentification;
 import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifierException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -66,9 +66,9 @@ public class AASBasicDiscoveryInterfaceTest {
 
         server.enqueue(new MockResponse().setBody(serializer.write(expected)));
 
-        List<AssetIdentification> assetIdentificationList = new ArrayList<>();
-        assetIdentificationList.add(new GlobalAssetIdentification.Builder().value("globalAssetId1").build());
-        assetIdentificationList.add(new GlobalAssetIdentification.Builder().value("globalAssetId2").build());
+        List<SpecificAssetId> assetIdentificationList = new ArrayList<>();
+        assetIdentificationList.add(new DefaultSpecificAssetId.Builder().name("globalAssetId").value("globalAssetId1").build());
+        assetIdentificationList.add(new DefaultSpecificAssetId.Builder().name("globalAssetId").value("globalAssetId2").build());
         Page<String> actual = discoveryInterface.lookupByAssetLink(assetIdentificationList, PagingInfo.ALL);
         RecordedRequest request = server.takeRequest();
 
@@ -77,5 +77,51 @@ public class AASBasicDiscoveryInterfaceTest {
                 "/api/v3.0/lookup/shells/?assetIds=ew0KICAibmFtZSIgOiAiZ2xvYmFsQXNzZXRJZCIsDQogICJ2YWx1ZSIgOiAiZ2xvYmFsQXNzZXRJZDEiDQp9,ew0KICAibmFtZSIgOiAiZ2xvYmFsQXNzZXRJZCIsDQogICJ2YWx1ZSIgOiAiZ2xvYmFsQXNzZXRJZDIiDQp9",
                 request.getPath());
         assertEquals(expected, actual);
+    }
+
+
+    @Test
+    public void testLookupByAASId() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
+        List<SpecificAssetId> expected = new ArrayList<>();
+        expected.add(new DefaultSpecificAssetId.Builder().name("globalAssetId").value("globalAssetId1").build());
+        expected.add(new DefaultSpecificAssetId.Builder().name("globalAssetId").value("globalAssetId2").build());
+
+        server.enqueue(new MockResponse().setBody(serializer.write(expected)));
+
+        List<SpecificAssetId> actual = discoveryInterface.lookupByAasId("aasId1"); // todo: find reason for deserialization error
+        RecordedRequest request = server.takeRequest();
+
+        assertEquals("GET", request.getMethod());
+        assertEquals("/api/v3.0/lookup/shells/YWFzSWQx", request.getPath());
+        assertEquals(expected, actual);
+    }
+
+
+    @Test
+    public void testCreateAssetLinks() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
+        List<SpecificAssetId> expected = new ArrayList<>();
+        expected.add(new DefaultSpecificAssetId.Builder().name("globalAssetId").value("globalAssetId1").build());
+        expected.add(new DefaultSpecificAssetId.Builder().name("globalAssetId").value("globalAssetId2").build());
+
+        server.enqueue(new MockResponse().setBody(serializer.write(expected)));
+
+        List<SpecificAssetId> actual = discoveryInterface.createAssetLinks(expected, "aasId1"); // todo: find reason for deserialization error
+        RecordedRequest request = server.takeRequest();
+
+        assertEquals("GET", request.getMethod());
+        assertEquals("/api/v3.0/lookup/shells/YWFzSWQx", request.getPath());
+        assertEquals(expected, actual);
+    }
+
+
+    @Test
+    public void testDeleteAssetLinks() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
+        server.enqueue(new MockResponse().setResponseCode(204));
+        discoveryInterface.deleteAssetLinks("aasId1");
+        RecordedRequest request = server.takeRequest();
+
+        assertEquals("DELETE", request.getMethod());
+        assertEquals(0, request.getBodySize());
+        assertEquals("/api/v3.0/lookup/shells/YWFzSWQx", request.getPath());
     }
 }
