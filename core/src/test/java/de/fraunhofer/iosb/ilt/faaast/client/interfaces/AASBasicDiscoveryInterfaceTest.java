@@ -72,8 +72,10 @@ public class AASBasicDiscoveryInterfaceTest {
         Page<String> actual = discoveryInterface.lookupByAssetLink(assetIdentificationList, PagingInfo.ALL);
         RecordedRequest request = server.takeRequest();
 
-        assertEquals("POST", request.getMethod());
-        assertEquals("/api/v3.0/lookup/shellsByAssetLink", request.getPath());
+        assertEquals("GET", request.getMethod());
+        assertEquals(
+                "/api/v3.0/lookup/shells/?assetIds=ew0KICAibmFtZSIgOiAiZ2xvYmFsQXNzZXRJZCIsDQogICJ2YWx1ZSIgOiAiZ2xvYmFsQXNzZXRJZDEiDQp9,ew0KICAibmFtZSIgOiAiZ2xvYmFsQXNzZXRJZCIsDQogICJ2YWx1ZSIgOiAiZ2xvYmFsQXNzZXRJZDIiDQp9",
+                request.getPath());
         assertEquals(expected, actual);
     }
 }

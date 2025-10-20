@@ -47,9 +47,7 @@ import java.util.List;
  */
 public class AASBasicDiscoveryInterface extends BaseInterface {
 
-    private static final String LOOKUP_PATH = "/lookup";
-    private static final String SHELLS_PATH = "/shells";
-    private static final String SHELLS_BY_ASSETLINK_PATH = "/shellsByAssetLink";
+    private static final String LOOKUP_PATH = "/lookup/shells";
 
     /**
      * Creates a new Discovery Interface.
@@ -110,12 +108,12 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public Page<String> lookupByAssetLink(List<AssetIdentification> assetLinks, PagingInfo pagingInfo) throws StatusCodeException, ConnectivityException {
-        HttpRequest request = HttpHelper.createPostRequest(
+        AASSearchCriteria assetIds = new AASSearchCriteria.Builder().assetIds(assetLinks).build();
+        HttpRequest request = HttpHelper.createGetRequest(
                 resolve(QueryHelper.apply(
-                        SHELLS_BY_ASSETLINK_PATH, Content.DEFAULT, QueryModifier.DEFAULT, pagingInfo, AASSearchCriteria.DEFAULT)),
-                serializeEntity(assetLinks));
+                        null, Content.DEFAULT, QueryModifier.DEFAULT, pagingInfo, assetIds)));
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
-        validateStatusCode(HttpMethod.POST, response, HttpStatus.OK);
+        validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         try {
             return deserializePage(response.body(), String.class);
         }
@@ -144,7 +142,7 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<AssetIdentification> lookupByAasId(String aasIdentifier) throws StatusCodeException, ConnectivityException {
-        return getAll(SHELLS_PATH + idPath(aasIdentifier), AssetIdentification.class);
+        return getAll(idPath(aasIdentifier), AssetIdentification.class);
     }
 
 
@@ -165,7 +163,7 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<AssetIdentification> createAssetLinks(List<AssetIdentification> assetLinks, String aasIdentifier) throws StatusCodeException, ConnectivityException {
-        HttpRequest request = HttpHelper.createPostRequest(resolve(QueryHelper.apply(SHELLS_PATH + idPath(aasIdentifier), Content.DEFAULT, QueryModifier.DEFAULT)),
+        HttpRequest request = HttpHelper.createPostRequest(resolve(QueryHelper.apply(idPath(aasIdentifier), Content.DEFAULT, QueryModifier.DEFAULT)),
                 serializeEntity(assetLinks));
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.POST, response, HttpStatus.OK);
@@ -192,7 +190,7 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public void deleteAssetLinks(String aasIdentifier) throws StatusCodeException, ConnectivityException {
-        delete(SHELLS_PATH + idPath(aasIdentifier));
+        delete(idPath(aasIdentifier));
     }
 
 }
