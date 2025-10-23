@@ -941,6 +941,12 @@ public abstract class BaseInterface {
     }
 
 
+    /**
+     * Serialises class for body of HTTP response.
+     *
+     * @param entity the payload to parse
+     * @return parsed body of response
+     */
     protected static String serializeEntity(Object entity) {
         try {
             return new JsonApiSerializer().write(entity, OutputModifier.DEFAULT);
@@ -951,6 +957,14 @@ public abstract class BaseInterface {
     }
 
 
+    /**
+     * Parses body of HTTP response.
+     *
+     * @param <T> result type
+     * @param responseBody the response
+     * @param responseType the type of the payload to parse
+     * @return parsed body of response
+     */
     protected static <T> Page<T> deserializePage(String responseBody, Class<T> responseType) throws DeserializationException, JSONException {
         JSONArray result = new JSONObject(responseBody).getJSONArray("result");
         JSONObject metadata = new JSONObject(responseBody).getJSONObject("paging_metadata");
