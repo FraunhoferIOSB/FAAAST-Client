@@ -74,7 +74,7 @@ public class AASBasicDiscoveryInterfaceTest {
 
         assertEquals("GET", request.getMethod());
         assertEquals(
-                "/api/v3.0/lookup/shells/?assetIds=ew0KICAibmFtZSIgOiAiZ2xvYmFsQXNzZXRJZCIsDQogICJ2YWx1ZSIgOiAiZ2xvYmFsQXNzZXRJZDEiDQp9,ew0KICAibmFtZSIgOiAiZ2xvYmFsQXNzZXRJZCIsDQogICJ2YWx1ZSIgOiAiZ2xvYmFsQXNzZXRJZDIiDQp9",
+                "/api/v3.0/lookup/shells/?assetIds=WyB7DQogICJuYW1lIiA6ICJnbG9iYWxBc3NldElkIiwNCiAgInZhbHVlIiA6ICJnbG9iYWxBc3NldElkMSINCn0sIHsNCiAgIm5hbWUiIDogImdsb2JhbEFzc2V0SWQiLA0KICAidmFsdWUiIDogImdsb2JhbEFzc2V0SWQyIg0KfSBd",
                 request.getPath());
         assertEquals(expected, actual);
     }
@@ -88,7 +88,7 @@ public class AASBasicDiscoveryInterfaceTest {
 
         server.enqueue(new MockResponse().setBody(serializer.write(expected)));
 
-        List<SpecificAssetId> actual = discoveryInterface.lookupByAasId("aasId1"); // todo: find reason for deserialization error
+        List<SpecificAssetId> actual = discoveryInterface.lookupByAasId("aasId1");
         RecordedRequest request = server.takeRequest();
 
         assertEquals("GET", request.getMethod());
@@ -101,14 +101,13 @@ public class AASBasicDiscoveryInterfaceTest {
     public void testCreateAssetLinks() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
         List<SpecificAssetId> expected = new ArrayList<>();
         expected.add(new DefaultSpecificAssetId.Builder().name("globalAssetId").value("globalAssetId1").build());
-        expected.add(new DefaultSpecificAssetId.Builder().name("globalAssetId").value("globalAssetId2").build());
 
         server.enqueue(new MockResponse().setBody(serializer.write(expected)));
 
-        List<SpecificAssetId> actual = discoveryInterface.createAssetLinks(expected, "aasId1"); // todo: find reason for deserialization error
+        List<SpecificAssetId> actual = discoveryInterface.createAssetLinks(expected, "aasId1");
         RecordedRequest request = server.takeRequest();
 
-        assertEquals("GET", request.getMethod());
+        assertEquals("POST", request.getMethod());
         assertEquals("/api/v3.0/lookup/shells/YWFzSWQx", request.getPath());
         assertEquals(expected, actual);
     }

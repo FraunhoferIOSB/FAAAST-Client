@@ -410,7 +410,7 @@ public abstract class BaseInterface {
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         try {
-            return new JsonApiDeserializer().readList(response.toString(), responseType);
+            return new JsonApiDeserializer().readList(response.body(), responseType);
         }
         catch (DeserializationException e) {
             throw new InvalidPayloadException(e);

@@ -19,10 +19,11 @@ import de.fraunhofer.iosb.ilt.faaast.client.exception.InvalidPayloadException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpMethod;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
-import de.fraunhofer.iosb.ilt.faaast.client.query.AASSearchCriteria;
+import de.fraunhofer.iosb.ilt.faaast.client.query.AASBasicDiscoverySearchCriteria;
 import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
 import de.fraunhofer.iosb.ilt.faaast.client.util.QueryHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.DeserializationException;
+import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiDeserializer;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Content;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.QueryModifier;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
@@ -116,7 +117,7 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
             assetIdentificationList.add(new SpecificAssetIdentification.Builder().value(assetLink.getValue()).key(assetLink.getName()).build());
         });
 
-        AASSearchCriteria assetIds = new AASSearchCriteria.Builder().assetIds(assetIdentificationList).build(); // todo: implement in SearchCriteria with this class
+        AASBasicDiscoverySearchCriteria assetIds = new AASBasicDiscoverySearchCriteria.Builder().assetIds(assetIdentificationList).build();
         HttpRequest request = HttpHelper.createGetRequest(
                 resolve(QueryHelper.apply(
                         null, Content.DEFAULT, QueryModifier.DEFAULT, pagingInfo, assetIds)));
@@ -175,7 +176,12 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
                 serializeEntity(assetLinks));
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.POST, response, HttpStatus.OK);
-        return getAllList(response.body(), SpecificAssetId.class);
+        try {
+            return new JsonApiDeserializer().readList(response.body(), SpecificAssetId.class);
+        }
+        catch (DeserializationException e) {
+            throw new InvalidPayloadException(e);
+        }
     }
 
 
