@@ -187,7 +187,7 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
 
     /**
      * Deletes specified specific asset identifiers linked to an Asset Administration Shell:
-     * discovery via these specific asset IDs shall not be supported any longer
+     * discovery via these specific asset IDs shall not be supported any longer.
      *
      * @param aasIdentifier The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
