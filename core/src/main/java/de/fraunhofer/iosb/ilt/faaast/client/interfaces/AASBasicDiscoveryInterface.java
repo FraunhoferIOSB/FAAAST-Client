@@ -60,7 +60,7 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      * @param httpClient custom http-client in case the user wants to set specific attributes
      */
     public AASBasicDiscoveryInterface(URI endpoint, HttpClient httpClient) {
-        super(endpoint, httpClient);
+        super(resolve(endpoint, LOOKUP_PATH), httpClient);
     }
 
 
@@ -102,6 +102,7 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      *
      * @param assetLinks A list of specific asset identifiers. Search for the global asset ID is supported by setting "name"
      *            to "globalAssetId" (see Constraint AASd-116).
+     * @param pagingInfo Metadata that describes how many elements at which starting point should be retrieved.
      * @return Page of requested Asset Administration Shell IDs
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
@@ -136,7 +137,7 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      * Returns a list of specific asset identifiers based on an Asset Administration Shell ID to edit discoverable content.
      * The global asset ID is returned as specific asset ID with "name" equal to "globalAssetId" (see Constraint AASd-116).
      *
-     * @param aasIdentifier The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)
+     * @param aasIdentifier The Asset Administration Shell’s unique id
      * @return Requested specific Asset identifiers (including the global asset ID represented by a specific asset ID)
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
@@ -159,7 +160,7 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      * Creates or replaces all asset links associated to the Asset Administration Shell.
      *
      * @param assetLinks A set of specific asset identifiers
-     * @param aasIdentifier The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)
+     * @param aasIdentifier The Asset Administration Shell’s unique id
      * @return List of asset links
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
@@ -186,7 +187,7 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
 
 
     /**
-     * Deletes specified specific asset identifiers linked to an Asset Administration Shell:
+     * Deletes all specific asset identifiers linked to a specified Asset Administration Shell:
      * discovery via these specific asset IDs shall not be supported any longer.
      *
      * @param aasIdentifier The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)

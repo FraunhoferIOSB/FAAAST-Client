@@ -248,7 +248,7 @@ to instantiate an interface for connection with that server.
 
 #### 🚀 New Features & Major Changes
 - Add option to connect to servers using self-signed certificates
-- Implemented Basic Discovery API
+- Implemented Basic Discovery API (v3.0.3)
 
 #### ⚙️ Internal changes & bugfixes
 - De-/Serialization

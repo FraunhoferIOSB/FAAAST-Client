@@ -114,7 +114,7 @@ public class AASBasicDiscoveryInterfaceTest {
 
 
     @Test
-    public void testDeleteAssetLinks() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
+    public void testDeleteAssetLinks() throws InterruptedException, ClientException {
         server.enqueue(new MockResponse().setResponseCode(204));
         discoveryInterface.deleteAssetLinks("aasId1");
         RecordedRequest request = server.takeRequest();

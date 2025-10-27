@@ -20,6 +20,7 @@ import de.fraunhofer.iosb.ilt.faaast.service.model.asset.GlobalAssetIdentificati
 import de.fraunhofer.iosb.ilt.faaast.service.model.asset.SpecificAssetIdentification;
 import de.fraunhofer.iosb.ilt.faaast.service.persistence.AssetAdministrationShellSearchCriteria;
 import de.fraunhofer.iosb.ilt.faaast.service.util.EncodingHelper;
+import de.fraunhofer.iosb.ilt.faaast.service.util.FaaastConstants;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
@@ -30,8 +31,8 @@ import java.util.List;
 
 
 /**
- * Allows to filter Asset Administration Shells in an Asset Administration Shell repository based on
- * idShort and a List of AssetIdentification objects.
+ * Allows to filter Asset Administration Shells in an Asset Administration Shell Basic Discovery Interface
+ * based on a List of AssetIdentification objects.
  */
 public class AASBasicDiscoverySearchCriteria extends AssetAdministrationShellSearchCriteria implements SearchCriteria {
 
@@ -41,14 +42,12 @@ public class AASBasicDiscoverySearchCriteria extends AssetAdministrationShellSea
     public String toQueryString() {
         String assetIdsString;
         assetIdsString = getAssetIds() == null || getAssetIds().isEmpty() ? ""
-                : "assetIds=" + serializeAssetIdentification(getAssetIds());
-
+                : "assetIds=" + serializeAssetIdentifications(getAssetIds());
         return assetIdsString;
-
     }
 
 
-    private String serializeAssetIdentification(List<AssetIdentification> assetIds) {
+    private String serializeAssetIdentifications(List<AssetIdentification> assetIds) {
         List<SpecificAssetId> aas4jAssetIds = new ArrayList<>();
         for(AssetIdentification assetId : assetIds) {
             if (assetId instanceof SpecificAssetIdentification specificAssetIdentification) {
@@ -61,7 +60,7 @@ public class AASBasicDiscoverySearchCriteria extends AssetAdministrationShellSea
                 aas4jAssetIds.add(
                         new DefaultSpecificAssetId.Builder()
                                 .value(assetId.getValue())
-                                .name("globalAssetId")
+                                .name(FaaastConstants.KEY_GLOBAL_ASSET_ID)
                                 .build());
             }
         }

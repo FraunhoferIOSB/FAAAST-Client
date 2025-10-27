@@ -945,7 +945,7 @@ public abstract class BaseInterface {
      * Serialises class for body of HTTP response.
      *
      * @param entity the payload to parse
-     * @return parsed body of response
+     * @return parsed body of request
      */
     protected static String serializeEntity(Object entity) {
         try {
