@@ -14,6 +14,9 @@
  */
 package de.fraunhofer.iosb.ilt.faaast.client.interfaces;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ClientException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.ApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
@@ -32,6 +35,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -54,7 +58,7 @@ public class AASBasicDiscoveryInterfaceTest {
 
 
     @Test
-    public void testLookupByAssetLink() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException {
+    public void testLookupByAssetLink() throws SerializationException, InterruptedException, ClientException, UnsupportedModifierException, JsonProcessingException {
         List<String> aasIdList = new ArrayList<>();
         aasIdList.add("aasI1");
         aasIdList.add("aasI2");
@@ -73,9 +77,23 @@ public class AASBasicDiscoveryInterfaceTest {
         RecordedRequest request = server.takeRequest();
 
         assertEquals("GET", request.getMethod());
-        assertEquals(
-                "/api/v3.0/lookup/shells/?assetIds=WyB7DQogICJuYW1lIiA6ICJnbG9iYWxBc3NldElkIiwNCiAgInZhbHVlIiA6ICJnbG9iYWxBc3NldElkMSINCn0sIHsNCiAgIm5hbWUiIDogImdsb2JhbEFzc2V0SWQiLA0KICAidmFsdWUiIDogImdsb2JhbEFzc2V0SWQyIg0KfSBd",
-                request.getPath());
+
+        String path = request.getPath();
+        assert path != null;
+        String base64Part = path.substring(path.indexOf('=') + 1);
+        String decodedJson = new String(Base64.getDecoder().decode(base64Part));
+        String expectedJson = """
+    [
+      { "name": "globalAssetId", "value": "globalAssetId1" },
+      { "name": "globalAssetId", "value": "globalAssetId2" }
+    ]
+    """;
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode expectedNode = mapper.readTree(expectedJson);
+        JsonNode actualNode = mapper.readTree(decodedJson);
+
+        assertEquals(expectedNode, actualNode);
         assertEquals(expected, actual);
     }
 
