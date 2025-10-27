@@ -50,7 +50,7 @@
     </issueManagement>
     <properties>
         <aas4j.version>1.0.4</aas4j.version>
-        <checkstyle.version>10.25.0</checkstyle.version>
+        <checkstyle.version>12.1.0</checkstyle.version>
         <faaast.service.version>1.3.0-SNAPSHOT</faaast.service.version>
         <httpcomponents.client.version>5.4.4</httpcomponents.client.version>
         <httpcomponents.core.version>5.3.4</httpcomponents.core.version>
