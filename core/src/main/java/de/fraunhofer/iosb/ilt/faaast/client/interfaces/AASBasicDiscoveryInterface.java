@@ -108,6 +108,8 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      *             <div>
      *             <ul>
      *             <li>400: BadRequestException</li>
+     *             <li>401: UnauthorizedException</li>
+     *             <li>403: ForbiddenException</li>
      *             </ul>
      *             </div>
      * @throws ConnectivityException if the connection to the server cannot be established
@@ -166,6 +168,8 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      *             <div>
      *             <ul>
      *             <li>400: BadRequestException</li>
+     *             <li>401: UnauthorizedException</li>
+     *             <li>403: ForbiddenException</li>
      *             <li>404: NotFoundException</li>
      *             <li>409: ConflictException</li>
      *             </ul>
@@ -194,6 +198,8 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      * @throws StatusCodeException if the server responds with an error. Possible Exceptions:
      *             <div>
      *             <ul>
+     *             <li>401: UnauthorizedException</li>
+     *             <li>403: ForbiddenException</li>
      *             <li>404: NotFoundException</li>
      *             </ul>
      *             </div>
