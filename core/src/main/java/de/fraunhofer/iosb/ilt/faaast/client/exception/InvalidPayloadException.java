@@ -15,7 +15,7 @@
 package de.fraunhofer.iosb.ilt.faaast.client.exception;
 
 /**
- * This exception is thrown if the server responds with a body that cannot be deserialized
+ * This exception is thrown if the server responds with a body that cannot be deserialized.
  */
 public class InvalidPayloadException extends RuntimeException {
 
