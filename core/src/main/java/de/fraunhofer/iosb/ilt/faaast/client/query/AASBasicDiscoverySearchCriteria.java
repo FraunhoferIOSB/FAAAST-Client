@@ -14,7 +14,6 @@
  */
 package de.fraunhofer.iosb.ilt.faaast.client.query;
 
-import de.fraunhofer.iosb.ilt.faaast.client.exception.InvalidPayloadException;
 import de.fraunhofer.iosb.ilt.faaast.service.model.asset.AssetIdentification;
 import de.fraunhofer.iosb.ilt.faaast.service.model.asset.GlobalAssetIdentification;
 import de.fraunhofer.iosb.ilt.faaast.service.model.asset.SpecificAssetIdentification;
@@ -68,7 +67,7 @@ public class AASBasicDiscoverySearchCriteria extends AssetAdministrationShellSea
             return EncodingHelper.base64Encode(new JsonSerializer().write(aas4jAssetIds));
         }
         catch (SerializationException e) {
-            throw new InvalidPayloadException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 

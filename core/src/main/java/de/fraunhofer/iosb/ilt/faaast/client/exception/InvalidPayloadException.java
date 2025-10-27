@@ -15,9 +15,7 @@
 package de.fraunhofer.iosb.ilt.faaast.client.exception;
 
 /**
- * This exception is thrown when a body cannot be deserialized.
- * This can happen if the server responds with a body that cannot be deserialized or the user provides a class that
- * cannot be deserialized when creating the request. This can happen with SearchCriteria vor example.
+ * This exception is thrown if the server responds with a body that cannot be deserialized
  */
 public class InvalidPayloadException extends RuntimeException {
 
