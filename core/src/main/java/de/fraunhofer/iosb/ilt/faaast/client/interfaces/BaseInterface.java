@@ -394,6 +394,31 @@ public abstract class BaseInterface {
 
 
     /**
+     * Executes a HTTP GET and parses the response body as a list of {@code responseType}.
+     *
+     * @param <T> the result type
+     * @param path the URL path relative to the current endpoint
+     * @param responseType the result type
+     * @return the parsed HTTP response
+     * @throws ConnectivityException if connection to the server fails
+     * @throws StatusCodeException if HTTP request returns invalid status code
+     * @throws InvalidPayloadException if deserializing the payload fails
+     */
+    protected <T> List<T> getAllList(String path, Class<T> responseType)
+            throws ConnectivityException, StatusCodeException {
+        HttpRequest request = HttpHelper.createGetRequest(resolve(path));
+        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
+        try {
+            return new JsonApiDeserializer().readList(response.body(), responseType);
+        }
+        catch (DeserializationException e) {
+            throw new InvalidPayloadException(e);
+        }
+    }
+
+
+    /**
      * Executes a HTTP GET and parses the response body as a page of {@code responseType}.
      *
      * @param <T> the result type
@@ -917,7 +942,13 @@ public abstract class BaseInterface {
     }
 
 
-    private static String serializeEntity(Object entity) {
+    /**
+     * Serialises class for body of HTTP response.
+     *
+     * @param entity the payload to parse
+     * @return parsed body of request
+     */
+    protected static String serializeEntity(Object entity) {
         try {
             return new JsonApiSerializer().write(entity, OutputModifier.DEFAULT);
         }
@@ -927,7 +958,15 @@ public abstract class BaseInterface {
     }
 
 
-    private static <T> Page<T> deserializePage(String responseBody, Class<T> responseType) throws DeserializationException, JSONException {
+    /**
+     * Parses body of HTTP response.
+     *
+     * @param <T> result type
+     * @param responseBody the response
+     * @param responseType the type of the payload to parse
+     * @return parsed body of response
+     */
+    protected static <T> Page<T> deserializePage(String responseBody, Class<T> responseType) throws DeserializationException, JSONException {
         JSONArray result = new JSONObject(responseBody).getJSONArray("result");
         JSONObject metadata = new JSONObject(responseBody).getJSONObject("paging_metadata");
         return new Page.Builder<T>()
