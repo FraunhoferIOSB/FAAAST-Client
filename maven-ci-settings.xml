@@ -7,15 +7,6 @@
             <username>${env.SONATYPE_USERNAME}</username>
             <password>${env.SONATYPE_PASSWORD}</password>
         </server>
-        <server>
-            <id>NIST_NVD_API</id>
-            <password>${env.NIST_NVD_API_KEY}</password>
-        </server>
-		<server>
-			<id>ossindex</id>
-			<username>michael.jacoby@iosb.fraunhofer.de</username>
-			<password>${env.OSS_INDEX_API_KEY}</password>
-		</server>
     </servers>
     <profiles>
         <profile>
