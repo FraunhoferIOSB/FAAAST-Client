@@ -53,6 +53,7 @@ aasRepository.getAASInterface("globalUniqueId").put(aas);
 	* Asset Administration Shell Repository API, Submodel Repository API, Concept Description Repository API
 	* Asset Administration Shell Registry API, Submodel Registry API
 	* Description API
+    * Asset Administration Shell Basic Discovery API
 *   Searching for specific identifiables in repositories
 *   Paging
 *   Synchronous Operations
@@ -119,6 +120,8 @@ The `SubmodelSearchCriteria` class allows for filtering Submodels based on `idSh
 The `ConceptDescriptionSearchCriteria` class allows for filtering Concept Descriptions based on `idShort`, `isCaseOf` and `dataSpecification`.
 
 The `AASDescriptorSearchCriteria` class allows for filtering AAS Descriptors based on `assetKind` and `assetType`.
+
+The `AASBasicDiscoverySearchCriteria` class allows for filtering AAS based on `assetIds`.
 
 The source code below demonstrates filtering AAS using the `AASSearchCriteria` class. Filtering based on other search criteria works similarly.
 
@@ -245,6 +248,7 @@ to instantiate an interface for connection with that server.
 
 #### 🚀 New Features & Major Changes
 - Add option to connect to servers using self-signed certificates
+- Implemented Basic Discovery API (v3.0.3)
 
 #### ⚙️ Internal changes & bugfixes
 - De-/Serialization
