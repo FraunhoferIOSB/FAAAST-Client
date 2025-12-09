@@ -33,6 +33,8 @@ import de.fraunhofer.iosb.ilt.faaast.service.typing.ElementValueTypeInfo;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.util.List;
+import java.util.function.Supplier;
+
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperationRequest;
 import javax.xml.datatype.Duration;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationResult;
@@ -95,6 +97,18 @@ public class SubmodelInterface extends BaseInterface {
      */
     public SubmodelInterface(URI endpoint, boolean trustAllCertificates) {
         super(endpoint, trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
+    }
+
+
+    /**
+     * Creates a new Submodel API.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST service
+     * @param authenticationHeaderProvider Supplier of authentication header value ('Authorization:
+     *            {authenticationHeaderProvider.get()}')
+     */
+    public SubmodelInterface(URI endpoint, Supplier<String> authenticationHeaderProvider) {
+        super(endpoint, authenticationHeaderProvider);
     }
 
 

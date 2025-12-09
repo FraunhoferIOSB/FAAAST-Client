@@ -27,6 +27,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShe
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.util.List;
+import java.util.function.Supplier;
 
 
 /**
@@ -84,6 +85,18 @@ public class AASRegistryInterface extends BaseInterface {
      */
     public AASRegistryInterface(URI endpoint, boolean trustAllCertificates) {
         super(resolve(endpoint, API_PATH), trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
+    }
+
+
+    /**
+     * Creates a new Asset Administration Shell Registry Interface.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST service
+     * @param authenticationHeaderProvider Supplier of authentication header value ('Authorization:
+     *            {authenticationHeaderProvider.get()}')
+     */
+    public AASRegistryInterface(URI endpoint, Supplier<String> authenticationHeaderProvider) {
+        super(resolve(endpoint, API_PATH), authenticationHeaderProvider);
     }
 
 

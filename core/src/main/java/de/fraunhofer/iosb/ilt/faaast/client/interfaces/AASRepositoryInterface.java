@@ -27,6 +27,7 @@ import java.net.http.HttpClient;
 import java.util.List;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import java.util.function.Supplier;
 
 
 /**
@@ -82,6 +83,18 @@ public class AASRepositoryInterface extends BaseInterface {
      */
     public AASRepositoryInterface(URI endpoint, boolean trustAllCertificates) {
         super(resolve(endpoint, API_PATH), trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
+    }
+
+
+    /**
+     * Creates a new Asset Administration Shell Repository Interface.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST service
+     * @param authenticationHeaderProvider Supplier of authentication header value ('Authorization:
+     *            {authenticationHeaderProvider.get()}')
+     */
+    public AASRepositoryInterface(URI endpoint, Supplier<String> authenticationHeaderProvider) {
+        super(resolve(endpoint, API_PATH), authenticationHeaderProvider);
     }
 
 

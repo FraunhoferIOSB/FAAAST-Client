@@ -56,6 +56,7 @@ public final class HttpHelper {
     private static final String FILE_PARAMETER = "file";
     private static final String FILENAME_PARAMETER = "fileName";
     private static final String DEFAULT_FILENAME = "unknown";
+    private static final String AUTHORIZATION = "Authorization";
 
     private HttpHelper() {}
 
@@ -130,10 +131,15 @@ public final class HttpHelper {
      * Creates a GET request to the specified URI.
      *
      * @param uri the target URI to send the GET request to
+     * @param authHeader Additional authentication header
      * @return the HttpResponse containing the response body as a string
      */
-    public static HttpRequest createGetRequest(URI uri) {
-        return HttpRequest.newBuilder().uri(uri).GET().build();
+    public static HttpRequest createGetRequest(URI uri, String authHeader) {
+        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder().uri(uri).GET();
+        if (authHeader != null) {
+            requestBuilder.header(AUTHORIZATION, authHeader);
+        }
+        return requestBuilder.build();
     }
 
 
@@ -141,15 +147,20 @@ public final class HttpHelper {
      * Creates a POST request to the specified URI with the provided request body.
      *
      * @param uri the target URI to send the POST request to
+     * @param authHeader Additional authentication header
      * @param body the request body as a string
      * @return the HttpResponse containing the response body as a string
      */
-    public static HttpRequest createPostRequest(URI uri, String body) {
-        return HttpRequest.newBuilder()
+    public static HttpRequest createPostRequest(URI uri, String authHeader, String body) {
+        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
                 .uri(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(body))
-                .header(HttpConstants.HEADER_CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-                .build();
+                .header(HttpConstants.HEADER_CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
+
+        if (authHeader != null) {
+            requestBuilder.header(AUTHORIZATION, authHeader);
+        }
+        return requestBuilder.build();
     }
 
 
@@ -157,15 +168,20 @@ public final class HttpHelper {
      * Sends a PUT request to the specified URI with the provided request body.
      *
      * @param uri the target URI to send the PUT request to
+     * @param authHeader Additional authentication header
      * @param body the request body as a string
      * @return the HttpResponse containing the response body as a string
      */
-    public static HttpRequest createPutRequest(URI uri, String body) {
-        return HttpRequest.newBuilder()
+    public static HttpRequest createPutRequest(URI uri, String authHeader, String body) {
+        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
                 .uri(uri)
                 .PUT(HttpRequest.BodyPublishers.ofString(body))
-                .header(HttpConstants.HEADER_CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-                .build();
+                .header(HttpConstants.HEADER_CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
+
+        if (authHeader != null) {
+            requestBuilder.header(AUTHORIZATION, authHeader);
+        }
+        return requestBuilder.build();
     }
 
 
@@ -173,9 +189,11 @@ public final class HttpHelper {
      * Creates a PUT request for files to the specified URI.
      *
      * @param uri the target URI to send the GET request to
+     * @param authHeader Additional authentication header
+     * @param file File to send
      * @return the HttpResponse containing the response body as a string
      */
-    public static HttpRequest createPutFileRequest(URI uri, TypedInMemoryFile file) {
+    public static HttpRequest createPutFileRequest(URI uri, String authHeader, TypedInMemoryFile file) {
         HttpEntity httpEntity = MultipartEntityBuilder.create()
                 .addTextBody(FILENAME_PARAMETER, file.getPath())
                 .addBinaryBody(FILE_PARAMETER,
@@ -184,11 +202,15 @@ public final class HttpHelper {
                         file.getPath())
                 .setBoundary(BOUNDARY)
                 .build();
-        return HttpRequest.newBuilder()
+        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
                 .uri(uri)
                 .header(HttpConstants.HEADER_CONTENT_TYPE, ContentType.MULTIPART_FORM_DATA.getMimeType() + "; boundary=" + BOUNDARY)
-                .PUT(HttpRequest.BodyPublishers.ofInputStream(LambdaExceptionHelper.wrap(httpEntity::getContent)))
-                .build();
+                .PUT(HttpRequest.BodyPublishers.ofInputStream(LambdaExceptionHelper.wrap(httpEntity::getContent)));
+
+        if (authHeader != null) {
+            requestBuilder.header(AUTHORIZATION, authHeader);
+        }
+        return requestBuilder.build();
     }
 
 
@@ -196,15 +218,20 @@ public final class HttpHelper {
      * Creates a PATCH request to the specified URI with the provided request body.
      *
      * @param uri the target URI to send the PATCH request to
+     * @param authHeader Additional authentication header
      * @param body the request body as a string
      * @return the HttpResponse containing the response body as a string
      */
-    public static HttpRequest createPatchRequest(URI uri, String body) {
-        return HttpRequest.newBuilder()
+    public static HttpRequest createPatchRequest(URI uri, String authHeader, String body) {
+        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
                 .uri(uri)
                 .method(HttpMethod.PATCH.name(), HttpRequest.BodyPublishers.ofString(body))
-                .header(HttpConstants.HEADER_CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-                .build();
+                .header(HttpConstants.HEADER_CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
+
+        if (authHeader != null) {
+            requestBuilder.header(AUTHORIZATION, authHeader);
+        }
+        return requestBuilder.build();
     }
 
 
@@ -212,10 +239,16 @@ public final class HttpHelper {
      * Creates a DELETE request to the specified URI.
      *
      * @param uri the target URI to send the DELETE request to
+     * @param authHeader Additional authentication header
      * @return the HttpResponse containing the response body as a string
      */
-    public static HttpRequest createDeleteRequest(URI uri) {
-        return HttpRequest.newBuilder().uri(uri).DELETE().build();
+    public static HttpRequest createDeleteRequest(URI uri, String authHeader) {
+        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder().uri(uri).DELETE();
+
+        if (authHeader != null) {
+            requestBuilder.header(AUTHORIZATION, authHeader);
+        }
+        return requestBuilder.build();
     }
 
 

@@ -25,6 +25,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.function.Supplier;
 
 
 /**
@@ -84,6 +85,18 @@ public class DescriptionInterface extends BaseInterface {
 
 
     /**
+     * Creates a new Description Interface.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST service
+     * @param authenticationHeaderProvider Supplier of authentication header value ('Authorization:
+     *            {authenticationHeaderProvider.get()}')
+     */
+    public DescriptionInterface(URI endpoint, Supplier<String> authenticationHeaderProvider) {
+        super(resolve(endpoint, API_PATH), authenticationHeaderProvider);
+    }
+
+
+    /**
      * Retrieves the self-describing information of a network resource (ServiceDescription) as a List of Strings.
      *
      * @return Requested self-describing information
@@ -100,7 +113,7 @@ public class DescriptionInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public ServiceDescription get() throws StatusCodeException, ConnectivityException {
-        HttpRequest request = HttpHelper.createGetRequest(endpoint);
+        HttpRequest request = HttpHelper.createGetRequest(endpoint, authenticationHeaderProvider.get());
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         return parseBody(response, ServiceDescription.class);
