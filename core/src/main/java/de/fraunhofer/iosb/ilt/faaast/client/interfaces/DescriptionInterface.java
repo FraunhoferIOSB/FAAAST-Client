@@ -40,6 +40,11 @@ public class DescriptionInterface extends BaseInterface {
 
     private static final String API_PATH = "/description";
 
+    private DescriptionInterface(URI endpoint, HttpClient httpClient, Supplier<String> authenticationHeaderProvider) {
+        super(endpoint, httpClient, authenticationHeaderProvider);
+    }
+
+
     /**
      * Creates a new Description Interface.
      *
@@ -119,4 +124,33 @@ public class DescriptionInterface extends BaseInterface {
         return parseBody(response, ServiceDescription.class);
     }
 
+    public static class Builder extends BaseBuilder<DescriptionInterface, Builder> {
+
+        private Builder() {}
+
+
+        @Override
+        public Builder newInstance() {
+            return new Builder();
+        }
+
+
+        @Override
+        public Builder getSelf() {
+            return this;
+        }
+
+
+        @Override
+        public Builder endpoint(URI endpoint) {
+            this.endpoint = endpoint;
+            return getSelf();
+        }
+
+
+        @Override
+        public DescriptionInterface buildConcrete() {
+            return new DescriptionInterface(endpoint, httpClient, authenticationHeaderProvider);
+        }
+    }
 }

@@ -43,6 +43,11 @@ import org.eclipse.digitaltwin.aas4j.v3.model.*;
  */
 public class AASInterface extends BaseInterface {
 
+    private AASInterface(URI endpoint, HttpClient httpClient, Supplier<String> authenticationHeaderProvider) {
+        super(endpoint, httpClient, authenticationHeaderProvider);
+    }
+
+
     /**
      * Creates a new Asset Administration Shell Interface.
      *
@@ -403,4 +408,33 @@ public class AASInterface extends BaseInterface {
         return assetInfoPath() + "/thumbnail";
     }
 
+    public static class Builder extends BaseBuilder<AASInterface, Builder> {
+
+        private Builder() {}
+
+
+        @Override
+        public Builder newInstance() {
+            return new Builder();
+        }
+
+
+        @Override
+        public Builder getSelf() {
+            return this;
+        }
+
+
+        @Override
+        public Builder endpoint(URI endpoint) {
+            this.endpoint = endpoint;
+            return getSelf();
+        }
+
+
+        @Override
+        public AASInterface buildConcrete() {
+            return new AASInterface(endpoint, httpClient, authenticationHeaderProvider);
+        }
+    }
 }

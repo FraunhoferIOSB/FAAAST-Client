@@ -44,6 +44,11 @@ public class AASRegistryInterface extends BaseInterface {
 
     private static final String API_PATH = "/shell-descriptors";
 
+    private AASRegistryInterface(URI endpoint, HttpClient httpClient, Supplier<String> authenticationHeaderProvider) {
+        super(resolve(endpoint, API_PATH), httpClient, authenticationHeaderProvider);
+    }
+
+
     /**
      * Creates a new Asset Administration Shell Registry Interface.
      *
@@ -264,5 +269,35 @@ public class AASRegistryInterface extends BaseInterface {
      */
     public SubmodelRegistryInterface getSubmodelRegistryInterface(String aasIdentifier) {
         return new SubmodelRegistryInterface(resolve(idPath(aasIdentifier)));
+    }
+
+    public static class Builder extends BaseBuilder<AASRegistryInterface, Builder> {
+
+        private Builder() {}
+
+
+        @Override
+        public Builder newInstance() {
+            return new Builder();
+        }
+
+
+        @Override
+        public Builder getSelf() {
+            return this;
+        }
+
+
+        @Override
+        public Builder endpoint(URI endpoint) {
+            this.endpoint = resolve(endpoint, API_PATH);
+            return getSelf();
+        }
+
+
+        @Override
+        public AASRegistryInterface buildConcrete() {
+            return new AASRegistryInterface(endpoint, httpClient, authenticationHeaderProvider);
+        }
     }
 }

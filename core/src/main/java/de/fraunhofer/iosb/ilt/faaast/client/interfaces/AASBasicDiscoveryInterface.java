@@ -54,6 +54,11 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
 
     private static final String LOOKUP_PATH = "/lookup/shells";
 
+    private AASBasicDiscoveryInterface(URI endpoint, HttpClient httpClient, Supplier<String> authenticationHeaderProvider) {
+        super(resolve(endpoint, LOOKUP_PATH), httpClient, authenticationHeaderProvider);
+    }
+
+
     /**
      * Creates a new Discovery Interface.
      *
@@ -225,4 +230,33 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
         delete(idPath(aasIdentifier));
     }
 
+    public static class Builder extends BaseBuilder<AASBasicDiscoveryInterface, Builder> {
+
+        private Builder() {}
+
+
+        @Override
+        public Builder newInstance() {
+            return new Builder();
+        }
+
+
+        @Override
+        public Builder getSelf() {
+            return this;
+        }
+
+
+        @Override
+        public Builder endpoint(URI endpoint) {
+            this.endpoint = endpoint;
+            return getSelf();
+        }
+
+
+        @Override
+        public AASBasicDiscoveryInterface buildConcrete() {
+            return new AASBasicDiscoveryInterface(endpoint, httpClient, authenticationHeaderProvider);
+        }
+    }
 }
