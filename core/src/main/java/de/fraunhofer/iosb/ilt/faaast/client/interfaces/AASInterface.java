@@ -26,6 +26,7 @@ import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.util.List;
+import java.util.function.Supplier;
 
 import de.fraunhofer.iosb.ilt.faaast.service.model.exception.InvalidRequestException;
 import org.eclipse.digitaltwin.aas4j.v3.model.*;
@@ -83,6 +84,18 @@ public class AASInterface extends BaseInterface {
      */
     public AASInterface(URI endpoint, boolean trustAllCertificates) {
         super(endpoint, trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
+    }
+
+
+    /**
+     * Creates a new Asset Administration Shell Interface.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST service
+     * @param authenticationHeaderProvider Supplier of authentication header value ('Authorization:
+     *            {authenticationHeaderProvider.get()}')
+     */
+    public AASInterface(URI endpoint, Supplier<String> authenticationHeaderProvider) {
+        super(endpoint, authenticationHeaderProvider);
     }
 
 

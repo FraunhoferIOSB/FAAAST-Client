@@ -39,6 +39,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 
 /**
@@ -98,6 +99,18 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
 
 
     /**
+     * Creates a new Discovery Interface.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST service
+     * @param authenticationHeaderProvider Supplier of authentication header value ('Authorization:
+     *            {authenticationHeaderProvider.get()}')
+     */
+    public AASBasicDiscoveryInterface(URI endpoint, Supplier<String> authenticationHeaderProvider) {
+        super(resolve(endpoint, LOOKUP_PATH), authenticationHeaderProvider);
+    }
+
+
+    /**
      * Returns a list of Asset Administration Shell IDs linked to specific asset identifiers or the global asset ID.
      *
      * @param assetLinks A list of specific asset identifiers. Search for the global asset ID is supported by setting "name"
@@ -123,7 +136,8 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
         AASBasicDiscoverySearchCriteria assetIds = new AASBasicDiscoverySearchCriteria.Builder().assetIds(assetIdentificationList).build();
         HttpRequest request = HttpHelper.createGetRequest(
                 resolve(QueryHelper.apply(
-                        null, Content.DEFAULT, QueryModifier.DEFAULT, pagingInfo, assetIds)));
+                        null, Content.DEFAULT, QueryModifier.DEFAULT, pagingInfo, assetIds)),
+                authenticationHeaderProvider.get());
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         try {
@@ -177,7 +191,9 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<SpecificAssetId> createAssetLinks(List<SpecificAssetId> assetLinks, String aasIdentifier) throws StatusCodeException, ConnectivityException {
-        HttpRequest request = HttpHelper.createPostRequest(resolve(QueryHelper.apply(idPath(aasIdentifier), Content.DEFAULT, QueryModifier.DEFAULT)),
+        HttpRequest request = HttpHelper.createPostRequest(
+                resolve(QueryHelper.apply(idPath(aasIdentifier), Content.DEFAULT, QueryModifier.DEFAULT)),
+                authenticationHeaderProvider.get(),
                 serializeEntity(assetLinks));
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.POST, response, HttpStatus.OK);

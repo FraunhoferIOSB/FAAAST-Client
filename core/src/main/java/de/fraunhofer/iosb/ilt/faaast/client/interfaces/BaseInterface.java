@@ -54,6 +54,7 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,9 +75,26 @@ public abstract class BaseInterface {
             HttpStatus.FORBIDDEN,
             HttpStatus.NOT_FOUND,
             HttpStatus.INTERNAL_SERVER_ERROR);
+    private static final Supplier<String> NO_OP_AUTH_HEADER_PROVIDER = () -> null;
 
     protected final HttpClient httpClient;
     protected final URI endpoint;
+    protected final Supplier<String> authenticationHeaderProvider;
+
+    /**
+     * Creates a new instance.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST service
+     * @param httpClient Allows user to specify custom http-client
+     * @param authenticationHeaderProvider Supplier of authentication header value ('Authorization:
+     *            {authenticationHeaderProvider.get()}')
+     */
+    protected BaseInterface(URI endpoint, HttpClient httpClient, Supplier<String> authenticationHeaderProvider) {
+        this.endpoint = sanitizeEndpoint(endpoint);
+        this.httpClient = httpClient;
+        this.authenticationHeaderProvider = authenticationHeaderProvider;
+    }
+
 
     /**
      * Creates a new instance.
@@ -85,8 +103,7 @@ public abstract class BaseInterface {
      * @param httpClient Allows user to specify custom http-client
      */
     protected BaseInterface(URI endpoint, HttpClient httpClient) {
-        this.endpoint = sanitizeEndpoint(endpoint);
-        this.httpClient = httpClient;
+        this(endpoint, httpClient, NO_OP_AUTH_HEADER_PROVIDER);
     }
 
 
@@ -120,6 +137,18 @@ public abstract class BaseInterface {
      */
     protected BaseInterface(URI endpoint, boolean trustAllCertificates) {
         this(endpoint, trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
+    }
+
+
+    /**
+     * Creates a new instance.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST service
+     * @param authenticationHeaderProvider Supplier of authentication header value ('Authorization:
+     *            {authenticationHeaderProvider.get()}')
+     */
+    protected BaseInterface(URI endpoint, Supplier<String> authenticationHeaderProvider) {
+        this(endpoint, HttpClient.newHttpClient(), authenticationHeaderProvider);
     }
 
 
@@ -251,7 +280,7 @@ public abstract class BaseInterface {
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> T get(String path, QueryModifier modifier, Content content, Class<T> responseType) throws ConnectivityException, StatusCodeException {
-        HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, content, modifier)));
+        HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, content, modifier)), authenticationHeaderProvider.get());
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         return parseBody(response, responseType);
@@ -271,7 +300,7 @@ public abstract class BaseInterface {
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T extends ElementValue> T getValue(String path, QueryModifier modifier, TypeInfo<?> typeInfo) throws ConnectivityException, StatusCodeException {
-        HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, Content.VALUE, modifier)));
+        HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, Content.VALUE, modifier)), authenticationHeaderProvider.get());
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         try {
@@ -291,7 +320,7 @@ public abstract class BaseInterface {
      * @throws StatusCodeException if HTTP request returns invalid status code
      */
     protected InMemoryFile getFile(String path) throws ConnectivityException, StatusCodeException {
-        HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, Content.DEFAULT, QueryModifier.DEFAULT)));
+        HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, Content.DEFAULT, QueryModifier.DEFAULT)), authenticationHeaderProvider.get());
         HttpResponse<byte[]> response = HttpHelper.sendFileRequest(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
 
@@ -381,7 +410,7 @@ public abstract class BaseInterface {
      */
     protected <T> List<T> getAll(String path, SearchCriteria searchCriteria, Content content, QueryModifier modifier, Class<T> responseType)
             throws ConnectivityException, StatusCodeException {
-        HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, content, modifier, PagingInfo.ALL, searchCriteria)));
+        HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, content, modifier, PagingInfo.ALL, searchCriteria)), authenticationHeaderProvider.get());
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         try {
@@ -406,7 +435,7 @@ public abstract class BaseInterface {
      */
     protected <T> List<T> getAllList(String path, Class<T> responseType)
             throws ConnectivityException, StatusCodeException {
-        HttpRequest request = HttpHelper.createGetRequest(resolve(path));
+        HttpRequest request = HttpHelper.createGetRequest(resolve(path), authenticationHeaderProvider.get());
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         try {
@@ -526,7 +555,7 @@ public abstract class BaseInterface {
      */
     protected <T> Page<T> getPage(String path, Content content, QueryModifier modifier, PagingInfo pagingInfo, SearchCriteria searchCriteria, Class<T> responseType)
             throws ConnectivityException, StatusCodeException {
-        HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, content, modifier, pagingInfo, searchCriteria)));
+        HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, content, modifier, pagingInfo, searchCriteria)), authenticationHeaderProvider.get());
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         try {
@@ -627,6 +656,7 @@ public abstract class BaseInterface {
             throws ConnectivityException, StatusCodeException {
         HttpRequest request = HttpHelper.createPostRequest(
                 resolve(QueryHelper.apply(path, content, QueryModifier.DEFAULT)),
+                authenticationHeaderProvider.get(),
                 serialize(entity, content, modifier));
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.POST, response, expectedStatusCode);
@@ -699,6 +729,7 @@ public abstract class BaseInterface {
     protected void put(String path, Object entity, Content content, QueryModifier modifier) throws ConnectivityException, StatusCodeException {
         HttpRequest request = HttpHelper.createPutRequest(
                 resolve(QueryHelper.apply(path, content, modifier)),
+                authenticationHeaderProvider.get(),
                 serialize(entity, content, modifier));
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.PUT, response, HttpStatus.NO_CONTENT);
@@ -714,7 +745,7 @@ public abstract class BaseInterface {
      * @throws StatusCodeException if HTTP request returns invalid status code
      */
     protected void putFile(String path, TypedInMemoryFile file) throws ConnectivityException, StatusCodeException {
-        HttpRequest request = HttpHelper.createPutFileRequest(resolve(QueryHelper.apply(path, Content.DEFAULT, QueryModifier.DEFAULT)), file);
+        HttpRequest request = HttpHelper.createPutFileRequest(resolve(QueryHelper.apply(path, Content.DEFAULT, QueryModifier.DEFAULT)), authenticationHeaderProvider.get(), file);
         HttpResponse<byte[]> response = HttpHelper.sendFileRequest(httpClient, request);
         validateStatusCode(HttpMethod.PUT, response, HttpStatus.NO_CONTENT);
     }
@@ -787,6 +818,7 @@ public abstract class BaseInterface {
     protected void patch(String path, Object entity, Content content, QueryModifier modifier) throws ConnectivityException, StatusCodeException {
         HttpRequest request = HttpHelper.createPatchRequest(
                 resolve(QueryHelper.apply(path, content, modifier)),
+                authenticationHeaderProvider.get(),
                 serialize(entity, content, modifier));
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.PATCH, response, HttpStatus.NO_CONTENT);
@@ -805,6 +837,7 @@ public abstract class BaseInterface {
     protected void patchValue(String path, Object entity, QueryModifier modifier) throws ConnectivityException, StatusCodeException {
         HttpRequest request = HttpHelper.createPatchRequest(
                 resolve(QueryHelper.apply(path, Content.VALUE, modifier)),
+                authenticationHeaderProvider.get(),
                 serializeEntity(entity));
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.PATCH, response, HttpStatus.NO_CONTENT);
@@ -832,7 +865,7 @@ public abstract class BaseInterface {
      * @throws StatusCodeException if HTTP request returns invalid status code
      */
     protected void delete(String path, HttpStatus expectedStatus) throws ConnectivityException, StatusCodeException {
-        HttpRequest request = HttpHelper.createDeleteRequest(resolve(path));
+        HttpRequest request = HttpHelper.createDeleteRequest(resolve(path), authenticationHeaderProvider.get());
         HttpResponse<String> response = HttpHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.DELETE, response, expectedStatus);
     }

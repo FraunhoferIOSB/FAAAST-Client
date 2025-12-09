@@ -25,6 +25,8 @@ import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.util.List;
+import java.util.function.Supplier;
+
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 
@@ -82,6 +84,18 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      */
     public SubmodelRepositoryInterface(URI endpoint, boolean trustAllCertificates) {
         super(resolve(endpoint, API_PATH), trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
+    }
+
+
+    /**
+     * Creates a new Submodel Repository Interface.
+     *
+     * @param endpoint Uri used to communicate with the FA³ST service
+     * @param authenticationHeaderProvider Supplier of authentication header value ('Authorization:
+     *            {authenticationHeaderProvider.get()}')
+     */
+    public SubmodelRepositoryInterface(URI endpoint, Supplier<String> authenticationHeaderProvider) {
+        super(resolve(endpoint, API_PATH), authenticationHeaderProvider);
     }
 
 
