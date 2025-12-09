@@ -42,6 +42,11 @@ public class AASRepositoryInterface extends BaseInterface {
 
     private static final String API_PATH = "/shells";
 
+    private AASRepositoryInterface(URI endpoint, HttpClient httpClient, Supplier<String> authenticationHeaderProvider) {
+        super(resolve(endpoint, API_PATH), httpClient, authenticationHeaderProvider);
+    }
+
+
     /**
      * Creates a new Asset Administration Shell Repository Interface using a custom HTTP client.
      *
@@ -330,5 +335,35 @@ public class AASRepositoryInterface extends BaseInterface {
      */
     public AASInterface getAASInterface(String aasIdentifier) {
         return new AASInterface(resolve(idPath(aasIdentifier)), httpClient);
+    }
+
+    public static class Builder extends BaseBuilder<AASRepositoryInterface, Builder> {
+
+        private Builder() {}
+
+
+        @Override
+        public Builder newInstance() {
+            return new Builder();
+        }
+
+
+        @Override
+        public Builder getSelf() {
+            return this;
+        }
+
+
+        @Override
+        public Builder endpoint(URI endpoint) {
+            this.endpoint = resolve(endpoint, API_PATH);
+            return getSelf();
+        }
+
+
+        @Override
+        public AASRepositoryInterface buildConcrete() {
+            return new AASRepositoryInterface(endpoint, httpClient, authenticationHeaderProvider);
+        }
     }
 }

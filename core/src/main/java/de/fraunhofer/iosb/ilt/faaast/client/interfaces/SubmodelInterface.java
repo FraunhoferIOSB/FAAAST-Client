@@ -56,6 +56,11 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
  */
 public class SubmodelInterface extends BaseInterface {
 
+    private SubmodelInterface(URI endpoint, HttpClient httpClient, Supplier<String> authenticationHeaderProvider) {
+        super(endpoint, httpClient, authenticationHeaderProvider);
+    }
+
+
     /**
      * Creates a new Submodel API.
      *
@@ -943,5 +948,35 @@ public class SubmodelInterface extends BaseInterface {
 
     private static String invokePath(IdShortPath idShortPath) {
         return submodelElementIdPath(idShortPath) + "/invoke";
+    }
+
+    public static class Builder extends BaseBuilder<SubmodelInterface, Builder> {
+
+        private Builder() {}
+
+
+        @Override
+        public Builder newInstance() {
+            return new Builder();
+        }
+
+
+        @Override
+        public Builder getSelf() {
+            return this;
+        }
+
+
+        @Override
+        public Builder endpoint(URI endpoint) {
+            this.endpoint = endpoint;
+            return getSelf();
+        }
+
+
+        @Override
+        public SubmodelInterface buildConcrete() {
+            return new SubmodelInterface(endpoint, httpClient, authenticationHeaderProvider);
+        }
     }
 }

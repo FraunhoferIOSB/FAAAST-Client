@@ -41,6 +41,12 @@ public class SubmodelRegistryInterface extends BaseInterface {
 
     private static final String API_PATH = "/submodel-descriptors";
 
+
+    private SubmodelRegistryInterface(URI endpoint, HttpClient httpClient, Supplier<String> authenticationHeaderProvider) {
+        super(resolve(endpoint, API_PATH), httpClient, authenticationHeaderProvider);
+    }
+
+
     /**
      * Creates a new Submodel Registry Interface.
      *
@@ -226,5 +232,35 @@ public class SubmodelRegistryInterface extends BaseInterface {
     @Override
     public void delete(String submodelIdentifier) throws StatusCodeException, ConnectivityException {
         super.delete(idPath(submodelIdentifier));
+    }
+
+    public static class Builder extends BaseBuilder<SubmodelRegistryInterface, Builder> {
+
+        private Builder() {}
+
+
+        @Override
+        public Builder newInstance() {
+            return new Builder();
+        }
+
+
+        @Override
+        public Builder getSelf() {
+            return this;
+        }
+
+
+        @Override
+        public Builder endpoint(URI endpoint) {
+            this.endpoint = endpoint;
+            return getSelf();
+        }
+
+
+        @Override
+        public SubmodelRegistryInterface buildConcrete() {
+            return new SubmodelRegistryInterface(endpoint, httpClient, authenticationHeaderProvider);
+        }
     }
 }

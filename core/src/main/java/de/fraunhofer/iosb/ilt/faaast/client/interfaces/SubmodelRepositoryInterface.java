@@ -43,6 +43,12 @@ public class SubmodelRepositoryInterface extends BaseInterface {
 
     private static final String API_PATH = "/submodels";
 
+
+    private SubmodelRepositoryInterface(URI endpoint, HttpClient httpClient, Supplier<String> authenticationHeaderProvider) {
+        super(resolve(endpoint, API_PATH), httpClient, authenticationHeaderProvider);
+    }
+
+
     /**
      * Creates a new Submodel Repository API.
      *
@@ -519,5 +525,35 @@ public class SubmodelRepositoryInterface extends BaseInterface {
      */
     public SubmodelInterface getSubmodelInterface(String submodelId) {
         return new SubmodelInterface(resolve(idPath(submodelId)), httpClient);
+    }
+
+    public static class Builder extends BaseBuilder<SubmodelRepositoryInterface, Builder> {
+
+        private Builder() {}
+
+
+        @Override
+        public Builder newInstance() {
+            return new Builder();
+        }
+
+
+        @Override
+        public Builder getSelf() {
+            return this;
+        }
+
+
+        @Override
+        public Builder endpoint(URI endpoint) {
+            this.endpoint = endpoint;
+            return getSelf();
+        }
+
+
+        @Override
+        public SubmodelRepositoryInterface buildConcrete() {
+            return new SubmodelRepositoryInterface(endpoint, httpClient, authenticationHeaderProvider);
+        }
     }
 }

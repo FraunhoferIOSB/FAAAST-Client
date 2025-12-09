@@ -42,6 +42,11 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
 
     private static final String API_PATH = "/concept-descriptions";
 
+    private ConceptDescriptionRepositoryInterface(URI endpoint, HttpClient httpClient, Supplier<String> authenticationHeaderProvider) {
+        super(resolve(endpoint, API_PATH), httpClient, authenticationHeaderProvider);
+    }
+
+
     /**
      * Creates a new Concept Description Interface.
      *
@@ -273,5 +278,35 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
     @Override
     public void delete(String cdIdentifier) throws StatusCodeException, ConnectivityException {
         super.delete(idPath(cdIdentifier));
+    }
+
+    public static class Builder extends BaseBuilder<ConceptDescriptionRepositoryInterface, Builder> {
+
+        private Builder() {}
+
+
+        @Override
+        public Builder newInstance() {
+            return new Builder();
+        }
+
+
+        @Override
+        public Builder getSelf() {
+            return this;
+        }
+
+
+        @Override
+        public Builder endpoint(URI endpoint) {
+            this.endpoint = endpoint;
+            return getSelf();
+        }
+
+
+        @Override
+        public ConceptDescriptionRepositoryInterface buildConcrete() {
+            return new ConceptDescriptionRepositoryInterface(endpoint, httpClient, authenticationHeaderProvider);
+        }
     }
 }

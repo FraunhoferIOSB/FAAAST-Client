@@ -56,6 +56,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import de.fraunhofer.iosb.ilt.faaast.service.util.Ensure;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1050,4 +1051,72 @@ public abstract class BaseInterface {
         }
     }
 
+    public abstract static class BaseBuilder<I extends BaseInterface, B extends BaseBuilder<I, B>> {
+        protected HttpClient httpClient;
+        protected URI endpoint;
+        protected Supplier<String> authenticationHeaderProvider;
+
+        public abstract B newInstance();
+
+
+        public abstract B getSelf();
+
+
+        /**
+         * @param endpoint Uri used to communicate with the FA³ST Service
+         * @return builder
+         */
+        public abstract B endpoint(URI endpoint);
+
+
+        /**
+         * @param httpClient Allows user to specify custom http-client.<p>Will remove any previously defined http client.
+         * @return builder
+         */
+        public B httpClient(HttpClient httpClient) {
+            this.httpClient = httpClient;
+            return getSelf();
+        }
+
+
+        /**
+         * If called, the built interface will allow all (incl. self-signed) ssl certificates to communicate with AAS
+         * servers.<p>Will remove any previously defined http client.
+         *
+         * @return builder
+         */
+        public B useTrustAllHttpClient() {
+            this.httpClient = HttpHelper.newTrustAllCertificatesClient();
+            return getSelf();
+        }
+
+
+        /**
+         * Will remove any previously defined authentication header provider.
+         *
+         * @param authenticationHeaderProvider Supplier of authentication header value ('Authorization:
+         *            {authenticationHeaderProvider.get()}')
+         * @return builder
+         */
+        public B authenticationHeaderProvider(Supplier<String> authenticationHeaderProvider) {
+            this.authenticationHeaderProvider = authenticationHeaderProvider;
+            return getSelf();
+        }
+
+
+        private void validate() {
+            Ensure.requireNonNull(this.endpoint);
+            this.httpClient = Objects.requireNonNullElse(httpClient, HttpHelper.newDefaultClient());
+            this.authenticationHeaderProvider = Objects.requireNonNullElse(authenticationHeaderProvider, NO_OP_AUTH_HEADER_PROVIDER);
+        }
+
+
+        protected abstract I buildConcrete();
+
+
+        public final I build() {
+            validate();
+            return getSelf().buildConcrete();
+        }
+    }
 }
