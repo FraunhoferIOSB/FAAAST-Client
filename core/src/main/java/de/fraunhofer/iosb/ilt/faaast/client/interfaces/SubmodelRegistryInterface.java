@@ -260,7 +260,7 @@ public class SubmodelRegistryInterface extends BaseInterface {
 
         @Override
         public SubmodelRegistryInterface buildConcrete() {
-            return new SubmodelRegistryInterface(endpoint, httpClient, authenticationHeaderProvider);
+            return new SubmodelRegistryInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }
     }
 }

@@ -297,7 +297,7 @@ public class AASRegistryInterface extends BaseInterface {
 
         @Override
         public AASRegistryInterface buildConcrete() {
-            return new AASRegistryInterface(endpoint, httpClient, authenticationHeaderProvider);
+            return new AASRegistryInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }
     }
 }
