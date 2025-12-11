@@ -25,10 +25,10 @@ import de.fraunhofer.iosb.ilt.faaast.client.exception.NotFoundException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.UnauthorizedException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.UnsupportedStatusCodeException;
-import de.fraunhofer.iosb.ilt.faaast.client.query.SearchCriteria;
-import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpMethod;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
+import de.fraunhofer.iosb.ilt.faaast.client.query.SearchCriteria;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
 import de.fraunhofer.iosb.ilt.faaast.client.util.QueryHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.DeserializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
@@ -46,6 +46,11 @@ import de.fraunhofer.iosb.ilt.faaast.service.model.exception.UnsupportedModifier
 import de.fraunhofer.iosb.ilt.faaast.service.model.value.ElementValue;
 import de.fraunhofer.iosb.ilt.faaast.service.typing.TypeInfo;
 import de.fraunhofer.iosb.ilt.faaast.service.util.EncodingHelper;
+import de.fraunhofer.iosb.ilt.faaast.service.util.Ensure;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
@@ -56,17 +61,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import de.fraunhofer.iosb.ilt.faaast.service.util.Ensure;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 
 /**
- * Abstract base class providing core functionality for sending HTTP requests and handling API responses.
- * Supports GET, POST, PUT, PATCH and DELETE operations, deserialization of responses, and throws exceptions based on
- * status codes.
- * Subclasses extend these methods to interact with specific APIs.
+ * Abstract base class providing core functionality for sending HTTP requests and handling API responses. Supports GET,
+ * POST, PUT, PATCH and DELETE operations, deserialization of
+ * responses, and throws exceptions based on status codes. Subclasses extend these methods to interact with specific
+ * APIs.
  */
 public abstract class BaseInterface {
     private static final String URI_PATH_SEPERATOR = "/";
@@ -1052,14 +1052,28 @@ public abstract class BaseInterface {
     }
 
     public abstract static class BaseBuilder<I extends BaseInterface, B extends BaseBuilder<I, B>> {
-        protected HttpClient.Builder httpClientBuilder = HttpClient.newBuilder();
+        private HttpClient.Builder httpClientBuilder = HttpClient.newBuilder();
         protected URI endpoint;
         protected Supplier<String> authenticationHeaderProvider = NO_OP_AUTH_HEADER_PROVIDER;
 
+        /**
+         * Get a new instance of this builder type.
+         *
+         * @return A new instance of this builder type.
+         */
         public abstract B newInstance();
 
 
-        public abstract B getSelf();
+        /**
+         * Supply a custom HttpClient.Builder.
+         *
+         * @param builder Custom HttpClient.Builder
+         * @return builder
+         */
+        public B customHttpClientBuilder(HttpClient.Builder builder) {
+            this.httpClientBuilder = builder;
+            return getSelf();
+        }
 
 
         /**
@@ -1086,7 +1100,7 @@ public abstract class BaseInterface {
          *
          * @param username The username
          * @param password The password
-         * @return The builder
+         * @return builder
          */
         public B useBasicAuthentication(String username, String password) {
             HttpHelper.addBasicAuthentication(this.httpClientBuilder, username, password);
@@ -1114,6 +1128,9 @@ public abstract class BaseInterface {
         private void validate() {
             Ensure.requireNonNull(this.endpoint);
         }
+
+
+        protected abstract B getSelf();
 
 
         protected final HttpClient httpClient() {
