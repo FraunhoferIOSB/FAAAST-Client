@@ -306,7 +306,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
 
         @Override
         public ConceptDescriptionRepositoryInterface buildConcrete() {
-            return new ConceptDescriptionRepositoryInterface(endpoint, httpClient, authenticationHeaderProvider);
+            return new ConceptDescriptionRepositoryInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }
     }
 }

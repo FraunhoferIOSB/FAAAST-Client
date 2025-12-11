@@ -150,7 +150,7 @@ public class DescriptionInterface extends BaseInterface {
 
         @Override
         public DescriptionInterface buildConcrete() {
-            return new DescriptionInterface(endpoint, httpClient, authenticationHeaderProvider);
+            return new DescriptionInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }
     }
 }

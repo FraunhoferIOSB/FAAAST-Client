@@ -363,7 +363,7 @@ public class AASRepositoryInterface extends BaseInterface {
 
         @Override
         public AASRepositoryInterface buildConcrete() {
-            return new AASRepositoryInterface(endpoint, httpClient, authenticationHeaderProvider);
+            return new AASRepositoryInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }
     }
 }

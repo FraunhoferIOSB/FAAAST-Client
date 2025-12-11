@@ -976,7 +976,7 @@ public class SubmodelInterface extends BaseInterface {
 
         @Override
         public SubmodelInterface buildConcrete() {
-            return new SubmodelInterface(endpoint, httpClient, authenticationHeaderProvider);
+            return new SubmodelInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }
     }
 }

@@ -434,7 +434,7 @@ public class AASInterface extends BaseInterface {
 
         @Override
         public AASInterface buildConcrete() {
-            return new AASInterface(endpoint, httpClient, authenticationHeaderProvider);
+            return new AASInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }
     }
 }

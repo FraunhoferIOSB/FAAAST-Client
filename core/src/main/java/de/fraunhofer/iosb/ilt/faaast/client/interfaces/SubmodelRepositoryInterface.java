@@ -43,7 +43,6 @@ public class SubmodelRepositoryInterface extends BaseInterface {
 
     private static final String API_PATH = "/submodels";
 
-
     private SubmodelRepositoryInterface(URI endpoint, HttpClient httpClient, Supplier<String> authenticationHeaderProvider) {
         super(resolve(endpoint, API_PATH), httpClient, authenticationHeaderProvider);
     }
@@ -553,7 +552,7 @@ public class SubmodelRepositoryInterface extends BaseInterface {
 
         @Override
         public SubmodelRepositoryInterface buildConcrete() {
-            return new SubmodelRepositoryInterface(endpoint, httpClient, authenticationHeaderProvider);
+            return new SubmodelRepositoryInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }
     }
 }

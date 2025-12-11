@@ -256,7 +256,7 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
 
         @Override
         public AASBasicDiscoveryInterface buildConcrete() {
-            return new AASBasicDiscoveryInterface(endpoint, httpClient, authenticationHeaderProvider);
+            return new AASBasicDiscoveryInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }
     }
 }

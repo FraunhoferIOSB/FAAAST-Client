@@ -1052,9 +1052,9 @@ public abstract class BaseInterface {
     }
 
     public abstract static class BaseBuilder<I extends BaseInterface, B extends BaseBuilder<I, B>> {
-        protected HttpClient httpClient;
+        protected HttpClient.Builder httpClientBuilder = HttpClient.newBuilder();
         protected URI endpoint;
-        protected Supplier<String> authenticationHeaderProvider;
+        protected Supplier<String> authenticationHeaderProvider = NO_OP_AUTH_HEADER_PROVIDER;
 
         public abstract B newInstance();
 
@@ -1070,28 +1070,35 @@ public abstract class BaseInterface {
 
 
         /**
-         * @param httpClient Allows user to specify custom http-client.<p>Will remove any previously defined http client.
-         * @return builder
-         */
-        public B httpClient(HttpClient httpClient) {
-            this.httpClient = httpClient;
-            return getSelf();
-        }
-
-
-        /**
          * If called, the built interface will allow all (incl. self-signed) ssl certificates to communicate with AAS
          * servers.<p>Will remove any previously defined http client.
          *
          * @return builder
          */
         public B useTrustAllHttpClient() {
-            this.httpClient = HttpHelper.newTrustAllCertificatesClient();
+            HttpHelper.makeTrustAllCertificates(this.httpClientBuilder);
             return getSelf();
         }
 
 
         /**
+         * Use basic authentication via username and password to connect to AAS server.
+         *
+         * @param username The username
+         * @param password The password
+         * @return The builder
+         */
+        public B useBasicAuthentication(String username, String password) {
+            HttpHelper.addBasicAuthentication(this.httpClientBuilder, username, password);
+            return getSelf();
+        }
+
+
+        /**
+         * Adds a supplier of an authentication header value. When requesting a resource from the AAS server, the authentication
+         * header will be retrieved and appended to the HTTP
+         * request. In terms of curl, this would mean: <p>{@code --header Authorization: authenticationHeaderProvider.get()}.
+         * <p>
          * Will remove any previously defined authentication header provider.
          *
          * @param authenticationHeaderProvider Supplier of authentication header value ('Authorization:
@@ -1106,8 +1113,11 @@ public abstract class BaseInterface {
 
         private void validate() {
             Ensure.requireNonNull(this.endpoint);
-            this.httpClient = Objects.requireNonNullElse(httpClient, HttpHelper.newDefaultClient());
-            this.authenticationHeaderProvider = Objects.requireNonNullElse(authenticationHeaderProvider, NO_OP_AUTH_HEADER_PROVIDER);
+        }
+
+
+        protected final HttpClient httpClient() {
+            return this.httpClientBuilder.build();
         }
 
 
