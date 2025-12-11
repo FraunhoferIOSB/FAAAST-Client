@@ -90,13 +90,49 @@ public final class HttpHelper {
 
 
     /**
+     * Creates a new HTTP client with basic username/password authentication.
+     *
+     * @param httpClientBuilder Builder to add basic auth to
+     * @param username the username
+     * @param password the password
+     */
+    public static void addBasicAuthentication(HttpClient.Builder httpClientBuilder, String username, String password) {
+        httpClientBuilder
+                .authenticator(new Authenticator() {
+                    @Override
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(username, password.toCharArray());
+                    }
+                });
+    }
+
+
+    /**
      * Creates a new HTTP client that trusts all certificates (including self-signed ones).
      *
      * @return the new HTTP client
      */
     public static HttpClient newTrustAllCertificatesClient() {
+        return HttpClient.newBuilder()
+                .sslContext(trustAllSslContext())
+                .build();
+    }
+
+
+    /**
+     * Adds "trust-all-certificates" to a HttpClient builder.
+     *
+     * @param httpClientBuilder Builder to allow all certificates
+     */
+    public static void makeTrustAllCertificates(HttpClient.Builder httpClientBuilder) {
+        httpClientBuilder.sslContext(trustAllSslContext());
+    }
+
+
+    private static SSLContext trustAllSslContext() {
+        SSLContext sslContext;
         try {
-            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext = SSLContext.getInstance("TLS");
             sslContext.init(null, new TrustManager[] {
                     new X509TrustManager() {
                         @Override
@@ -117,13 +153,12 @@ public final class HttpHelper {
                         }
                     }
             }, new java.security.SecureRandom());
-            return HttpClient.newBuilder()
-                    .sslContext(sslContext)
-                    .build();
         }
         catch (GeneralSecurityException e) {
             throw new RuntimeException("failed to create HTTP client that trusts all certificates", e);
         }
+
+        return sslContext;
     }
 
 
