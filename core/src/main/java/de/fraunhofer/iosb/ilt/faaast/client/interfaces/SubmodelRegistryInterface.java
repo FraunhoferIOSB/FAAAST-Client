@@ -41,7 +41,6 @@ public class SubmodelRegistryInterface extends BaseInterface {
 
     private static final String API_PATH = "/submodel-descriptors";
 
-
     private SubmodelRegistryInterface(URI endpoint, HttpClient httpClient, Supplier<String> authenticationHeaderProvider) {
         super(resolve(endpoint, API_PATH), httpClient, authenticationHeaderProvider);
     }
