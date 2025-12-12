@@ -27,7 +27,6 @@ import java.net.http.HttpClient;
 import java.util.List;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
-import java.util.function.Supplier;
 
 
 /**
@@ -41,11 +40,6 @@ import java.util.function.Supplier;
 public class AASRepositoryInterface extends BaseInterface {
 
     private static final String API_PATH = "/shells";
-
-    private AASRepositoryInterface(URI endpoint, HttpClient httpClient, Supplier<String> authenticationHeaderProvider) {
-        super(resolve(endpoint, API_PATH), httpClient, authenticationHeaderProvider);
-    }
-
 
     /**
      * Creates a new Asset Administration Shell Repository Interface using a custom HTTP client.
@@ -329,7 +323,7 @@ public class AASRepositoryInterface extends BaseInterface {
 
         @Override
         protected AASRepositoryInterface buildConcrete() {
-            return new AASRepositoryInterface(endpoint, httpClient(), authenticationHeaderProvider);
+            return new AASRepositoryInterface(endpoint, httpClient());
         }
     }
 }

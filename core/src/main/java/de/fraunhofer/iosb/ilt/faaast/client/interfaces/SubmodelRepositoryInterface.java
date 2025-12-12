@@ -25,7 +25,6 @@ import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.util.List;
-import java.util.function.Supplier;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -42,11 +41,6 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 public class SubmodelRepositoryInterface extends BaseInterface {
 
     private static final String API_PATH = "/submodels";
-
-    private SubmodelRepositoryInterface(URI endpoint, HttpClient httpClient, Supplier<String> authenticationHeaderProvider) {
-        super(resolve(endpoint, API_PATH), httpClient, authenticationHeaderProvider);
-    }
-
 
     /**
      * Creates a new Submodel Repository API.
@@ -518,7 +512,7 @@ public class SubmodelRepositoryInterface extends BaseInterface {
 
         @Override
         protected SubmodelRepositoryInterface buildConcrete() {
-            return new SubmodelRepositoryInterface(endpoint, httpClient(), authenticationHeaderProvider);
+            return new SubmodelRepositoryInterface(endpoint, httpClient());
         }
     }
 }

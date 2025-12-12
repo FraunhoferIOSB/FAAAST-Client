@@ -26,7 +26,6 @@ import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.util.List;
-import java.util.function.Supplier;
 
 import de.fraunhofer.iosb.ilt.faaast.service.model.exception.InvalidRequestException;
 import org.eclipse.digitaltwin.aas4j.v3.model.*;
@@ -42,11 +41,6 @@ import org.eclipse.digitaltwin.aas4j.v3.model.*;
  * </p>
  */
 public class AASInterface extends BaseInterface {
-
-    private AASInterface(URI endpoint, HttpClient httpClient, Supplier<String> authenticationHeaderProvider) {
-        super(endpoint, httpClient, authenticationHeaderProvider);
-    }
-
 
     /**
      * Creates a new Asset Administration Shell Interface.
@@ -400,7 +394,7 @@ public class AASInterface extends BaseInterface {
 
         @Override
         protected AASInterface buildConcrete() {
-            return new AASInterface(endpoint, httpClient(), authenticationHeaderProvider);
+            return new AASInterface(endpoint, httpClient());
         }
     }
 }

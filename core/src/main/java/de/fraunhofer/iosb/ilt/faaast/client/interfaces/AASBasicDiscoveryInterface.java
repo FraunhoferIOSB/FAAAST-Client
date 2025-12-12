@@ -40,7 +40,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 
 /**
@@ -54,11 +53,6 @@ import java.util.function.Supplier;
 public class AASBasicDiscoveryInterface extends BaseInterface {
 
     private static final String LOOKUP_PATH = "/lookup/shells";
-
-    private AASBasicDiscoveryInterface(URI endpoint, HttpClient httpClient, Supplier<String> authenticationHeaderProvider) {
-        super(resolve(endpoint, LOOKUP_PATH), httpClient, authenticationHeaderProvider);
-    }
-
 
     /**
      * Creates a new Discovery Interface.
@@ -130,8 +124,7 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
         AASBasicDiscoverySearchCriteria assetIds = new AASBasicDiscoverySearchCriteria.Builder().assetIds(assetIdentificationList).build();
         HttpRequest request = HttpRequestHelper.createGetRequest(
                 resolve(QueryHelper.apply(
-                        null, Content.DEFAULT, QueryModifier.DEFAULT, pagingInfo, assetIds)),
-                authenticationHeaderProvider.get());
+                        null, Content.DEFAULT, QueryModifier.DEFAULT, pagingInfo, assetIds)));
         HttpResponse<String> response = HttpRequestHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         try {
@@ -185,9 +178,7 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<SpecificAssetId> createAssetLinks(List<SpecificAssetId> assetLinks, String aasIdentifier) throws StatusCodeException, ConnectivityException {
-        HttpRequest request = HttpRequestHelper.createPostRequest(
-                resolve(QueryHelper.apply(idPath(aasIdentifier), Content.DEFAULT, QueryModifier.DEFAULT)),
-                authenticationHeaderProvider.get(),
+        HttpRequest request = HttpRequestHelper.createPostRequest(resolve(QueryHelper.apply(idPath(aasIdentifier), Content.DEFAULT, QueryModifier.DEFAULT)),
                 serializeEntity(assetLinks));
         HttpResponse<String> response = HttpRequestHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.POST, response, HttpStatus.OK);
@@ -223,7 +214,7 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
 
         @Override
         protected AASBasicDiscoveryInterface buildConcrete() {
-            return new AASBasicDiscoveryInterface(endpoint, httpClient(), authenticationHeaderProvider);
+            return new AASBasicDiscoveryInterface(endpoint, httpClient());
         }
     }
 }

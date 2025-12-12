@@ -24,7 +24,6 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelDescriptor;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.util.List;
-import java.util.function.Supplier;
 
 
 /**
@@ -40,11 +39,6 @@ import java.util.function.Supplier;
 public class SubmodelRegistryInterface extends BaseInterface {
 
     private static final String API_PATH = "/submodel-descriptors";
-
-    private SubmodelRegistryInterface(URI endpoint, HttpClient httpClient, Supplier<String> authenticationHeaderProvider) {
-        super(resolve(endpoint, API_PATH), httpClient, authenticationHeaderProvider);
-    }
-
 
     /**
      * Creates a new Submodel Registry Interface.
@@ -225,7 +219,7 @@ public class SubmodelRegistryInterface extends BaseInterface {
 
         @Override
         protected SubmodelRegistryInterface buildConcrete() {
-            return new SubmodelRegistryInterface(endpoint, httpClient(), authenticationHeaderProvider);
+            return new SubmodelRegistryInterface(endpoint, httpClient());
         }
     }
 }
