@@ -26,7 +26,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.function.Supplier;
 
 
 /**
@@ -40,11 +39,6 @@ import java.util.function.Supplier;
 public class DescriptionInterface extends BaseInterface {
 
     private static final String API_PATH = "/description";
-
-    private DescriptionInterface(URI endpoint, HttpClient httpClient, Supplier<String> authenticationHeaderProvider) {
-        super(resolve(endpoint, API_PATH), httpClient, authenticationHeaderProvider);
-    }
-
 
     /**
      * Creates a new Description Interface.
@@ -107,7 +101,7 @@ public class DescriptionInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public ServiceDescription get() throws StatusCodeException, ConnectivityException {
-        HttpRequest request = HttpRequestHelper.createGetRequest(endpoint, authenticationHeaderProvider.get());
+        HttpRequest request = HttpRequestHelper.createGetRequest(endpoint);
         HttpResponse<String> response = HttpRequestHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         return parseBody(response, ServiceDescription.class);
@@ -117,7 +111,7 @@ public class DescriptionInterface extends BaseInterface {
 
         @Override
         protected DescriptionInterface buildConcrete() {
-            return new DescriptionInterface(endpoint, httpClient(), authenticationHeaderProvider);
+            return new DescriptionInterface(endpoint, httpClient());
         }
     }
 }

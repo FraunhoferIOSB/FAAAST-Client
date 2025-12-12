@@ -33,7 +33,6 @@ import de.fraunhofer.iosb.ilt.faaast.service.typing.ElementValueTypeInfo;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.util.List;
-import java.util.function.Supplier;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperationRequest;
 import javax.xml.datatype.Duration;
@@ -55,11 +54,6 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
  * </p>
  */
 public class SubmodelInterface extends BaseInterface {
-
-    private SubmodelInterface(URI endpoint, HttpClient httpClient, Supplier<String> authenticationHeaderProvider) {
-        super(endpoint, httpClient, authenticationHeaderProvider);
-    }
-
 
     /**
      * Creates a new Submodel API.
@@ -942,7 +936,7 @@ public class SubmodelInterface extends BaseInterface {
 
         @Override
         protected SubmodelInterface buildConcrete() {
-            return new SubmodelInterface(endpoint, httpClient(), authenticationHeaderProvider);
+            return new SubmodelInterface(endpoint, httpClient());
         }
     }
 }

@@ -27,7 +27,6 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShe
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.util.List;
-import java.util.function.Supplier;
 
 
 /**
@@ -43,11 +42,6 @@ import java.util.function.Supplier;
 public class AASRegistryInterface extends BaseInterface {
 
     private static final String API_PATH = "/shell-descriptors";
-
-    private AASRegistryInterface(URI endpoint, HttpClient httpClient, Supplier<String> authenticationHeaderProvider) {
-        super(resolve(endpoint, API_PATH), httpClient, authenticationHeaderProvider);
-    }
-
 
     /**
      * Creates a new Asset Administration Shell Registry Interface.
@@ -263,7 +257,7 @@ public class AASRegistryInterface extends BaseInterface {
 
         @Override
         protected AASRegistryInterface buildConcrete() {
-            return new AASRegistryInterface(endpoint, httpClient(), authenticationHeaderProvider);
+            return new AASRegistryInterface(endpoint, httpClient());
         }
     }
 }

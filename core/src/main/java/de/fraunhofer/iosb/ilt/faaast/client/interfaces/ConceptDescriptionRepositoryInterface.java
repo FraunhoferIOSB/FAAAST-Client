@@ -42,11 +42,6 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
 
     private static final String API_PATH = "/concept-descriptions";
 
-    private ConceptDescriptionRepositoryInterface(URI endpoint, HttpClient httpClient, Supplier<String> authenticationHeaderProvider) {
-        super(resolve(endpoint, API_PATH), httpClient, authenticationHeaderProvider);
-    }
-
-
     /**
      * Creates a new Concept Description Interface.
      *
@@ -272,7 +267,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
 
         @Override
         protected ConceptDescriptionRepositoryInterface buildConcrete() {
-            return new ConceptDescriptionRepositoryInterface(endpoint, httpClient(), authenticationHeaderProvider);
+            return new ConceptDescriptionRepositoryInterface(endpoint, httpClient());
         }
     }
 }
