@@ -14,7 +14,6 @@
  */
 package de.fraunhofer.iosb.ilt.faaast.client.util;
 
-import static java.lang.Thread.currentThread;
 import static org.apache.commons.fileupload.FileUploadBase.CONTENT_DISPOSITION;
 
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpMethod;

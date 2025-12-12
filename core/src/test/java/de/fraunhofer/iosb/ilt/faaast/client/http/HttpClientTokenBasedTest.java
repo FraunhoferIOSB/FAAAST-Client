@@ -35,6 +35,7 @@ import java.util.function.Supplier;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 
 public class HttpClientTokenBasedTest {
@@ -48,7 +49,7 @@ public class HttpClientTokenBasedTest {
 
 
     @Test
-    public void send_withCorrectAuthHeader_isAddedToRequest() throws InterruptedException {
+    public void sendWithCorrectAuthHeaderIsAddedToRequest() throws InterruptedException {
         HttpClient httpClient = HttpClientHelper.newDefaultClient();
         Supplier<String> supplier = () -> "Bearer eyxyZABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -62,7 +63,7 @@ public class HttpClientTokenBasedTest {
 
 
     @Test
-    public void sendAsync_withCorrectAuthHeader_isAddedToRequest() throws InterruptedException {
+    public void sendAsyncWithCorrectAuthHeaderIsAddedToRequest() throws InterruptedException {
         HttpClient httpClient = HttpClientHelper.newDefaultClient();
         Supplier<String> supplier = () -> "Bearer eyxyZABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -76,7 +77,7 @@ public class HttpClientTokenBasedTest {
 
 
     @Test
-    public void sendAsyncWithPushPromise_withCorrectAuthHeader_isAddedToRequest() throws InterruptedException {
+    public void sendAsyncWithPushPromiseWithCorrectAuthHeaderIsAddedToRequest() throws InterruptedException {
         HttpClient httpClient = HttpClientHelper.newDefaultClient();
         Supplier<String> supplier = () -> "Bearer eyxyZABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -90,7 +91,7 @@ public class HttpClientTokenBasedTest {
 
 
     @Test
-    public void send_supplyingNull_doesNotFail() throws InterruptedException {
+    public void sendSupplyingNullDoesNotFail() throws InterruptedException {
         HttpClient httpClient = HttpClientHelper.newDefaultClient();
         Supplier<String> supplier = () -> null;
 
@@ -104,7 +105,7 @@ public class HttpClientTokenBasedTest {
 
 
     @Test
-    public void send_noAdditionalHeaders_doesNotFail() throws InterruptedException {
+    public void sendNoAdditionalHeadersDoesNotFail() throws InterruptedException {
         HttpClient httpClient = HttpClientHelper.newDefaultClient();
         Supplier<String> supplier = () -> "test";
 
@@ -122,7 +123,7 @@ public class HttpClientTokenBasedTest {
 
 
     @Test
-    public void validate_allSettings_sameAsDecoratedHttpClient() {
+    public void validateAllSettingsSameAsDecoratedHttpClient() {
         HttpClient httpClient = HttpClientHelper.newDefaultClient();
         Supplier<String> supplier = () -> "Bearer eyxyZABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -157,7 +158,8 @@ public class HttpClientTokenBasedTest {
                 return client.send(request, responseHandler);
             }
             catch (IOException | InterruptedException e) {
-                throw new RuntimeException(e);
+                fail();
+                return null;
             }
         };
     }
@@ -169,7 +171,8 @@ public class HttpClientTokenBasedTest {
                 return client.sendAsync(request, responseHandler).get();
             }
             catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
+                fail();
+                return null;
             }
         };
     }
@@ -181,7 +184,8 @@ public class HttpClientTokenBasedTest {
                 return client.sendAsync(request, responseHandler, null).get();
             }
             catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
+                fail();
+                return null;
             }
         };
     }
