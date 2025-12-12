@@ -277,13 +277,6 @@ public class AASRegistryInterface extends BaseInterface {
 
 
         @Override
-        public Builder endpoint(URI endpoint) {
-            this.endpoint = resolve(endpoint, API_PATH);
-            return getSelf();
-        }
-
-
-        @Override
         public AASRegistryInterface buildConcrete() {
             return new AASRegistryInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }

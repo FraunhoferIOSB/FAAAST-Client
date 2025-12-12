@@ -414,13 +414,6 @@ public class AASInterface extends BaseInterface {
 
 
         @Override
-        public Builder endpoint(URI endpoint) {
-            this.endpoint = endpoint;
-            return getSelf();
-        }
-
-
-        @Override
         public AASInterface buildConcrete() {
             return new AASInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }

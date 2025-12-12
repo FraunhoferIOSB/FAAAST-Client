@@ -343,13 +343,6 @@ public class AASRepositoryInterface extends BaseInterface {
 
 
         @Override
-        public Builder endpoint(URI endpoint) {
-            this.endpoint = resolve(endpoint, API_PATH);
-            return getSelf();
-        }
-
-
-        @Override
         public AASRepositoryInterface buildConcrete() {
             return new AASRepositoryInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }

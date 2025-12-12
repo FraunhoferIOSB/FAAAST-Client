@@ -532,13 +532,6 @@ public class SubmodelRepositoryInterface extends BaseInterface {
 
 
         @Override
-        public Builder endpoint(URI endpoint) {
-            this.endpoint = endpoint;
-            return getSelf();
-        }
-
-
-        @Override
         public SubmodelRepositoryInterface buildConcrete() {
             return new SubmodelRepositoryInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }

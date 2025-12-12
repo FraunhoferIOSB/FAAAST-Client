@@ -21,6 +21,7 @@ import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
 import de.fraunhofer.iosb.ilt.faaast.client.util.HttpClientHelper;
 import de.fraunhofer.iosb.ilt.faaast.client.util.HttpRequestHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.model.ServiceDescription;
+import org.eclipse.jetty.server.Session;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -42,7 +43,7 @@ public class DescriptionInterface extends BaseInterface {
     private static final String API_PATH = "/description";
 
     private DescriptionInterface(URI endpoint, HttpClient httpClient, Supplier<String> authenticationHeaderProvider) {
-        super(endpoint, httpClient, authenticationHeaderProvider);
+        super(resolve(endpoint, API_PATH), httpClient, authenticationHeaderProvider);
     }
 
 
@@ -127,13 +128,6 @@ public class DescriptionInterface extends BaseInterface {
         @Override
         public Builder getSelf() {
             return this;
-        }
-
-
-        @Override
-        public Builder endpoint(URI endpoint) {
-            this.endpoint = endpoint;
-            return getSelf();
         }
 
 
