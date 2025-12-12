@@ -91,18 +91,6 @@ public class SubmodelRegistryInterface extends BaseInterface {
 
 
     /**
-     * Creates a new Submodel Registry Interface.
-     *
-     * @param endpoint Uri used to communicate with the FA³ST service
-     * @param authenticationHeaderProvider Supplier of authentication header value ('Authorization:
-     *            {authenticationHeaderProvider.get()}')
-     */
-    public SubmodelRegistryInterface(URI endpoint, Supplier<String> authenticationHeaderProvider) {
-        super(resolve(endpoint, API_PATH), authenticationHeaderProvider);
-    }
-
-
-    /**
      * Retrieves a list of all Submodel Descriptors.
      *
      * @return A list containing all Submodel Descriptors

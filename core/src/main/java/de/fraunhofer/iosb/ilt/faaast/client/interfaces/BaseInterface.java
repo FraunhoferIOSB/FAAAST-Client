@@ -143,18 +143,6 @@ public abstract class BaseInterface {
 
 
     /**
-     * Creates a new instance.
-     *
-     * @param endpoint Uri used to communicate with the FA³ST service
-     * @param authenticationHeaderProvider Supplier of authentication header value ('Authorization:
-     *            {authenticationHeaderProvider.get()}')
-     */
-    protected BaseInterface(URI endpoint, Supplier<String> authenticationHeaderProvider) {
-        this(endpoint, HttpClient.newHttpClient(), authenticationHeaderProvider);
-    }
-
-
-    /**
      * Executes a HTTP GET and parses the response body as {@code responseType}.
      *
      * @param <T> the result type

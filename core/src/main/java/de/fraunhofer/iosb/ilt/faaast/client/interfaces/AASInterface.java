@@ -93,18 +93,6 @@ public class AASInterface extends BaseInterface {
 
 
     /**
-     * Creates a new Asset Administration Shell Interface.
-     *
-     * @param endpoint Uri used to communicate with the FA³ST service
-     * @param authenticationHeaderProvider Supplier of authentication header value ('Authorization:
-     *            {authenticationHeaderProvider.get()}')
-     */
-    public AASInterface(URI endpoint, Supplier<String> authenticationHeaderProvider) {
-        super(endpoint, authenticationHeaderProvider);
-    }
-
-
-    /**
      * Retrieves the Asset Administration Shell (AAS) from the server.
      *
      * @return The requested Asset Administration Shell object

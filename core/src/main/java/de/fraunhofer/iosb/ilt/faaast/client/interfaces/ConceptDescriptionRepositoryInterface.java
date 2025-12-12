@@ -92,18 +92,6 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
 
 
     /**
-     * Creates a new Concept Description Interface.
-     *
-     * @param endpoint Uri used to communicate with the FA³ST service
-     * @param authenticationHeaderProvider Supplier of authentication header value ('Authorization:
-     *            {authenticationHeaderProvider.get()}')
-     */
-    public ConceptDescriptionRepositoryInterface(URI endpoint, Supplier<String> authenticationHeaderProvider) {
-        super(resolve(endpoint, API_PATH), authenticationHeaderProvider);
-    }
-
-
-    /**
      * Retrieves all Concept Descriptions from the server.
      *
      * @return List of all Concept Descriptions
