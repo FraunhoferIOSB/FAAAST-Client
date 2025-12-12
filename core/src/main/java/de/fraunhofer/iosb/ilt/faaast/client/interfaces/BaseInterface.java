@@ -412,7 +412,8 @@ public abstract class BaseInterface {
      */
     protected <T> List<T> getAll(String path, SearchCriteria searchCriteria, Content content, QueryModifier modifier, Class<T> responseType)
             throws ConnectivityException, StatusCodeException {
-        HttpRequest request = HttpRequestHelper.createGetRequest(resolve(QueryHelper.apply(path, content, modifier, PagingInfo.ALL, searchCriteria)), authenticationHeaderProvider.get());
+        HttpRequest request = HttpRequestHelper.createGetRequest(resolve(QueryHelper.apply(path, content, modifier, PagingInfo.ALL, searchCriteria)),
+                authenticationHeaderProvider.get());
         HttpResponse<String> response = HttpRequestHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         try {
@@ -557,7 +558,8 @@ public abstract class BaseInterface {
      */
     protected <T> Page<T> getPage(String path, Content content, QueryModifier modifier, PagingInfo pagingInfo, SearchCriteria searchCriteria, Class<T> responseType)
             throws ConnectivityException, StatusCodeException {
-        HttpRequest request = HttpRequestHelper.createGetRequest(resolve(QueryHelper.apply(path, content, modifier, pagingInfo, searchCriteria)), authenticationHeaderProvider.get());
+        HttpRequest request = HttpRequestHelper.createGetRequest(resolve(QueryHelper.apply(path, content, modifier, pagingInfo, searchCriteria)),
+                authenticationHeaderProvider.get());
         HttpResponse<String> response = HttpRequestHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         try {
@@ -747,7 +749,8 @@ public abstract class BaseInterface {
      * @throws StatusCodeException if HTTP request returns invalid status code
      */
     protected void putFile(String path, TypedInMemoryFile file) throws ConnectivityException, StatusCodeException {
-        HttpRequest request = HttpRequestHelper.createPutFileRequest(resolve(QueryHelper.apply(path, Content.DEFAULT, QueryModifier.DEFAULT)), authenticationHeaderProvider.get(), file);
+        HttpRequest request = HttpRequestHelper.createPutFileRequest(resolve(QueryHelper.apply(path, Content.DEFAULT, QueryModifier.DEFAULT)), authenticationHeaderProvider.get(),
+                file);
         HttpResponse<byte[]> response = HttpRequestHelper.sendFileRequest(httpClient, request);
         validateStatusCode(HttpMethod.PUT, response, HttpStatus.NO_CONTENT);
     }
