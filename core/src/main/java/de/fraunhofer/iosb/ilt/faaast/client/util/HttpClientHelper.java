@@ -18,6 +18,8 @@ import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.http.HttpClient;
 import java.security.GeneralSecurityException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -125,7 +127,7 @@ public final class HttpClientHelper {
                     }
             }, new java.security.SecureRandom());
         }
-        catch (GeneralSecurityException e) {
+        catch (KeyManagementException | NoSuchAlgorithmException e) {
             throw new RuntimeException("failed to create HTTP client that trusts all certificates", e);
         }
 
