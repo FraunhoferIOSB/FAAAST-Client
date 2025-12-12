@@ -105,18 +105,6 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
 
 
     /**
-     * Creates a new Discovery Interface.
-     *
-     * @param endpoint Uri used to communicate with the FA³ST service
-     * @param authenticationHeaderProvider Supplier of authentication header value ('Authorization:
-     *            {authenticationHeaderProvider.get()}')
-     */
-    public AASBasicDiscoveryInterface(URI endpoint, Supplier<String> authenticationHeaderProvider) {
-        super(resolve(endpoint, LOOKUP_PATH), authenticationHeaderProvider);
-    }
-
-
-    /**
      * Returns a list of Asset Administration Shell IDs linked to specific asset identifiers or the global asset ID.
      *
      * @param assetLinks A list of specific asset identifiers. Search for the global asset ID is supported by setting "name"

@@ -93,18 +93,6 @@ public class SubmodelRepositoryInterface extends BaseInterface {
 
 
     /**
-     * Creates a new Submodel Repository Interface.
-     *
-     * @param endpoint Uri used to communicate with the FA³ST service
-     * @param authenticationHeaderProvider Supplier of authentication header value ('Authorization:
-     *            {authenticationHeaderProvider.get()}')
-     */
-    public SubmodelRepositoryInterface(URI endpoint, Supplier<String> authenticationHeaderProvider) {
-        super(resolve(endpoint, API_PATH), authenticationHeaderProvider);
-    }
-
-
-    /**
      * Retrieves all Submodels.
      *
      * @return A List of all Submodels

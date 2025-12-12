@@ -94,18 +94,6 @@ public class AASRegistryInterface extends BaseInterface {
 
 
     /**
-     * Creates a new Asset Administration Shell Registry Interface.
-     *
-     * @param endpoint Uri used to communicate with the FA³ST service
-     * @param authenticationHeaderProvider Supplier of authentication header value ('Authorization:
-     *            {authenticationHeaderProvider.get()}')
-     */
-    public AASRegistryInterface(URI endpoint, Supplier<String> authenticationHeaderProvider) {
-        super(resolve(endpoint, API_PATH), authenticationHeaderProvider);
-    }
-
-
-    /**
      * Returns all Asset Administration Shell Descriptors in a List.
      *
      * @return List containing all Asset Administration Shell Descriptors

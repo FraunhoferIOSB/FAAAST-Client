@@ -91,18 +91,6 @@ public class DescriptionInterface extends BaseInterface {
 
 
     /**
-     * Creates a new Description Interface.
-     *
-     * @param endpoint Uri used to communicate with the FA³ST service
-     * @param authenticationHeaderProvider Supplier of authentication header value ('Authorization:
-     *            {authenticationHeaderProvider.get()}')
-     */
-    public DescriptionInterface(URI endpoint, Supplier<String> authenticationHeaderProvider) {
-        super(resolve(endpoint, API_PATH), authenticationHeaderProvider);
-    }
-
-
-    /**
      * Retrieves the self-describing information of a network resource (ServiceDescription) as a List of Strings.
      *
      * @return Requested self-describing information
