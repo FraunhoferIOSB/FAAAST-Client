@@ -44,7 +44,9 @@ public class BaseInterfaceTest {
     public void setup() throws IOException {
         server = new MockWebServer();
         server.start();
-        concreteSubclass = new SubmodelRepositoryInterface(server.url("api/v3.0").uri());
+        concreteSubclass = new SubmodelRepositoryInterface.Builder()
+                .endpoint(server.url("api/v3.0").uri())
+                .build();
     }
 
 

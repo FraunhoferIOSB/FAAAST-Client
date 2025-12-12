@@ -16,7 +16,7 @@ package de.fraunhofer.iosb.ilt.faaast.client.interfaces;
 
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
-import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpClientHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelDescriptor;
@@ -80,7 +80,7 @@ public class SubmodelRegistryInterface extends BaseInterface {
      * @param trustAllCertificates Allows user to specify if all certificates (including self-signed) are trusted
      */
     public SubmodelRegistryInterface(URI endpoint, boolean trustAllCertificates) {
-        super(resolve(endpoint, API_PATH), trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
+        super(resolve(endpoint, API_PATH), trustAllCertificates ? HttpClientHelper.newTrustAllCertificatesClient() : HttpClientHelper.newDefaultClient());
     }
 
 
@@ -213,5 +213,13 @@ public class SubmodelRegistryInterface extends BaseInterface {
     @Override
     public void delete(String submodelIdentifier) throws StatusCodeException, ConnectivityException {
         super.delete(idPath(submodelIdentifier));
+    }
+
+    public static class Builder extends AbstractBuilder<SubmodelRegistryInterface, Builder> {
+
+        @Override
+        protected SubmodelRegistryInterface buildConcrete() {
+            return new SubmodelRegistryInterface(endpoint, httpClient());
+        }
     }
 }
