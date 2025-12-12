@@ -21,7 +21,6 @@ import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
 import de.fraunhofer.iosb.ilt.faaast.client.util.HttpClientHelper;
 import de.fraunhofer.iosb.ilt.faaast.client.util.HttpRequestHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.model.ServiceDescription;
-import org.eclipse.jetty.server.Session;
 
 import java.net.URI;
 import java.net.http.HttpClient;
