@@ -14,6 +14,7 @@
  */
 package de.fraunhofer.iosb.ilt.faaast.client.util;
 
+import static java.lang.Thread.currentThread;
 import static org.apache.commons.fileupload.FileUploadBase.CONTENT_DISPOSITION;
 
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpMethod;
@@ -159,8 +160,12 @@ public final class HttpRequestHelper {
         try {
             return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         }
-        catch (IOException | InterruptedException e) {
+        catch (IOException e) {
             throw new ConnectivityException(e);
+        }
+        catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new ConnectivityException("Request interrupted", e);
         }
     }
 
