@@ -239,13 +239,6 @@ public class SubmodelRegistryInterface extends BaseInterface {
 
 
         @Override
-        public Builder endpoint(URI endpoint) {
-            this.endpoint = endpoint;
-            return getSelf();
-        }
-
-
-        @Override
         public SubmodelRegistryInterface buildConcrete() {
             return new SubmodelRegistryInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }

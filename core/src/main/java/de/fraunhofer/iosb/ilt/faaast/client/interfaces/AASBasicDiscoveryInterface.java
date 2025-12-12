@@ -237,13 +237,6 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
 
 
         @Override
-        public Builder endpoint(URI endpoint) {
-            this.endpoint = endpoint;
-            return getSelf();
-        }
-
-
-        @Override
         public AASBasicDiscoveryInterface buildConcrete() {
             return new AASBasicDiscoveryInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }

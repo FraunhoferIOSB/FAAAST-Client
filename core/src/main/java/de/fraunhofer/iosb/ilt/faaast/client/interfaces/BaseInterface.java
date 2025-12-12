@@ -1068,19 +1068,22 @@ public abstract class BaseInterface {
          * @param builder Custom HttpClient.Builder
          * @return builder
          */
-        public B customHttpClientBuilder(HttpClient.Builder builder) {
+        public final B customHttpClientBuilder(HttpClient.Builder builder) {
             this.httpClientBuilder = builder;
             return getSelf();
         }
 
 
         /**
-         * Defines the endpoint of the AAS server.
+         * Defines the raw endpoint of the AAS server, i.e. *not* suffixed by the specific resource (e.g., /shells).
          *
          * @param endpoint Uri used to communicate with the FA³ST Service
          * @return builder
          */
-        public abstract B endpoint(URI endpoint);
+        public final B endpoint(URI endpoint) {
+            this.endpoint = endpoint;
+            return getSelf();
+        }
 
 
         /**
@@ -1092,7 +1095,7 @@ public abstract class BaseInterface {
          *
          * @return builder
          */
-        public B useTrustAllHttpClient() {
+        public final B useTrustAllHttpClient() {
             HttpClientHelper.makeTrustAllCertificates(this.httpClientBuilder);
             return getSelf();
         }
@@ -1105,7 +1108,7 @@ public abstract class BaseInterface {
          * @param password The password
          * @return builder
          */
-        public B useBasicAuthentication(String username, String password) {
+        public final B useBasicAuthentication(String username, String password) {
             HttpClientHelper.addBasicAuthentication(this.httpClientBuilder, username, password);
             return getSelf();
         }
@@ -1125,26 +1128,10 @@ public abstract class BaseInterface {
          *            {authenticationHeaderProvider.get()}')
          * @return builder
          */
-        public B authenticationHeaderProvider(Supplier<String> authenticationHeaderProvider) {
+        public final B authenticationHeaderProvider(Supplier<String> authenticationHeaderProvider) {
             this.authenticationHeaderProvider = authenticationHeaderProvider;
             return getSelf();
         }
-
-
-        private void validate() {
-            Ensure.requireNonNull(this.endpoint);
-        }
-
-
-        protected abstract B getSelf();
-
-
-        protected final HttpClient httpClient() {
-            return this.httpClientBuilder.build();
-        }
-
-
-        protected abstract I buildConcrete();
 
 
         /**
@@ -1156,5 +1143,22 @@ public abstract class BaseInterface {
             validate();
             return getSelf().buildConcrete();
         }
+
+
+        protected abstract B getSelf();
+
+
+        protected abstract I buildConcrete();
+
+
+        protected final HttpClient httpClient() {
+            return this.httpClientBuilder.build();
+        }
+
+
+        private void validate() {
+            Ensure.requireNonNull(this.endpoint);
+        }
+
     }
 }

@@ -286,13 +286,6 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
 
 
         @Override
-        public Builder endpoint(URI endpoint) {
-            this.endpoint = endpoint;
-            return getSelf();
-        }
-
-
-        @Override
         public ConceptDescriptionRepositoryInterface buildConcrete() {
             return new ConceptDescriptionRepositoryInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }
