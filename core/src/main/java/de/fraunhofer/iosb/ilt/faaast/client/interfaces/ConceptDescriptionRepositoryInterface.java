@@ -17,7 +17,7 @@ package de.fraunhofer.iosb.ilt.faaast.client.interfaces;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.query.ConceptDescriptionSearchCriteria;
-import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpClientHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Content;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.QueryModifier;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
@@ -87,7 +87,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
      * @param trustAllCertificates Allows user to specify if all certificates (including self-signed) are trusted
      */
     public ConceptDescriptionRepositoryInterface(URI endpoint, boolean trustAllCertificates) {
-        super(resolve(endpoint, API_PATH), trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
+        super(resolve(endpoint, API_PATH), trustAllCertificates ? HttpClientHelper.newTrustAllCertificatesClient() : HttpClientHelper.newDefaultClient());
     }
 
 
@@ -280,7 +280,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
         super.delete(idPath(cdIdentifier));
     }
 
-    public static class Builder extends BaseBuilder<ConceptDescriptionRepositoryInterface, Builder> {
+    public static class Builder extends AbstractBuilder<ConceptDescriptionRepositoryInterface, Builder> {
 
         private Builder() {}
 

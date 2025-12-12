@@ -28,29 +28,22 @@ import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import java.io.IOException;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.security.GeneralSecurityException;
-import java.security.cert.X509Certificate;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 
 /**
  * Utility class for sending HTTP requests using HttpClient.
  * Provides methods to send GET, POST, PUT, PATCH, and DELETE requests,
  * and handles the response as a string.
- * This class wraps HttpClient and manages request building and sending,
+ * This class manages request building and sending,
  * throwing a ConnectivityException in case of failures during the request.
  */
-public final class HttpHelper {
+public final class HttpRequestHelper {
 
     private static final String BOUNDARY = "----ClientBoundary7MA4YWxkTrZu0gW";
     private static final String FILE_PARAMETER = "file";
@@ -58,108 +51,7 @@ public final class HttpHelper {
     private static final String DEFAULT_FILENAME = "unknown";
     private static final String AUTHORIZATION = "Authorization";
 
-    private HttpHelper() {}
-
-
-    /**
-     * Creates a new default HTTP client.
-     *
-     * @return the new HTTP client
-     */
-    public static HttpClient newDefaultClient() {
-        return HttpClient.newHttpClient();
-    }
-
-
-    /**
-     * Creates a new HTTP client with basic username/password authentication.
-     *
-     * @param username the username
-     * @param password the password
-     * @return the new HTTP client
-     */
-    public static HttpClient newUsernamePasswordClient(String username, String password) {
-        return HttpClient.newBuilder()
-                .authenticator(new Authenticator() {
-                    @Override
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(username, password.toCharArray());
-                    }
-                }).build();
-    }
-
-
-    /**
-     * Creates a new HTTP client with basic username/password authentication.
-     *
-     * @param httpClientBuilder Builder to add basic auth to
-     * @param username the username
-     * @param password the password
-     */
-    public static void addBasicAuthentication(HttpClient.Builder httpClientBuilder, String username, String password) {
-        httpClientBuilder
-                .authenticator(new Authenticator() {
-                    @Override
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(username, password.toCharArray());
-                    }
-                });
-    }
-
-
-    /**
-     * Creates a new HTTP client that trusts all certificates (including self-signed ones).
-     *
-     * @return the new HTTP client
-     */
-    public static HttpClient newTrustAllCertificatesClient() {
-        return HttpClient.newBuilder()
-                .sslContext(trustAllSslContext())
-                .build();
-    }
-
-
-    /**
-     * Adds "trust-all-certificates" to a HttpClient builder.
-     *
-     * @param httpClientBuilder Builder to allow all certificates
-     */
-    public static void makeTrustAllCertificates(HttpClient.Builder httpClientBuilder) {
-        httpClientBuilder.sslContext(trustAllSslContext());
-    }
-
-
-    private static SSLContext trustAllSslContext() {
-        SSLContext sslContext;
-        try {
-            sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, new TrustManager[] {
-                    new X509TrustManager() {
-                        @Override
-                        public void checkClientTrusted(X509Certificate[] certs, String authType) {
-                            // intentionally empty
-                        }
-
-
-                        @Override
-                        public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                            // intentionally empty
-                        }
-
-
-                        @Override
-                        public X509Certificate[] getAcceptedIssuers() {
-                            return new X509Certificate[0];
-                        }
-                    }
-            }, new java.security.SecureRandom());
-        }
-        catch (GeneralSecurityException e) {
-            throw new RuntimeException("failed to create HTTP client that trusts all certificates", e);
-        }
-
-        return sslContext;
-    }
+    private HttpRequestHelper() {}
 
 
     /**
@@ -171,9 +63,8 @@ public final class HttpHelper {
      */
     public static HttpRequest createGetRequest(URI uri, String authHeader) {
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder().uri(uri).GET();
-        if (authHeader != null) {
-            requestBuilder.header(AUTHORIZATION, authHeader);
-        }
+        decorate(requestBuilder, authHeader);
+
         return requestBuilder.build();
     }
 
@@ -192,9 +83,8 @@ public final class HttpHelper {
                 .POST(HttpRequest.BodyPublishers.ofString(body))
                 .header(HttpConstants.HEADER_CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
 
-        if (authHeader != null) {
-            requestBuilder.header(AUTHORIZATION, authHeader);
-        }
+        decorate(requestBuilder, authHeader);
+
         return requestBuilder.build();
     }
 
@@ -213,9 +103,8 @@ public final class HttpHelper {
                 .PUT(HttpRequest.BodyPublishers.ofString(body))
                 .header(HttpConstants.HEADER_CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
 
-        if (authHeader != null) {
-            requestBuilder.header(AUTHORIZATION, authHeader);
-        }
+        decorate(requestBuilder, authHeader);
+
         return requestBuilder.build();
     }
 
@@ -242,9 +131,8 @@ public final class HttpHelper {
                 .header(HttpConstants.HEADER_CONTENT_TYPE, ContentType.MULTIPART_FORM_DATA.getMimeType() + "; boundary=" + BOUNDARY)
                 .PUT(HttpRequest.BodyPublishers.ofInputStream(LambdaExceptionHelper.wrap(httpEntity::getContent)));
 
-        if (authHeader != null) {
-            requestBuilder.header(AUTHORIZATION, authHeader);
-        }
+        decorate(requestBuilder, authHeader);
+
         return requestBuilder.build();
     }
 
@@ -263,9 +151,8 @@ public final class HttpHelper {
                 .method(HttpMethod.PATCH.name(), HttpRequest.BodyPublishers.ofString(body))
                 .header(HttpConstants.HEADER_CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
 
-        if (authHeader != null) {
-            requestBuilder.header(AUTHORIZATION, authHeader);
-        }
+        decorate(requestBuilder, authHeader);
+
         return requestBuilder.build();
     }
 
@@ -280,17 +167,15 @@ public final class HttpHelper {
     public static HttpRequest createDeleteRequest(URI uri, String authHeader) {
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder().uri(uri).DELETE();
 
-        if (authHeader != null) {
-            requestBuilder.header(AUTHORIZATION, authHeader);
-        }
+        decorate(requestBuilder, authHeader);
+
         return requestBuilder.build();
     }
 
 
     /**
-     * Sends the provided HttpRequest and returns the HttpResponse containing a string body
-     * Handles any IOException or InterruptedException by throwing
-     * a ConnectivityException.
+     * Sends the provided HttpRequest and returns the HttpResponse containing a string body Handles any IOException or
+     * InterruptedException by throwing a ConnectivityException.
      *
      * @param httpClient the client to use
      * @param request the HttpRequest to be sent
@@ -308,9 +193,9 @@ public final class HttpHelper {
 
 
     /**
-     * Sends the provided HttpRequest and returns the HttpResponse containing a byte array body
-     * Handles any IOException or InterruptedException by throwing
-     * a ConnectivityException.
+     * Sends the provided HttpRequest and returns the HttpResponse containing a byte array body Handles any IOException or
+     * InterruptedException by throwing a
+     * ConnectivityException.
      *
      * @param httpClient the client to use
      * @param request the HttpRequest to be sent
@@ -343,6 +228,13 @@ public final class HttpHelper {
         return new InMemoryFile.Builder()
                 .content(httpResponse.body())
                 .path(extractName(contentDispositionHeader)).build();
+    }
+
+
+    private static void decorate(HttpRequest.Builder requestBuilder, String authenticationHeaderValue) {
+        if (authenticationHeaderValue != null) {
+            requestBuilder.header(AUTHORIZATION, authenticationHeaderValue);
+        }
     }
 
 

@@ -18,7 +18,8 @@ import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpMethod;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
-import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpClientHelper;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpRequestHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.model.ServiceDescription;
 
 import java.net.URI;
@@ -85,7 +86,7 @@ public class DescriptionInterface extends BaseInterface {
      * @param trustAllCertificates Allows user to specify if all certificates (including self-signed) are trusted
      */
     public DescriptionInterface(URI endpoint, boolean trustAllCertificates) {
-        super(resolve(endpoint, API_PATH), trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
+        super(resolve(endpoint, API_PATH), trustAllCertificates ? HttpClientHelper.newTrustAllCertificatesClient() : HttpClientHelper.newDefaultClient());
     }
 
 
@@ -118,13 +119,13 @@ public class DescriptionInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public ServiceDescription get() throws StatusCodeException, ConnectivityException {
-        HttpRequest request = HttpHelper.createGetRequest(endpoint, authenticationHeaderProvider.get());
-        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        HttpRequest request = HttpRequestHelper.createGetRequest(endpoint, authenticationHeaderProvider.get());
+        HttpResponse<String> response = HttpRequestHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         return parseBody(response, ServiceDescription.class);
     }
 
-    public static class Builder extends BaseBuilder<DescriptionInterface, Builder> {
+    public static class Builder extends AbstractBuilder<DescriptionInterface, Builder> {
 
         private Builder() {}
 

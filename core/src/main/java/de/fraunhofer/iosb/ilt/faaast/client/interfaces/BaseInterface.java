@@ -28,7 +28,8 @@ import de.fraunhofer.iosb.ilt.faaast.client.exception.UnsupportedStatusCodeExcep
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpMethod;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
 import de.fraunhofer.iosb.ilt.faaast.client.query.SearchCriteria;
-import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpClientHelper;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpRequestHelper;
 import de.fraunhofer.iosb.ilt.faaast.client.util.QueryHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.DeserializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
@@ -126,7 +127,7 @@ public abstract class BaseInterface {
      * @param password String to allow for basic authentication
      */
     protected BaseInterface(URI endpoint, String user, String password) {
-        this(endpoint, HttpHelper.newUsernamePasswordClient(user, password));
+        this(endpoint, HttpClientHelper.newUsernamePasswordClient(user, password));
     }
 
 
@@ -137,7 +138,7 @@ public abstract class BaseInterface {
      * @param trustAllCertificates Allows user to specify if all certificates (including self-signed) are trusted
      */
     protected BaseInterface(URI endpoint, boolean trustAllCertificates) {
-        this(endpoint, trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
+        this(endpoint, trustAllCertificates ? HttpClientHelper.newTrustAllCertificatesClient() : HttpClientHelper.newDefaultClient());
     }
 
 
@@ -281,8 +282,8 @@ public abstract class BaseInterface {
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> T get(String path, QueryModifier modifier, Content content, Class<T> responseType) throws ConnectivityException, StatusCodeException {
-        HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, content, modifier)), authenticationHeaderProvider.get());
-        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        HttpRequest request = HttpRequestHelper.createGetRequest(resolve(QueryHelper.apply(path, content, modifier)), authenticationHeaderProvider.get());
+        HttpResponse<String> response = HttpRequestHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         return parseBody(response, responseType);
     }
@@ -301,8 +302,8 @@ public abstract class BaseInterface {
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T extends ElementValue> T getValue(String path, QueryModifier modifier, TypeInfo<?> typeInfo) throws ConnectivityException, StatusCodeException {
-        HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, Content.VALUE, modifier)), authenticationHeaderProvider.get());
-        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        HttpRequest request = HttpRequestHelper.createGetRequest(resolve(QueryHelper.apply(path, Content.VALUE, modifier)), authenticationHeaderProvider.get());
+        HttpResponse<String> response = HttpRequestHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         try {
             return new JsonApiDeserializer().readValue(response.body(), typeInfo);
@@ -321,11 +322,11 @@ public abstract class BaseInterface {
      * @throws StatusCodeException if HTTP request returns invalid status code
      */
     protected InMemoryFile getFile(String path) throws ConnectivityException, StatusCodeException {
-        HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, Content.DEFAULT, QueryModifier.DEFAULT)), authenticationHeaderProvider.get());
-        HttpResponse<byte[]> response = HttpHelper.sendFileRequest(httpClient, request);
+        HttpRequest request = HttpRequestHelper.createGetRequest(resolve(QueryHelper.apply(path, Content.DEFAULT, QueryModifier.DEFAULT)), authenticationHeaderProvider.get());
+        HttpResponse<byte[]> response = HttpRequestHelper.sendFileRequest(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
 
-        return HttpHelper.parseBody(response);
+        return HttpRequestHelper.parseBody(response);
     }
 
 
@@ -411,8 +412,8 @@ public abstract class BaseInterface {
      */
     protected <T> List<T> getAll(String path, SearchCriteria searchCriteria, Content content, QueryModifier modifier, Class<T> responseType)
             throws ConnectivityException, StatusCodeException {
-        HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, content, modifier, PagingInfo.ALL, searchCriteria)), authenticationHeaderProvider.get());
-        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        HttpRequest request = HttpRequestHelper.createGetRequest(resolve(QueryHelper.apply(path, content, modifier, PagingInfo.ALL, searchCriteria)), authenticationHeaderProvider.get());
+        HttpResponse<String> response = HttpRequestHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         try {
             return deserializePage(response.body(), responseType).getContent();
@@ -436,8 +437,8 @@ public abstract class BaseInterface {
      */
     protected <T> List<T> getAllList(String path, Class<T> responseType)
             throws ConnectivityException, StatusCodeException {
-        HttpRequest request = HttpHelper.createGetRequest(resolve(path), authenticationHeaderProvider.get());
-        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        HttpRequest request = HttpRequestHelper.createGetRequest(resolve(path), authenticationHeaderProvider.get());
+        HttpResponse<String> response = HttpRequestHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         try {
             return new JsonApiDeserializer().readList(response.body(), responseType);
@@ -556,8 +557,8 @@ public abstract class BaseInterface {
      */
     protected <T> Page<T> getPage(String path, Content content, QueryModifier modifier, PagingInfo pagingInfo, SearchCriteria searchCriteria, Class<T> responseType)
             throws ConnectivityException, StatusCodeException {
-        HttpRequest request = HttpHelper.createGetRequest(resolve(QueryHelper.apply(path, content, modifier, pagingInfo, searchCriteria)), authenticationHeaderProvider.get());
-        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        HttpRequest request = HttpRequestHelper.createGetRequest(resolve(QueryHelper.apply(path, content, modifier, pagingInfo, searchCriteria)), authenticationHeaderProvider.get());
+        HttpResponse<String> response = HttpRequestHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         try {
             return deserializePage(response.body(), responseType);
@@ -655,11 +656,11 @@ public abstract class BaseInterface {
      */
     protected <T> T post(String path, Object entity, QueryModifier modifier, Content content, HttpStatus expectedStatusCode, Class<T> responseType)
             throws ConnectivityException, StatusCodeException {
-        HttpRequest request = HttpHelper.createPostRequest(
+        HttpRequest request = HttpRequestHelper.createPostRequest(
                 resolve(QueryHelper.apply(path, content, QueryModifier.DEFAULT)),
                 authenticationHeaderProvider.get(),
                 serialize(entity, content, modifier));
-        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        HttpResponse<String> response = HttpRequestHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.POST, response, expectedStatusCode);
         return parseBody(response, responseType);
     }
@@ -728,11 +729,11 @@ public abstract class BaseInterface {
      * @throws StatusCodeException if HTTP request returns invalid status code
      */
     protected void put(String path, Object entity, Content content, QueryModifier modifier) throws ConnectivityException, StatusCodeException {
-        HttpRequest request = HttpHelper.createPutRequest(
+        HttpRequest request = HttpRequestHelper.createPutRequest(
                 resolve(QueryHelper.apply(path, content, modifier)),
                 authenticationHeaderProvider.get(),
                 serialize(entity, content, modifier));
-        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        HttpResponse<String> response = HttpRequestHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.PUT, response, HttpStatus.NO_CONTENT);
     }
 
@@ -746,8 +747,8 @@ public abstract class BaseInterface {
      * @throws StatusCodeException if HTTP request returns invalid status code
      */
     protected void putFile(String path, TypedInMemoryFile file) throws ConnectivityException, StatusCodeException {
-        HttpRequest request = HttpHelper.createPutFileRequest(resolve(QueryHelper.apply(path, Content.DEFAULT, QueryModifier.DEFAULT)), authenticationHeaderProvider.get(), file);
-        HttpResponse<byte[]> response = HttpHelper.sendFileRequest(httpClient, request);
+        HttpRequest request = HttpRequestHelper.createPutFileRequest(resolve(QueryHelper.apply(path, Content.DEFAULT, QueryModifier.DEFAULT)), authenticationHeaderProvider.get(), file);
+        HttpResponse<byte[]> response = HttpRequestHelper.sendFileRequest(httpClient, request);
         validateStatusCode(HttpMethod.PUT, response, HttpStatus.NO_CONTENT);
     }
 
@@ -817,11 +818,11 @@ public abstract class BaseInterface {
      * @throws StatusCodeException if HTTP request returns invalid status code
      */
     protected void patch(String path, Object entity, Content content, QueryModifier modifier) throws ConnectivityException, StatusCodeException {
-        HttpRequest request = HttpHelper.createPatchRequest(
+        HttpRequest request = HttpRequestHelper.createPatchRequest(
                 resolve(QueryHelper.apply(path, content, modifier)),
                 authenticationHeaderProvider.get(),
                 serialize(entity, content, modifier));
-        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        HttpResponse<String> response = HttpRequestHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.PATCH, response, HttpStatus.NO_CONTENT);
     }
 
@@ -836,11 +837,11 @@ public abstract class BaseInterface {
      * @throws StatusCodeException if HTTP request returns invalid status code
      */
     protected void patchValue(String path, Object entity, QueryModifier modifier) throws ConnectivityException, StatusCodeException {
-        HttpRequest request = HttpHelper.createPatchRequest(
+        HttpRequest request = HttpRequestHelper.createPatchRequest(
                 resolve(QueryHelper.apply(path, Content.VALUE, modifier)),
                 authenticationHeaderProvider.get(),
                 serializeEntity(entity));
-        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        HttpResponse<String> response = HttpRequestHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.PATCH, response, HttpStatus.NO_CONTENT);
     }
 
@@ -866,8 +867,8 @@ public abstract class BaseInterface {
      * @throws StatusCodeException if HTTP request returns invalid status code
      */
     protected void delete(String path, HttpStatus expectedStatus) throws ConnectivityException, StatusCodeException {
-        HttpRequest request = HttpHelper.createDeleteRequest(resolve(path), authenticationHeaderProvider.get());
-        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        HttpRequest request = HttpRequestHelper.createDeleteRequest(resolve(path), authenticationHeaderProvider.get());
+        HttpResponse<String> response = HttpRequestHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.DELETE, response, expectedStatus);
     }
 
@@ -1051,7 +1052,13 @@ public abstract class BaseInterface {
         }
     }
 
-    public abstract static class BaseBuilder<I extends BaseInterface, B extends BaseBuilder<I, B>> {
+    /**
+     * Base builder for interface implementations to extend.
+     *
+     * @param <I> The type of the implementing interface
+     * @param <B> The type of the extending builder
+     */
+    public abstract static class AbstractBuilder<I extends BaseInterface, B extends AbstractBuilder<I, B>> {
         private HttpClient.Builder httpClientBuilder = HttpClient.newBuilder();
         protected URI endpoint;
         protected Supplier<String> authenticationHeaderProvider = NO_OP_AUTH_HEADER_PROVIDER;
@@ -1077,6 +1084,8 @@ public abstract class BaseInterface {
 
 
         /**
+         * Defines the endpoint of the AAS server.
+         *
          * @param endpoint Uri used to communicate with the FA³ST Service
          * @return builder
          */
@@ -1085,12 +1094,15 @@ public abstract class BaseInterface {
 
         /**
          * If called, the built interface will allow all (incl. self-signed) ssl certificates to communicate with AAS
-         * servers.<p>Will remove any previously defined http client.
+         * servers.
+         *
+         * <p>
+         * Will remove any previously defined http client.
          *
          * @return builder
          */
         public B useTrustAllHttpClient() {
-            HttpHelper.makeTrustAllCertificates(this.httpClientBuilder);
+            HttpClientHelper.makeTrustAllCertificates(this.httpClientBuilder);
             return getSelf();
         }
 
@@ -1103,15 +1115,18 @@ public abstract class BaseInterface {
          * @return builder
          */
         public B useBasicAuthentication(String username, String password) {
-            HttpHelper.addBasicAuthentication(this.httpClientBuilder, username, password);
+            HttpClientHelper.addBasicAuthentication(this.httpClientBuilder, username, password);
             return getSelf();
         }
 
 
         /**
          * Adds a supplier of an authentication header value. When requesting a resource from the AAS server, the authentication
-         * header will be retrieved and appended to the HTTP
-         * request. In terms of curl, this would mean: <p>{@code --header Authorization: authenticationHeaderProvider.get()}.
+         * header will be retrieved and appended to the HTTP request. In terms of curl, this would mean:
+         *
+         * <p>
+         * {@code --header Authorization: authenticationHeaderProvider.get()}.
+         *
          * <p>
          * Will remove any previously defined authentication header provider.
          *
@@ -1141,6 +1156,11 @@ public abstract class BaseInterface {
         protected abstract I buildConcrete();
 
 
+        /**
+         * Build the interface instance from the collected builder values.
+         *
+         * @return An instance of the interface implementation.
+         */
         public final I build() {
             validate();
             return getSelf().buildConcrete();
