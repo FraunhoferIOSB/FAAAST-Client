@@ -398,23 +398,8 @@ public class AASInterface extends BaseInterface {
 
     public static class Builder extends AbstractBuilder<AASInterface, Builder> {
 
-        private Builder() {}
-
-
         @Override
-        public Builder newInstance() {
-            return new Builder();
-        }
-
-
-        @Override
-        public Builder getSelf() {
-            return this;
-        }
-
-
-        @Override
-        public AASInterface buildConcrete() {
+        protected AASInterface buildConcrete() {
             return new AASInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }
     }

@@ -261,23 +261,8 @@ public class AASRegistryInterface extends BaseInterface {
 
     public static class Builder extends AbstractBuilder<AASRegistryInterface, Builder> {
 
-        private Builder() {}
-
-
         @Override
-        public Builder newInstance() {
-            return new Builder();
-        }
-
-
-        @Override
-        public Builder getSelf() {
-            return this;
-        }
-
-
-        @Override
-        public AASRegistryInterface buildConcrete() {
+        protected AASRegistryInterface buildConcrete() {
             return new AASRegistryInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }
     }

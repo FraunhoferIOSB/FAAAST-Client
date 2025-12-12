@@ -940,23 +940,8 @@ public class SubmodelInterface extends BaseInterface {
 
     public static class Builder extends AbstractBuilder<SubmodelInterface, Builder> {
 
-        private Builder() {}
-
-
         @Override
-        public Builder newInstance() {
-            return new Builder();
-        }
-
-
-        @Override
-        public Builder getSelf() {
-            return this;
-        }
-
-
-        @Override
-        public SubmodelInterface buildConcrete() {
+        protected SubmodelInterface buildConcrete() {
             return new SubmodelInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }
     }

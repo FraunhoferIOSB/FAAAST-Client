@@ -516,23 +516,8 @@ public class SubmodelRepositoryInterface extends BaseInterface {
 
     public static class Builder extends AbstractBuilder<SubmodelRepositoryInterface, Builder> {
 
-        private Builder() {}
-
-
         @Override
-        public Builder newInstance() {
-            return new Builder();
-        }
-
-
-        @Override
-        public Builder getSelf() {
-            return this;
-        }
-
-
-        @Override
-        public SubmodelRepositoryInterface buildConcrete() {
+        protected SubmodelRepositoryInterface buildConcrete() {
             return new SubmodelRepositoryInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }
     }

@@ -221,23 +221,8 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
 
     public static class Builder extends AbstractBuilder<AASBasicDiscoveryInterface, Builder> {
 
-        private Builder() {}
-
-
         @Override
-        public Builder newInstance() {
-            return new Builder();
-        }
-
-
-        @Override
-        public Builder getSelf() {
-            return this;
-        }
-
-
-        @Override
-        public AASBasicDiscoveryInterface buildConcrete() {
+        protected AASBasicDiscoveryInterface buildConcrete() {
             return new AASBasicDiscoveryInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }
     }

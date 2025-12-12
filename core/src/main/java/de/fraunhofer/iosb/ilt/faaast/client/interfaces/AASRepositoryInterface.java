@@ -327,23 +327,8 @@ public class AASRepositoryInterface extends BaseInterface {
 
     public static class Builder extends AbstractBuilder<AASRepositoryInterface, Builder> {
 
-        private Builder() {}
-
-
         @Override
-        public Builder newInstance() {
-            return new Builder();
-        }
-
-
-        @Override
-        public Builder getSelf() {
-            return this;
-        }
-
-
-        @Override
-        public AASRepositoryInterface buildConcrete() {
+        protected AASRepositoryInterface buildConcrete() {
             return new AASRepositoryInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }
     }
