@@ -124,9 +124,11 @@ public class HttpClientTokenBased extends HttpClient {
     private HttpRequest decorate(HttpRequest request) {
         HttpRequest.Builder decoratedRequestBuilder = HttpRequest.newBuilder()
                 .uri(request.uri())
-                .header(AUTHORIZATION, authSupplier.get())
                 .method(request.method(), request.bodyPublisher().orElse(noBody()))
                 .expectContinue(request.expectContinue());
+
+        Optional.ofNullable(authSupplier.get())
+                .ifPresent(auth -> decoratedRequestBuilder.header(AUTHORIZATION, auth));
 
         // Add existing headers
         request.headers().map()

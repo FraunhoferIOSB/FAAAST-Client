@@ -49,7 +49,6 @@ public final class HttpRequestHelper {
     private static final String FILE_PARAMETER = "file";
     private static final String FILENAME_PARAMETER = "fileName";
     private static final String DEFAULT_FILENAME = "unknown";
-    private static final String AUTHORIZATION = "Authorization";
 
     private HttpRequestHelper() {}
 

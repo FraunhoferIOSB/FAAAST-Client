@@ -22,17 +22,17 @@ import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Content;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.QueryModifier;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.util.List;
-import java.util.function.Supplier;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 
 
 /**
- * Interface for managing Concept Descriptions. It further provides access to the data of these elements through
- * the AAS Interface. A repository can host multiple entities.
+ * Interface for managing Concept Descriptions. It further provides access to the data of these elements through the AAS
+ * Interface. A repository can host multiple entities.
  *
  * <p>
  * Communication is handled via HTTP requests to a specified service URI.
