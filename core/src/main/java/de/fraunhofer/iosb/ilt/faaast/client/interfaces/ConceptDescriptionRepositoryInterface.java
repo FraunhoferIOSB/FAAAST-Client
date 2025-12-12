@@ -270,23 +270,8 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
 
     public static class Builder extends AbstractBuilder<ConceptDescriptionRepositoryInterface, Builder> {
 
-        private Builder() {}
-
-
         @Override
-        public Builder newInstance() {
-            return new Builder();
-        }
-
-
-        @Override
-        public Builder getSelf() {
-            return this;
-        }
-
-
-        @Override
-        public ConceptDescriptionRepositoryInterface buildConcrete() {
+        protected ConceptDescriptionRepositoryInterface buildConcrete() {
             return new ConceptDescriptionRepositoryInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }
     }

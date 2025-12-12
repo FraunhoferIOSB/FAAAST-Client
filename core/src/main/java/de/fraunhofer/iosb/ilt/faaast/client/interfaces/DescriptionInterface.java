@@ -116,23 +116,8 @@ public class DescriptionInterface extends BaseInterface {
 
     public static class Builder extends AbstractBuilder<DescriptionInterface, Builder> {
 
-        private Builder() {}
-
-
         @Override
-        public Builder newInstance() {
-            return new Builder();
-        }
-
-
-        @Override
-        public Builder getSelf() {
-            return this;
-        }
-
-
-        @Override
-        public DescriptionInterface buildConcrete() {
+        protected DescriptionInterface buildConcrete() {
             return new DescriptionInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }
     }

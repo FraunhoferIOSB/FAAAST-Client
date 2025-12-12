@@ -223,23 +223,8 @@ public class SubmodelRegistryInterface extends BaseInterface {
 
     public static class Builder extends AbstractBuilder<SubmodelRegistryInterface, Builder> {
 
-        private Builder() {}
-
-
         @Override
-        public Builder newInstance() {
-            return new Builder();
-        }
-
-
-        @Override
-        public Builder getSelf() {
-            return this;
-        }
-
-
-        @Override
-        public SubmodelRegistryInterface buildConcrete() {
+        protected SubmodelRegistryInterface buildConcrete() {
             return new SubmodelRegistryInterface(endpoint, httpClient(), authenticationHeaderProvider);
         }
     }

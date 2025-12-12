@@ -1055,14 +1055,6 @@ public abstract class BaseInterface {
         protected Supplier<String> authenticationHeaderProvider = NO_OP_AUTH_HEADER_PROVIDER;
 
         /**
-         * Get a new instance of this builder type.
-         *
-         * @return A new instance of this builder type.
-         */
-        public abstract B newInstance();
-
-
-        /**
          * Supply a custom HttpClient.Builder.
          *
          * @param builder Custom HttpClient.Builder
@@ -1070,7 +1062,7 @@ public abstract class BaseInterface {
          */
         public final B customHttpClientBuilder(HttpClient.Builder builder) {
             this.httpClientBuilder = builder;
-            return getSelf();
+            return self();
         }
 
 
@@ -1082,7 +1074,7 @@ public abstract class BaseInterface {
          */
         public final B endpoint(URI endpoint) {
             this.endpoint = endpoint;
-            return getSelf();
+            return self();
         }
 
 
@@ -1097,7 +1089,7 @@ public abstract class BaseInterface {
          */
         public final B useTrustAllHttpClient() {
             HttpClientHelper.makeTrustAllCertificates(this.httpClientBuilder);
-            return getSelf();
+            return self();
         }
 
 
@@ -1110,7 +1102,7 @@ public abstract class BaseInterface {
          */
         public final B useBasicAuthentication(String username, String password) {
             HttpClientHelper.addBasicAuthentication(this.httpClientBuilder, username, password);
-            return getSelf();
+            return self();
         }
 
 
@@ -1130,7 +1122,7 @@ public abstract class BaseInterface {
          */
         public final B authenticationHeaderProvider(Supplier<String> authenticationHeaderProvider) {
             this.authenticationHeaderProvider = authenticationHeaderProvider;
-            return getSelf();
+            return self();
         }
 
 
@@ -1141,14 +1133,17 @@ public abstract class BaseInterface {
          */
         public final I build() {
             validate();
-            return getSelf().buildConcrete();
+            return self().buildConcrete();
         }
 
 
-        protected abstract B getSelf();
-
-
         protected abstract I buildConcrete();
+
+
+        @SuppressWarnings("unchecked")
+        protected final B self() {
+            return (B) this;
+        }
 
 
         protected final HttpClient httpClient() {
