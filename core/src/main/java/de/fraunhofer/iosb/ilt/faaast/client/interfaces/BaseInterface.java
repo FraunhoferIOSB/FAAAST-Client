@@ -430,7 +430,7 @@ public abstract class BaseInterface {
      * @throws InvalidPayloadException if deserializing the payload fails
      */
     protected <T> Page<T> getPage(PagingInfo pagingInfo, Class<T> responseType) throws ConnectivityException, StatusCodeException {
-        return getPage((String) null, pagingInfo, responseType);
+        return getPage(null, pagingInfo, responseType);
     }
 
 
@@ -882,7 +882,8 @@ public abstract class BaseInterface {
             actualPath = actualPath.substring(0, actualPath.length() - 1);
         }
         try {
-            return new URI(baseUri + URI_PATH_SEPERATOR).resolve(actualPath);
+            String uriString = new URI(baseUri + URI_PATH_SEPERATOR).resolve(actualPath).toString();
+            return new URI(uriString.replaceAll("/\\?", "?"));
         }
         catch (URISyntaxException e) {
             throw new IllegalArgumentException(

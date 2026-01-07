@@ -110,7 +110,7 @@ public class AASRepositoryInterfaceTest {
 
         assertEquals("GET", request.getMethod());
         assertEquals(0, request.getBodySize());
-        assertEquals("/example/api/v3.0/shells/?limit=1", request.getPath());
+        assertEquals("/example/api/v3.0/shells?limit=1", request.getPath());
         assertEquals("1", responseAssetAdministrationShellPage.getMetadata().getCursor());
     }
 
