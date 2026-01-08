@@ -64,7 +64,7 @@ aasRepository.getAASInterface("globalUniqueId").put(aas);
 
 There are several classes that are central to the library. 
 An instance of them represents an AAS service. All of these interfaces can be instantiated using a `baseUri`. 
-This `baseUri` should include the domain and end on `api/v3.0`. For example: `https://www.example.org/api/v3.0`.
+This `baseUri` should include the domain and can contain a path prefix such as `api/v3.0`. For example: `https://www.example.org/api/v3.0`.
 Optionally, the interfaces can be instantiated with strings for user and password for basic authentication or 
 with a user defined http-client for more advanced customization.
 

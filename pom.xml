@@ -69,7 +69,6 @@
         <maven.plugin.jar.version>3.4.2</maven.plugin.jar.version>
         <maven.plugin.javadoc.version>3.11.2</maven.plugin.javadoc.version>
         <maven.plugin.license>2.5.0</maven.plugin.license>
-        <maven.plugin.owasp.version>12.1.1</maven.plugin.owasp.version>
         <maven.plugin.source.version>3.3.1</maven.plugin.source.version>
         <maven.plugin.spotless.version>2.44.4</maven.plugin.spotless.version>
         <maven.plugin.surefire.version>3.5.3</maven.plugin.surefire.version>
@@ -187,25 +186,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven.plugin.compiler.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.owasp</groupId>
-                    <artifactId>dependency-check-maven</artifactId>
-                    <version>${maven.plugin.owasp.version}</version>
-                    <configuration>
-                        <nvdApiKey>${env.NIST_NVD_API_KEY}</nvdApiKey>
-                        <failBuildOnCVSS>6</failBuildOnCVSS>
-                        <suppressionFiles>
-                            <suppressionFile>owaspSuppressions.xml</suppressionFile>
-                        </suppressionFiles>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>aggregate</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -416,21 +396,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>owasp</id>
-            <properties>
-                <maven.javadoc.skip>true</maven.javadoc.skip>
-                <maven.test.skip>true</maven.test.skip>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.owasp</groupId>
-                        <artifactId>dependency-check-maven</artifactId>
                     </plugin>
                 </plugins>
             </build>

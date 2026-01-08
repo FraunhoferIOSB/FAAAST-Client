@@ -66,7 +66,7 @@ public class AASBasicDiscoveryInterfaceTest {
         aasIdList.add("aasI1");
         aasIdList.add("aasI2");
 
-        Page<String> expected = Page.<String>builder()
+        Page<String> expected = Page.<String> builder()
                 .result(aasIdList)
                 .metadata(new PagingMetadata.Builder().cursor("1").build())
                 .build();
