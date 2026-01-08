@@ -20,7 +20,8 @@ import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpMethod;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
 import de.fraunhofer.iosb.ilt.faaast.client.query.AASBasicDiscoverySearchCriteria;
-import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpClientHelper;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpRequestHelper;
 import de.fraunhofer.iosb.ilt.faaast.client.util.QueryHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.DeserializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiDeserializer;
@@ -93,7 +94,7 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      * @param trustAllCertificates Allows user to specify if all certificates (including self-signed) are trusted
      */
     public AASBasicDiscoveryInterface(URI endpoint, boolean trustAllCertificates) {
-        super(resolve(endpoint, LOOKUP_PATH), trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
+        super(resolve(endpoint, LOOKUP_PATH), trustAllCertificates ? HttpClientHelper.newTrustAllCertificatesClient() : HttpClientHelper.newDefaultClient());
     }
 
 
@@ -121,10 +122,10 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
         });
 
         AASBasicDiscoverySearchCriteria assetIds = new AASBasicDiscoverySearchCriteria.Builder().assetIds(assetIdentificationList).build();
-        HttpRequest request = HttpHelper.createGetRequest(
+        HttpRequest request = HttpRequestHelper.createGetRequest(
                 resolve(QueryHelper.apply(
                         null, Content.DEFAULT, QueryModifier.DEFAULT, pagingInfo, assetIds)));
-        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        HttpResponse<String> response = HttpRequestHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
         try {
             return deserializePage(response.body(), String.class);
@@ -177,9 +178,9 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      * @throws ConnectivityException if the connection to the server cannot be established
      */
     public List<SpecificAssetId> createAssetLinks(List<SpecificAssetId> assetLinks, String aasIdentifier) throws StatusCodeException, ConnectivityException {
-        HttpRequest request = HttpHelper.createPostRequest(resolve(QueryHelper.apply(idPath(aasIdentifier), Content.DEFAULT, QueryModifier.DEFAULT)),
+        HttpRequest request = HttpRequestHelper.createPostRequest(resolve(QueryHelper.apply(idPath(aasIdentifier), Content.DEFAULT, QueryModifier.DEFAULT)),
                 serializeEntity(assetLinks));
-        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        HttpResponse<String> response = HttpRequestHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.POST, response, HttpStatus.OK);
         try {
             return new JsonApiDeserializer().readList(response.body(), SpecificAssetId.class);
@@ -209,4 +210,11 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
         delete(idPath(aasIdentifier));
     }
 
+    public static class Builder extends AbstractBuilder<AASBasicDiscoveryInterface, Builder> {
+
+        @Override
+        protected AASBasicDiscoveryInterface buildConcrete() {
+            return new AASBasicDiscoveryInterface(endpoint, httpClient());
+        }
+    }
 }

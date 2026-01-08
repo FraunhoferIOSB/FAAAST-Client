@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.http.HttpStatus;
-import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpClientHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.model.IdShortPath;
 import de.fraunhofer.iosb.ilt.faaast.service.model.InMemoryFile;
 import de.fraunhofer.iosb.ilt.faaast.service.model.TypedInMemoryFile;
@@ -33,6 +33,7 @@ import de.fraunhofer.iosb.ilt.faaast.service.typing.ElementValueTypeInfo;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.util.List;
+
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperationRequest;
 import javax.xml.datatype.Duration;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationResult;
@@ -94,7 +95,7 @@ public class SubmodelInterface extends BaseInterface {
      * @param trustAllCertificates Allows user to specify if all certificates (including self-signed) are trusted
      */
     public SubmodelInterface(URI endpoint, boolean trustAllCertificates) {
-        super(endpoint, trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
+        super(endpoint, trustAllCertificates ? HttpClientHelper.newTrustAllCertificatesClient() : HttpClientHelper.newDefaultClient());
     }
 
 
@@ -929,5 +930,13 @@ public class SubmodelInterface extends BaseInterface {
 
     private static String invokePath(IdShortPath idShortPath) {
         return submodelElementIdPath(idShortPath) + "/invoke";
+    }
+
+    public static class Builder extends AbstractBuilder<SubmodelInterface, Builder> {
+
+        @Override
+        protected SubmodelInterface buildConcrete() {
+            return new SubmodelInterface(endpoint, httpClient());
+        }
     }
 }
