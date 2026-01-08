@@ -14,19 +14,14 @@
  */
 package de.fraunhofer.iosb.ilt.faaast.client.query;
 
-import de.fraunhofer.iosb.ilt.faaast.service.model.asset.AssetIdentification;
-import de.fraunhofer.iosb.ilt.faaast.service.model.asset.GlobalAssetIdentification;
-import de.fraunhofer.iosb.ilt.faaast.service.model.asset.SpecificAssetIdentification;
 import de.fraunhofer.iosb.ilt.faaast.service.persistence.AssetAdministrationShellSearchCriteria;
 import de.fraunhofer.iosb.ilt.faaast.service.util.EncodingHelper;
-import de.fraunhofer.iosb.ilt.faaast.service.util.FaaastConstants;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -35,36 +30,60 @@ import java.util.List;
  */
 public class AASBasicDiscoverySearchCriteria extends AssetAdministrationShellSearchCriteria implements SearchCriteria {
 
+    private boolean fallback = false;
+    private List<SpecificAssetId> specificAssetIds;
+
     public static final AASBasicDiscoverySearchCriteria DEFAULT = new AASBasicDiscoverySearchCriteria();
 
     @Override
     public String toQueryString() {
         String assetIdsString;
-        assetIdsString = getAssetIds() == null || getAssetIds().isEmpty() ? ""
-                : "assetIds=" + serializeAssetIdentifications(getAssetIds());
-        return assetIdsString;
+        if (!fallback) {
+            assetIdsString = specificAssetIds == null || specificAssetIds.isEmpty() ? ""
+                    : "assetIds=" + serializeAssetIdentifications(specificAssetIds);
+            return assetIdsString;
+        }
+        else {
+            assetIdsString = specificAssetIds == null || specificAssetIds.isEmpty() ? ""
+                    : "assetIds=" + serializeAssetIdentificationsFallback(specificAssetIds);
+            return assetIdsString;
+        }
     }
 
 
-    private String serializeAssetIdentifications(List<AssetIdentification> assetIds) {
-        List<SpecificAssetId> aas4jAssetIds = new ArrayList<>();
-        for(AssetIdentification assetId : assetIds) {
-            if (assetId instanceof SpecificAssetIdentification specificAssetIdentification) {
-                aas4jAssetIds.add(
-                        new DefaultSpecificAssetId.Builder()
-                                .value(assetId.getValue())
-                                .name(specificAssetIdentification.getKey())
-                                .build());
-            } else if (assetId instanceof GlobalAssetIdentification) {
-                aas4jAssetIds.add(
-                        new DefaultSpecificAssetId.Builder()
-                                .value(assetId.getValue())
-                                .name(FaaastConstants.KEY_GLOBAL_ASSET_ID)
-                                .build());
-            }
-        }
+    private AASBasicDiscoverySearchCriteria() {}
+
+
+    protected void setFallback(boolean fallback) {
+        this.fallback = fallback;
+    }
+
+
+    protected void setSpecificAssetIds(List<SpecificAssetId> specificAssetIds) {
+        this.specificAssetIds = specificAssetIds;
+    }
+
+
+    private String serializeAssetIdentifications(List<SpecificAssetId> assetIds) {
         try {
-            return EncodingHelper.base64Encode(new JsonSerializer().write(aas4jAssetIds));
+            return EncodingHelper.base64Encode(new JsonSerializer().write(assetIds));
+        }
+        catch (SerializationException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+
+    private String serializeAssetIdentificationsFallback(List<SpecificAssetId> assetIds) {
+        return assetIds.stream()
+                .map(this::serializeAssetId)
+                .collect(Collectors.joining(","));
+    }
+
+
+    private String serializeAssetId(SpecificAssetId specificAssetId) {
+        try {
+            return EncodingHelper.base64Encode(new JsonSerializer().write(specificAssetId));
         }
         catch (SerializationException e) {
             throw new IllegalArgumentException(e);
@@ -72,6 +91,7 @@ public class AASBasicDiscoverySearchCriteria extends AssetAdministrationShellSea
     }
 
     public static class Builder extends AbstractBuilder<AASBasicDiscoverySearchCriteria, Builder> {
+
         @Override
         protected Builder getSelf() {
             return this;
@@ -81,6 +101,18 @@ public class AASBasicDiscoverySearchCriteria extends AssetAdministrationShellSea
         @Override
         protected AASBasicDiscoverySearchCriteria newBuildingInstance() {
             return new AASBasicDiscoverySearchCriteria();
+        }
+
+
+        public Builder fallback(boolean fallback) {
+            getBuildingInstance().setFallback(fallback);
+            return this;
+        }
+
+
+        public Builder specificAssetIds(List<SpecificAssetId> specificAssetIds) {
+            getBuildingInstance().setSpecificAssetIds(specificAssetIds);
+            return this;
         }
     }
 }
