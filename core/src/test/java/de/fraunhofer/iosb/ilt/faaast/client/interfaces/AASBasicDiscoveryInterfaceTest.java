@@ -18,6 +18,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ClientException;
+import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
+import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.ApiSerializer;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.SerializationException;
 import de.fraunhofer.iosb.ilt.faaast.service.dataformat.json.JsonApiSerializer;
@@ -39,6 +41,7 @@ import java.util.Base64;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 public class AASBasicDiscoveryInterfaceTest {
@@ -83,11 +86,11 @@ public class AASBasicDiscoveryInterfaceTest {
         String base64Part = path.substring(path.indexOf('=') + 1);
         String decodedJson = new String(Base64.getDecoder().decode(base64Part));
         String expectedJson = """
-    [
-      { "name": "globalAssetId", "value": "globalAssetId1" },
-      { "name": "globalAssetId", "value": "globalAssetId2" }
-    ]
-    """;
+                [
+                  { "name": "globalAssetId", "value": "globalAssetId1" },
+                  { "name": "globalAssetId", "value": "globalAssetId2" }
+                ]
+                """;
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode expectedNode = mapper.readTree(expectedJson);
@@ -95,6 +98,43 @@ public class AASBasicDiscoveryInterfaceTest {
 
         assertEquals(expectedNode, actualNode);
         assertEquals(expected, actual);
+    }
+
+
+    @Test
+    public void testLookupByAssetLinkFallback() throws SerializationException, UnsupportedModifierException, StatusCodeException, ConnectivityException, InterruptedException {
+        server.enqueue(new MockResponse().setBody(""));
+
+        List<String> aasIdList = new ArrayList<>();
+        aasIdList.add("aasI1");
+        aasIdList.add("aasI2");
+
+        Page<String> expected = Page.<String> builder()
+                .result(aasIdList)
+                .metadata(new PagingMetadata.Builder().cursor("1").build())
+                .build();
+        server.enqueue(new MockResponse().setBody(serializer.write(expected)));
+
+        List<SpecificAssetId> assetIdentificationList = new ArrayList<>();
+        assetIdentificationList.add(new DefaultSpecificAssetId.Builder().name("globalAssetId").value("globalAssetId1").build());
+        assetIdentificationList.add(new DefaultSpecificAssetId.Builder().name("globalAssetId").value("globalAssetId2").build());
+
+        Page<String> actual = discoveryInterface.lookupByAssetLink(assetIdentificationList, PagingInfo.ALL);
+
+        assertEquals(expected, actual);
+
+        RecordedRequest firstRequest = server.takeRequest();
+        String firstPath = firstRequest.getPath();
+        assert firstPath != null;
+
+        RecordedRequest fallbackRequest = server.takeRequest();
+        String fallbackPath = fallbackRequest.getPath();
+        assert fallbackPath != null;
+
+        assertEquals("GET", firstRequest.getMethod());
+        assertEquals("GET", fallbackRequest.getMethod());
+
+        assertNotEquals(firstPath, fallbackPath);
     }
 
 

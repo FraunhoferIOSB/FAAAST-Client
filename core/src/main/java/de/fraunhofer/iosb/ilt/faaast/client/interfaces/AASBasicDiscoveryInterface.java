@@ -28,8 +28,6 @@ import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Content;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.QueryModifier;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
-import de.fraunhofer.iosb.ilt.faaast.service.model.asset.AssetIdentification;
-import de.fraunhofer.iosb.ilt.faaast.service.model.asset.SpecificAssetIdentification;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.json.JSONException;
 
@@ -37,7 +35,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -114,24 +111,46 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
      *             </div>
      * @throws ConnectivityException if the connection to the server cannot be established
      */
-    public Page<String> lookupByAssetLink(List<SpecificAssetId> assetLinks, PagingInfo pagingInfo) throws StatusCodeException, ConnectivityException {
-        List<AssetIdentification> assetIdentificationList = new ArrayList<>();
-        assetLinks.forEach(assetLink -> {
-            assetIdentificationList.add(new SpecificAssetIdentification.Builder().value(assetLink.getValue()).key(assetLink.getName()).build());
-        });
+    public Page<String> lookupByAssetLink(List<SpecificAssetId> assetLinks, PagingInfo pagingInfo)
+            throws StatusCodeException, ConnectivityException {
 
-        AASBasicDiscoverySearchCriteria assetIds = new AASBasicDiscoverySearchCriteria.Builder().assetIds(assetIdentificationList).build();
-        HttpRequest request = HttpHelper.createGetRequest(
-                resolve(QueryHelper.apply(
-                        null, Content.DEFAULT, QueryModifier.DEFAULT, pagingInfo, assetIds)));
-        HttpResponse<String> response = HttpHelper.send(httpClient, request);
-        validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
+        HttpResponse<String> response = sendLookupRequest(pagingInfo, assetLinks, false);
+
+        if (response.body().isEmpty()) {
+            response = sendLookupRequest(pagingInfo, assetLinks, true);
+        }
+
+        return deserializePageSafely(response.body());
+    }
+
+
+    private Page<String> deserializePageSafely(String body) {
         try {
-            return deserializePage(response.body(), String.class);
+            return deserializePage(body, String.class);
         }
         catch (DeserializationException | JSONException e) {
             throw new InvalidPayloadException(e);
         }
+    }
+
+
+    private HttpResponse<String> sendLookupRequest(
+                                                   PagingInfo pagingInfo,
+                                                   List<SpecificAssetId> assetIdentificationList,
+                                                   boolean fallback)
+            throws ConnectivityException, StatusCodeException {
+
+        AASBasicDiscoverySearchCriteria assetIdSearchCriteria = new AASBasicDiscoverySearchCriteria.Builder()
+                .specificAssetIds(assetIdentificationList)
+                .fallback(fallback)
+                .build();
+
+        HttpRequest request = HttpHelper.createGetRequest(
+                resolve(QueryHelper.apply(null, Content.DEFAULT, QueryModifier.DEFAULT, pagingInfo, assetIdSearchCriteria)));
+        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
+
+        return response;
     }
 
 
