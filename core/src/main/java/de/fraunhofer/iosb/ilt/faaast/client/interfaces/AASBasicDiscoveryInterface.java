@@ -114,13 +114,26 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
     public Page<String> lookupByAssetLink(List<SpecificAssetId> assetLinks, PagingInfo pagingInfo)
             throws StatusCodeException, ConnectivityException {
 
-        HttpResponse<String> response = sendLookupRequest(pagingInfo, assetLinks, false);
+        try {
+            HttpResponse<String> response = sendLookupRequest(pagingInfo, assetLinks, false);
 
-        if (response.body().isEmpty() || response.statusCode() >= 400) {
-            response = sendLookupRequest(pagingInfo, assetLinks, true);
+            if (response.body().isEmpty()) {
+                return deserializePageSafely(
+                        sendLookupRequest(pagingInfo, assetLinks, true).body());
+            }
+
+            return deserializePageSafely(response.body());
         }
+        catch (StatusCodeException e) {
+            HttpStatus status = HttpStatus.from(e.getStatusCode());
 
-        return deserializePageSafely(response.body());
+            if (status.isRetryable()) {
+                return deserializePageSafely(
+                        sendLookupRequest(pagingInfo, assetLinks, true).body());
+            }
+
+            throw e;
+        }
     }
 
 
