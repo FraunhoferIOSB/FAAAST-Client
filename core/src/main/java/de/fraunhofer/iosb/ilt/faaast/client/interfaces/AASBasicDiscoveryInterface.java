@@ -116,7 +116,7 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
 
         HttpResponse<String> response = sendLookupRequest(pagingInfo, assetLinks, false);
 
-        if (response.body().isEmpty()) {
+        if (response.body().isEmpty() || response.statusCode() >= 400) {
             response = sendLookupRequest(pagingInfo, assetLinks, true);
         }
 
