@@ -17,20 +17,22 @@ package de.fraunhofer.iosb.ilt.faaast.client.interfaces;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.query.ConceptDescriptionSearchCriteria;
-import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpClientHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Content;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.QueryModifier;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.PagingInfo;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.util.List;
+
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 
 
 /**
- * Interface for managing Concept Descriptions. It further provides access to the data of these elements through
- * the AAS Interface. A repository can host multiple entities.
+ * Interface for managing Concept Descriptions. It further provides access to the data of these elements through the AAS
+ * Interface. A repository can host multiple entities.
  *
  * <p>
  * Communication is handled via HTTP requests to a specified service URI.
@@ -80,7 +82,7 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
      * @param trustAllCertificates Allows user to specify if all certificates (including self-signed) are trusted
      */
     public ConceptDescriptionRepositoryInterface(URI endpoint, boolean trustAllCertificates) {
-        super(resolve(endpoint, API_PATH), trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
+        super(resolve(endpoint, API_PATH), trustAllCertificates ? HttpClientHelper.newTrustAllCertificatesClient() : HttpClientHelper.newDefaultClient());
     }
 
 
@@ -259,5 +261,13 @@ public class ConceptDescriptionRepositoryInterface extends BaseInterface {
     @Override
     public void delete(String cdIdentifier) throws StatusCodeException, ConnectivityException {
         super.delete(idPath(cdIdentifier));
+    }
+
+    public static class Builder extends AbstractBuilder<ConceptDescriptionRepositoryInterface, Builder> {
+
+        @Override
+        protected ConceptDescriptionRepositoryInterface buildConcrete() {
+            return new ConceptDescriptionRepositoryInterface(endpoint, httpClient());
+        }
     }
 }

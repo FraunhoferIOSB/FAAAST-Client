@@ -17,7 +17,7 @@ package de.fraunhofer.iosb.ilt.faaast.client.interfaces;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.query.AASSearchCriteria;
-import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpClientHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Content;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.QueryModifier;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
@@ -81,7 +81,7 @@ public class AASRepositoryInterface extends BaseInterface {
      * @param trustAllCertificates Allows user to specify if all certificates (including self-signed) are trusted
      */
     public AASRepositoryInterface(URI endpoint, boolean trustAllCertificates) {
-        super(resolve(endpoint, API_PATH), trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
+        super(resolve(endpoint, API_PATH), trustAllCertificates ? HttpClientHelper.newTrustAllCertificatesClient() : HttpClientHelper.newDefaultClient());
     }
 
 
@@ -317,5 +317,13 @@ public class AASRepositoryInterface extends BaseInterface {
      */
     public AASInterface getAASInterface(String aasIdentifier) {
         return new AASInterface(resolve(idPath(aasIdentifier)), httpClient);
+    }
+
+    public static class Builder extends AbstractBuilder<AASRepositoryInterface, Builder> {
+
+        @Override
+        protected AASRepositoryInterface buildConcrete() {
+            return new AASRepositoryInterface(endpoint, httpClient());
+        }
     }
 }

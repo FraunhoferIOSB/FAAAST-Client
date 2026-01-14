@@ -17,7 +17,7 @@ package de.fraunhofer.iosb.ilt.faaast.client.interfaces;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.ConnectivityException;
 import de.fraunhofer.iosb.ilt.faaast.client.exception.StatusCodeException;
 import de.fraunhofer.iosb.ilt.faaast.client.query.AASDescriptorSearchCriteria;
-import de.fraunhofer.iosb.ilt.faaast.client.util.HttpHelper;
+import de.fraunhofer.iosb.ilt.faaast.client.util.HttpClientHelper;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.Content;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.modifier.QueryModifier;
 import de.fraunhofer.iosb.ilt.faaast.service.model.api.paging.Page;
@@ -83,7 +83,7 @@ public class AASRegistryInterface extends BaseInterface {
      * @param trustAllCertificates Allows user to specify if all certificates (including self-signed) are trusted
      */
     public AASRegistryInterface(URI endpoint, boolean trustAllCertificates) {
-        super(resolve(endpoint, API_PATH), trustAllCertificates ? HttpHelper.newTrustAllCertificatesClient() : HttpHelper.newDefaultClient());
+        super(resolve(endpoint, API_PATH), trustAllCertificates ? HttpClientHelper.newTrustAllCertificatesClient() : HttpClientHelper.newDefaultClient());
     }
 
 
@@ -251,5 +251,13 @@ public class AASRegistryInterface extends BaseInterface {
      */
     public SubmodelRegistryInterface getSubmodelRegistryInterface(String aasIdentifier) {
         return new SubmodelRegistryInterface(resolve(idPath(aasIdentifier)));
+    }
+
+    public static class Builder extends AbstractBuilder<AASRegistryInterface, Builder> {
+
+        @Override
+        protected AASRegistryInterface buildConcrete() {
+            return new AASRegistryInterface(endpoint, httpClient());
+        }
     }
 }
