@@ -159,9 +159,9 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
                 .fallback(fallback)
                 .build();
 
-        HttpRequest request = HttpHelper.createGetRequest(
+        HttpRequest request = HttpRequestHelper.createGetRequest(
                 resolve(QueryHelper.apply(null, Content.DEFAULT, QueryModifier.DEFAULT, pagingInfo, assetIdSearchCriteria)));
-        HttpResponse<String> response = HttpHelper.send(httpClient, request);
+        HttpResponse<String> response = HttpRequestHelper.send(httpClient, request);
         validateStatusCode(HttpMethod.GET, response, HttpStatus.OK);
 
         return response;
