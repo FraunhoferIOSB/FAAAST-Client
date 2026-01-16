@@ -100,6 +100,20 @@ public enum HttpStatus {
 
 
     /**
+     * Checks if this status represents a retryable error.
+     *
+     * @return true if status is retryable, otherwise false
+     */
+    public boolean isRetryable() {
+        if (isServerError()) {
+            return true;
+        }
+
+        return this == REQUEST_TIMEOUT;
+    }
+
+
+    /**
      * Creates a {@link HttpStatus} based on the underlying HTTP status code.
      *
      * @param code the HTTP status code

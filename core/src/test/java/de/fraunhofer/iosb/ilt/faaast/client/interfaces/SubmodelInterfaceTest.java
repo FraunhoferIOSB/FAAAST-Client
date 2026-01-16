@@ -148,7 +148,7 @@ public class SubmodelInterfaceTest {
 
         assertEquals("PATCH", request.getMethod());
         assertEquals(serializedSubmodel, request.getBody().readUtf8());
-        assertEquals("/api/v3.0/submodel/?level=core", request.getPath());
+        assertEquals("/api/v3.0/submodel?level=core", request.getPath());
     }
 
 
