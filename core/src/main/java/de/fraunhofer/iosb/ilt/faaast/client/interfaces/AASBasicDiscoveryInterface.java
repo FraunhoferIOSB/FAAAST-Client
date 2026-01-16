@@ -119,21 +119,13 @@ public class AASBasicDiscoveryInterface extends BaseInterface {
             HttpResponse<String> response = sendLookupRequest(pagingInfo, assetLinks, false);
 
             if (response.body().isEmpty()) {
-                return deserializePageSafely(
-                        sendLookupRequest(pagingInfo, assetLinks, true).body());
+                return deserializePageSafely(sendLookupRequest(pagingInfo, assetLinks, true).body());
             }
 
             return deserializePageSafely(response.body());
         }
         catch (StatusCodeException e) {
-            HttpStatus status = HttpStatus.from(e.getStatusCode());
-
-            if (status.isRetryable()) {
-                return deserializePageSafely(
-                        sendLookupRequest(pagingInfo, assetLinks, true).body());
-            }
-
-            throw e;
+            return deserializePageSafely(sendLookupRequest(pagingInfo, assetLinks, true).body());
         }
     }
 
