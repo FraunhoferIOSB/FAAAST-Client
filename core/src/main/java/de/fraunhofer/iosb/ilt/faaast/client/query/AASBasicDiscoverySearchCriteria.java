@@ -66,7 +66,7 @@ public class AASBasicDiscoverySearchCriteria extends AssetAdministrationShellSea
 
     private String serializeAssetIdentifications(List<SpecificAssetId> assetIds) {
         try {
-            return EncodingHelper.base64Encode(new JsonSerializer().write(assetIds));
+            return EncodingHelper.base64UrlEncode(new JsonSerializer().write(assetIds));
         }
         catch (SerializationException e) {
             throw new IllegalArgumentException(e);
@@ -83,7 +83,7 @@ public class AASBasicDiscoverySearchCriteria extends AssetAdministrationShellSea
 
     private String serializeAssetId(SpecificAssetId specificAssetId) {
         try {
-            return EncodingHelper.base64Encode(new JsonSerializer().write(specificAssetId));
+            return EncodingHelper.base64UrlEncode(new JsonSerializer().write(specificAssetId));
         }
         catch (SerializationException e) {
             throw new IllegalArgumentException(e);
