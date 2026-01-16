@@ -886,7 +886,8 @@ public abstract class BaseInterface {
             actualPath = actualPath.substring(0, actualPath.length() - 1);
         }
         try {
-            return new URI(baseUri + URI_PATH_SEPERATOR).resolve(actualPath);
+            String uriString = new URI(baseUri + URI_PATH_SEPERATOR).resolve(actualPath).toString();
+            return new URI(uriString.replaceAll("/\\?", "?"));
         }
         catch (URISyntaxException e) {
             throw new IllegalArgumentException(
