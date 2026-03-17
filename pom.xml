@@ -51,7 +51,7 @@
     <properties>
         <aas4j.version>1.0.4</aas4j.version>
         <checkstyle.version>12.1.0</checkstyle.version>
-        <faaast.service.version>1.3.0-SNAPSHOT</faaast.service.version>
+        <faaast.service.version>1.3.0</faaast.service.version>
         <httpcomponents.client.version>5.4.4</httpcomponents.client.version>
         <httpcomponents.core.version>5.3.4</httpcomponents.core.version>
         <junit.version>4.13.2</junit.version>
@@ -59,13 +59,13 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <maven.plugin.assembly.version>3.7.1</maven.plugin.assembly.version>
-        <maven.plugin.central-publishing.version>0.7.0</maven.plugin.central-publishing.version>
+        <maven.plugin.central-publishing.version>0.10.0</maven.plugin.central-publishing.version>
         <maven.plugin.checkstyle.version>3.6.0</maven.plugin.checkstyle.version>
         <maven.plugin.compiler.version>3.14.0</maven.plugin.compiler.version>
         <maven.plugin.dependency.version>3.8.1</maven.plugin.dependency.version>
         <maven.plugin.failsafe.version>3.5.3</maven.plugin.failsafe.version>
-        <maven.plugin.gpg.version>3.2.7</maven.plugin.gpg.version>
-        <maven.plugin.jacoco.version>0.8.12</maven.plugin.jacoco.version>
+        <maven.plugin.gpg.version>3.2.8</maven.plugin.gpg.version>
+        <maven.plugin.jacoco.version>0.8.14</maven.plugin.jacoco.version>
         <maven.plugin.jar.version>3.4.2</maven.plugin.jar.version>
         <maven.plugin.javadoc.version>3.11.2</maven.plugin.javadoc.version>
         <maven.plugin.license>2.5.0</maven.plugin.license>
