@@ -19,7 +19,7 @@ Add the dependency:
 <dependency>
 	<groupId>de.fraunhofer.iosb.ilt.faaast.client</groupId>
 	<artifactId>core</artifactId>
-	<version>1.0.0</version>
+	<version>1.1.0</version>
 </dependency>
 
 ```
@@ -27,7 +27,7 @@ Add the dependency:
 
 Add the dependency:
 ```gradle
-implementation 'de.fraunhofer.iosb.ilt.faaast.client:core:1.0.0'
+implementation 'de.fraunhofer.iosb.ilt.faaast.client:core:1.1.0'
 ```
 
 ### Quick start
@@ -243,8 +243,7 @@ to instantiate an interface for connection with that server.
 ## Changelog 
 
 <!--changelog-anchor-->
-<!--start:changelog-header-->
-### 1.1.0-SNAPSHOT (current development version)<!--end:changelog-header-->
+### 1.1.0
 
 #### 🚀 New Features & Major Changes
 - Add option to connect to servers using self-signed certificates
