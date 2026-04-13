@@ -32,12 +32,12 @@
         </dependency>
         <dependency>
             <groupId>de.fraunhofer.iosb.ilt.faaast.service</groupId>
-            <artifactId>model</artifactId>
+            <artifactId>endpoint-http</artifactId>
             <version>${faaast.service.version}</version>
         </dependency>
         <dependency>
             <groupId>de.fraunhofer.iosb.ilt.faaast.service</groupId>
-            <artifactId>starter</artifactId>
+            <artifactId>model</artifactId>
             <version>${faaast.service.version}</version>
         </dependency>
         <dependency>
