@@ -68,7 +68,7 @@
         <maven.plugin.jacoco.version>0.8.14</maven.plugin.jacoco.version>
         <maven.plugin.jar.version>3.4.2</maven.plugin.jar.version>
         <maven.plugin.javadoc.version>3.11.2</maven.plugin.javadoc.version>
-        <maven.plugin.license>2.5.0</maven.plugin.license>
+        <maven.plugin.license>2.7.1</maven.plugin.license>
         <maven.plugin.sonar.version>5.5.0.6356</maven.plugin.sonar.version>
         <maven.plugin.source.version>3.3.1</maven.plugin.source.version>
         <maven.plugin.spotless.version>2.44.4</maven.plugin.spotless.version>
