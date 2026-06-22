@@ -71,7 +71,7 @@
         <maven.plugin.license>2.7.1</maven.plugin.license>
         <maven.plugin.sonar.version>5.5.0.6356</maven.plugin.sonar.version>
         <maven.plugin.source.version>3.3.1</maven.plugin.source.version>
-        <maven.plugin.spotless.version>2.44.4</maven.plugin.spotless.version>
+        <maven.plugin.spotless.version>3.7.0</maven.plugin.spotless.version>
         <maven.plugin.surefire.version>3.5.3</maven.plugin.surefire.version>
         <okhttp3.version>4.12.0</okhttp3.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
