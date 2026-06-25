@@ -72,7 +72,7 @@
         <maven.plugin.sonar.version>5.7.0.6970</maven.plugin.sonar.version>
         <maven.plugin.source.version>3.4.0</maven.plugin.source.version>
         <maven.plugin.spotless.version>3.7.0</maven.plugin.spotless.version>
-        <maven.plugin.surefire.version>3.5.3</maven.plugin.surefire.version>
+        <maven.plugin.surefire.version>3.5.6</maven.plugin.surefire.version>
         <okhttp3.version>5.4.0</okhttp3.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <root.basedir>${project.basedir}</root.basedir>
