@@ -69,7 +69,7 @@
         <maven.plugin.jar.version>3.5.1</maven.plugin.jar.version>
         <maven.plugin.javadoc.version>3.12.0</maven.plugin.javadoc.version>
         <maven.plugin.license>2.7.1</maven.plugin.license>
-        <maven.plugin.sonar.version>5.7.0.6970</maven.plugin.sonar.version>
+        <maven.plugin.sonar.version>5.8.0.7211</maven.plugin.sonar.version>
         <maven.plugin.source.version>3.4.0</maven.plugin.source.version>
         <maven.plugin.spotless.version>3.10.1</maven.plugin.spotless.version>
         <maven.plugin.surefire.version>3.5.6</maven.plugin.surefire.version>
