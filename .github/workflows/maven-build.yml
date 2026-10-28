@@ -72,7 +72,7 @@ jobs:
           "$GPG_EXECUTABLE" --yes --batch --import-ownertrust
 
     - name: Deploy SNAPSHOTS
-      if:  ${{ endsWith(env.VERSION, '-SNAPSHOT') }}
+      if:  ${{ endsWith(env.VERSION, '-DONTRUNSNAPSHOT') }}
       env:
         GPG_EXECUTABLE: gpg
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
