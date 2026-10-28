@@ -77,7 +77,7 @@ jobs:
       if:  ${{ endsWith(env.VERSION, '-SNAPSHOT') }}
       env:
         GPG_EXECUTABLE: gpg
-        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
         SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
       run: mvn clean deploy -P release --settings maven-ci-settings.xml -B
