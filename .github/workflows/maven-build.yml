@@ -28,16 +28,19 @@ jobs:
         restore-keys: ${{ runner.os }}-maven
 
     - name: Set up JDK 17
+      if:  ${{ endsWith(env.VERSION, '-DONTRUNSNAPSHOT') }}
       uses: actions/setup-java@v6
       with:
         distribution: 'temurin'
         java-version: 17
 
     - name: Build with Maven
+      if:  ${{ endsWith(env.VERSION, '-DONTRUNSNAPSHOT') }}
       run: |
         mvn test-compile --settings maven-ci-settings.xml -B
 
     - name: Test with Coverage
+      if:  ${{ endsWith(env.VERSION, '-DONTRUNSNAPSHOT') }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -57,6 +60,8 @@ jobs:
         GPG_SECRET_KEYS: ${{ secrets.GPG_SECRET_KEYS }}
         GPG_OWNERTRUST: ${{ secrets.GPG_OWNERTRUST }}
       run: |
+        set -euo pipefail
+
         mkdir -p -m 700 "$HOME/.gnupg"
     
         printf '%s\n' 'use-agent' > "$HOME/.gnupg/gpg.conf"
