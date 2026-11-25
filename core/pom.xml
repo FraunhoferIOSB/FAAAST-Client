@@ -60,6 +60,11 @@
             <artifactId>aas4j-dataformat-json</artifactId>
             <version>${aas4j.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>${org.json.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
