@@ -10,7 +10,7 @@ For detailed documentation see [JavaDoc](https://javadoc.io/doc/de.fraunhofer.io
 ## Usage
 
 ### Requirements
-Java Runtime 17 or newer.
+Java Runtime 21 or newer.
 
 ### with maven
 
@@ -245,6 +245,10 @@ to instantiate an interface for connection with that server.
 <!--changelog-anchor-->
 <!--start:changelog-header-->
 ### 1.2.0-SNAPSHOT (current development version)<!--end:changelog-header-->
+
+#### 🚀 New Features & Major Changes
+- Update to Java 21
+
 ### 1.1.0
 
 #### 🚀 New Features & Major Changes
