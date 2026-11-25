@@ -56,8 +56,8 @@
         <httpcomponents.core.version>5.5</httpcomponents.core.version>
         <junit.version>4.13.2</junit.version>
         <logback.version>1.5.8</logback.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <maven.plugin.assembly.version>3.8.0</maven.plugin.assembly.version>
         <maven.plugin.central-publishing.version>0.12.0</maven.plugin.central-publishing.version>
         <maven.plugin.checkstyle.version>3.6.0</maven.plugin.checkstyle.version>

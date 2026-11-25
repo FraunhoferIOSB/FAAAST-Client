@@ -12,7 +12,7 @@
         <module name="de.fraunhofer.iosb.ilt.faaast.client.checks.ExtendedMissingJavadocTypeCheck">
             <property name="scope" value="protected"/>
         </module>
-        <module name="JavadocStyle"/>
+        <module name="SummaryJavadoc"/>
         <module name="JavadocParagraph"/>
         <module name="JavadocContentLocationCheck"/>
         <module name="RequireEmptyLineBeforeBlockTagGroup"/>
